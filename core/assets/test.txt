@@ -1,0 +1,9 @@
+1p 2p 1k x x x x x x
+1j 1r 2k 2j x x x x x
+x x x x x x x x x
+x x x x x x x x x
+x x x x x x x x x
+x x x x x x x x x
+x x x x x x x x x
+x x x x x x x x x
+x x x x x x x x x

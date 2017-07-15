@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
+import com.insanelyinsane.waifushogi.screens.LoadScreen;
 import com.insanelyinsane.waifushogi.screens.PlayScreen;
 import com.insanelyinsane.waifushogi.screens.Screen;
 import com.insanelyinsane.waifushogi.screens.ScreenType;
@@ -17,6 +18,7 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
 	SpriteBatch _batch;
         HashMap<ScreenType, Screen> _screens;
         Screen _activeScreen;
+        Screen _nextScreen;
 	
 	@Override
 	public void create() 
@@ -28,7 +30,7 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
             // Screen initialization
             _screens = new HashMap<>();
             addScreens();
-            _activeScreen = _screens.get(ScreenType.PLAY);
+            onScreenChanged(ScreenType.PLAY);
 	}
         
         
@@ -46,10 +48,18 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
         public final Screen getScreen() { return _activeScreen; }
         
         
+        /**
+         * Change to the given screen type, but first set the active screen to a load
+         * screen that will load the next screen's assets. Then, change to that screen
+         * when loading is finished.
+         * @param type 
+         */
         @Override
         public void onScreenChanged(ScreenType type)
         {
-            _activeScreen = _screens.get(type);
+            _nextScreen = _screens.get(type);
+            _activeScreen = new LoadScreen(this, _batch, _nextScreen.getAssets());
+            System.out.println("Changing to new screen.");
         }
 
         
@@ -65,16 +75,30 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
                 
                 // Update active screen
                 _activeScreen.render(Gdx.graphics.getDeltaTime());
+                
+                // If it's a load screen, load the next screens assets then
+                // switch to it.
+                if (_activeScreen instanceof LoadScreen)
+                {
+                    LoadScreen screen = (LoadScreen)_activeScreen;
+                    if (screen.loadingCompleted())
+                    {
+                        _activeScreen = _nextScreen;
+                    }
+                }
 	}
 	
         
         /**
-         * Calls dispose for the active screen, and releases any global resources.
+         * Calls dispose for screens' assets, and releases any global resources.
          */
 	@Override
 	public void dispose()
         {
 		_batch.dispose();
+                _activeScreen.getAssets().dispose();
+                _nextScreen.getAssets().dispose();
+                _screens.forEach((type, screen) -> screen.getAssets().dispose());
 	}
         
         

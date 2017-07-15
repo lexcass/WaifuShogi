@@ -5,6 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 
@@ -46,13 +47,12 @@ public class PlayScreen extends Screen
     {
         SpriteBatch batch = getSpriteBatch();
         
-        
         // Update objects here
-        
-        
+        System.out.println("Play");
+
         // Draw textures and text to the screen
         batch.begin();
-        
+
         batch.end();
     }
     

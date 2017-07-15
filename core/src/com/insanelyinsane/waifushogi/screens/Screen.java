@@ -5,6 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.screens;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.listeners.ObjectListener;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
@@ -18,6 +19,7 @@ public abstract class Screen implements ObjectListener
 {
     private final LinkedList<ScreenChangeListener> _screenChangeListeners;
     private final SpriteBatch _spriteBatch;
+    private final AssetManager _assets;
     
     public Screen(ScreenChangeListener game, SpriteBatch batch)
     {
@@ -26,6 +28,7 @@ public abstract class Screen implements ObjectListener
         _screenChangeListeners.add(game);
         
         _spriteBatch = batch;
+        _assets = new AssetManager();
     }
     
     /**
@@ -57,6 +60,8 @@ public abstract class Screen implements ObjectListener
     
     
     public SpriteBatch getSpriteBatch() { return _spriteBatch; }
+    
+    public AssetManager getAssets() { return _assets; }
     
     
     public abstract void render(float delta);
