@@ -21,12 +21,20 @@ public class LoadScreen extends Screen
     private final AssetManager _assetsToLoad;
     private boolean _loadingDone;
     
+    private float T = 0;
+    
     public LoadScreen(ScreenChangeListener game, SpriteBatch batch, AssetManager assets)
     {
         super(game, batch);
-        _font = new BitmapFont();
+        
         _assetsToLoad = assets;
         _loadingDone = false;
+    }
+    
+    @Override
+    public void create()
+    {
+        _font = new BitmapFont();
     }
     
     public boolean loadingCompleted() { return _loadingDone; }
@@ -40,8 +48,10 @@ public class LoadScreen extends Screen
         {
             _loadingDone = true;
             
-            System.out.println("loaded");
+            Gdx.app.debug("Game message", "screen loaded in " + T);
         }
+        
+        T += delta;
         
         SpriteBatch batch = getSpriteBatch();
         

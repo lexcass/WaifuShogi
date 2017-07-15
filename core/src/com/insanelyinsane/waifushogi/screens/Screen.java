@@ -35,12 +35,22 @@ public abstract class Screen implements ObjectListener
      * Change to a different screen of the specified type, and inform listeners.
      * @param type 
      */
-    public void changeScreen(ScreenType type)
+    public final void changeScreen(ScreenType type)
     {
         for (ScreenChangeListener l : _screenChangeListeners)
         {
             l.onScreenChanged(type);
         }
+    }
+    
+    /**
+     * Load an asset using the screen's asset manager
+     * @param fileName
+     * @param c 
+     */
+    public final void loadAsset(String fileName, Class c)
+    {
+        _assets.load(fileName, c);
     }
     
     @Override
@@ -63,6 +73,7 @@ public abstract class Screen implements ObjectListener
     
     public AssetManager getAssets() { return _assets; }
     
+    public abstract void create();
     
     public abstract void render(float delta);
     

@@ -1,5 +1,6 @@
 package com.insanelyinsane.waifushogi;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
@@ -7,8 +8,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.screens.LoadScreen;
-import com.insanelyinsane.waifushogi.screens.PlayScreen;
 import com.insanelyinsane.waifushogi.screens.Screen;
+import com.insanelyinsane.waifushogi.screens.ScreenFactory;
 import com.insanelyinsane.waifushogi.screens.ScreenType;
 import java.util.HashMap;
 
@@ -16,7 +17,6 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
 {
     
 	SpriteBatch _batch;
-        HashMap<ScreenType, Screen> _screens;
         Screen _activeScreen;
         Screen _nextScreen;
 	
@@ -27,20 +27,12 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
             _batch = new SpriteBatch();
             Gdx.input.setInputProcessor(this);
             
+            // Allow debug logging
+            Gdx.app.setLogLevel(Application.LOG_DEBUG);
+            
             // Screen initialization
-            _screens = new HashMap<>();
-            addScreens();
             onScreenChanged(ScreenType.PLAY);
 	}
-        
-        
-        /**
-         * Add screens to the screen Hash Map for easy access
-         */
-        public void addScreens()
-        {
-            _screens.put(ScreenType.PLAY, new PlayScreen(this, _batch));
-        }
         
         /**
          * Returns the active screen.
@@ -57,9 +49,12 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
         @Override
         public void onScreenChanged(ScreenType type)
         {
-            _nextScreen = _screens.get(type);
+            // Load next screen's assets asynchronously and show loading screen in the process
+            _nextScreen = ScreenFactory.createScreen(type, this, _batch);
             _activeScreen = new LoadScreen(this, _batch, _nextScreen.getAssets());
-            System.out.println("Changing to new screen.");
+            _activeScreen.create();
+            
+            Gdx.app.debug("Change screen", type.toString());
         }
 
         
@@ -76,14 +71,15 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
                 // Update active screen
                 _activeScreen.render(Gdx.graphics.getDeltaTime());
                 
-                // If it's a load screen, load the next screens assets then
-                // switch to it.
+                // If it's a load screen, load the next screen's assets then
+                // switch to it and call its create method.
                 if (_activeScreen instanceof LoadScreen)
                 {
                     LoadScreen screen = (LoadScreen)_activeScreen;
                     if (screen.loadingCompleted())
                     {
                         _activeScreen = _nextScreen;
+                        _activeScreen.create();
                     }
                 }
 	}
@@ -98,7 +94,6 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
 		_batch.dispose();
                 _activeScreen.getAssets().dispose();
                 _nextScreen.getAssets().dispose();
-                _screens.forEach((type, screen) -> screen.getAssets().dispose());
 	}
         
         

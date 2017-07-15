@@ -5,7 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.screens;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 
@@ -15,12 +15,23 @@ import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
  */
 public class PlayScreen extends Screen
 {
-    // Properties to update
+    // Assets to load
+    Texture boardTex;
+    
+    // Objects to update
     
     
     public PlayScreen(ScreenChangeListener game, SpriteBatch batch)
     {
         super(game, batch);
+        
+        loadAsset("ShogiBoard.png", Texture.class);
+    }
+    
+    @Override
+    public void create()
+    {
+        boardTex = getAssets().get("ShogiBoard.png");
     }
     
     @Override
@@ -48,11 +59,10 @@ public class PlayScreen extends Screen
         SpriteBatch batch = getSpriteBatch();
         
         // Update objects here
-        System.out.println("Play");
 
         // Draw textures and text to the screen
         batch.begin();
-
+        batch.draw(boardTex, 100, 100);
         batch.end();
     }
     
