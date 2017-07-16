@@ -19,7 +19,7 @@ public class ScreenFactory
         switch (type)
         {
             case MAIN_MENU:
-                break;
+                return new MainMenuScreen(l, batch);
             case PLAY:
                 return new PlayScreen(l, batch);
         }

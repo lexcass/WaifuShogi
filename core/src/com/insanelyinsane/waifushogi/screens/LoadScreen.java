@@ -21,6 +21,10 @@ public class LoadScreen extends Screen
     private final AssetManager _assetsToLoad;
     private boolean _loadingDone;
     
+    // Constants
+    private final int LOAD_Y = 48;
+    private final int LOAD_X = Gdx.graphics.getWidth() - 100;
+    
     private float T = 0;
     
     public LoadScreen(ScreenChangeListener game, SpriteBatch batch, AssetManager assets)
@@ -57,8 +61,15 @@ public class LoadScreen extends Screen
         
         // Draw "Loading..." text onto screen
         batch.begin();
-        _font.draw(batch, "Loading...", Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 100);
+        _font.draw(batch, "Loading...", LOAD_X, LOAD_Y);
         batch.end();
+    }
+    
+    
+    @Override
+    public boolean  touchDown(int screenX, int screenY, int pointer, int button)
+    {
+        return true;
     }
     
     @Override

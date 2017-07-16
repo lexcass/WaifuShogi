@@ -51,6 +51,12 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
         {
             // Load next screen's assets asynchronously and show loading screen in the process
             _nextScreen = ScreenFactory.createScreen(type, this, _batch);
+            
+            // Report non-existing screen to debug log
+            if (_nextScreen == null) Gdx.app.debug("Error", "WaifuShogi::_nextScreen was null in method onScreenChanged.");
+            
+            // Fail hard if _nextScreen is null (uncaught NullPointerException). 
+            // This is unacceptable behavior for the end user. 
             _activeScreen = new LoadScreen(this, _batch, _nextScreen.getAssets());
             _activeScreen.create();
             
@@ -108,6 +114,8 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
          */
         public boolean  touchDown(int screenX, int screenY, int pointer, int button) 
         { 
+            _activeScreen.touchDown(screenX, screenY, pointer, button);
+            
             return true; 
         }
         

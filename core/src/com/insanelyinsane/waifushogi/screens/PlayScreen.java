@@ -5,9 +5,17 @@
  */
 package com.insanelyinsane.waifushogi.screens;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
+import com.insanelyinsane.waifushogi.objects.Board;
+import com.insanelyinsane.waifushogi.objects.GameObject;
+import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
+import com.insanelyinsane.waifushogi.objects.pieces.Piece;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -15,41 +23,51 @@ import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
  */
 public class PlayScreen extends Screen
 {
+    // Constants
+    
     // Assets to load
-    Texture boardTex;
+    Texture _woodTex;
+    Texture _boardTex;
+    Texture _pawnTex;
     
     // Objects to update
+    GameObject<Board> _boardObj;
+    List<GameObject<Piece>> _pieceObjects;
     
     
     public PlayScreen(ScreenChangeListener game, SpriteBatch batch)
     {
         super(game, batch);
         
+        // Load assets
+        loadAsset("woodbg.jpg", Texture.class);
         loadAsset("ShogiBoard.png", Texture.class);
+        loadAsset("Pawn.png", Texture.class);
+        
+        _pieceObjects = new LinkedList<>();
     }
     
     @Override
     public void create()
     {
-        boardTex = getAssets().get("ShogiBoard.png");
-    }
-    
-    @Override
-    public void onObjectAdded(Object object)
-    {
-        // IMPORTANT: Super's callback must be called first.
-        super.onObjectAdded(object);
+        // Create assets
+        AssetManager assets = getAssets();
+        
+        _woodTex = assets.get("woodbg.jpg");
+        _boardTex = assets.get("ShogiBoard.png");
+        _pawnTex = assets.get("Pawn.png");
         
         
-    }
-    
-    @Override
-    public void onObjectRemoved(Object object)
-    {
-        // IMPORTANT: Super's callback must be called first.
-        super.onObjectRemoved(object);
+        // Initialize board
+        int boardX = Gdx.graphics.getWidth() / 2 - _boardTex.getWidth() / 2;
+        int boardY = Gdx.graphics.getHeight() / 2 - _boardTex.getHeight() / 2;
+        Board board = new Board();
+        _boardObj = new GameObject<>(_boardTex, board, boardX, boardY);
         
-        
+        // Create pieces and place into cells
+        Pawn pawn = new Pawn();
+        board.getCellAt(0, 0).setPiece(pawn);
+        _pieceObjects.add(new GameObject<>(_pawnTex, pawn, boardX, boardY));
     }
     
     
@@ -62,8 +80,22 @@ public class PlayScreen extends Screen
 
         // Draw textures and text to the screen
         batch.begin();
-        batch.draw(boardTex, 100, 100);
+        batch.draw(_woodTex, 0, 0);
+        _boardObj.draw(batch);
+        
+        for (GameObject<Piece> pieceObj : _pieceObjects)
+        {
+            pieceObj.draw(batch);
+        }
+        
         batch.end();
+    }
+    
+    
+    @Override
+    public boolean  touchDown(int screenX, int screenY, int pointer, int button)
+    {
+        return true;
     }
     
     

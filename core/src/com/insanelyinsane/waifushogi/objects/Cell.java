@@ -1,30 +1,21 @@
 package com.insanelyinsane.waifushogi.objects;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 
 /**
  *
  * @author alex
  */
-public class Cell extends Actor
+public class Cell
 {
+    private Piece _piece;
+    
     public Cell()
     {
-        super();
-        
-        addListener(new InputListener() 
-        {
-            @Override
-            public boolean touchDown(InputEvent e, float x, float y, int pointer, int button)
-            {
-                return true;
-            }
-
-            @Override
-            public void touchUp(InputEvent e, float x, float y, int pointer, int button) {}
-        });
-    }
+        _piece = null;
+    }   
     
+    public Piece getPiece() { return _piece; }
+    
+    public void setPiece(Piece p) { _piece = p; };
 }

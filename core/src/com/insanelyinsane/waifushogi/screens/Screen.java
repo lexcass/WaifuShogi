@@ -15,17 +15,16 @@ import java.util.LinkedList;
  *
  * @author alex
  */
-public abstract class Screen implements ObjectListener
+public abstract class Screen
 {
-    private final LinkedList<ScreenChangeListener> _screenChangeListeners;
+    private final ScreenChangeListener _screenChangeListener;
     private final SpriteBatch _spriteBatch;
     private final AssetManager _assets;
     
     public Screen(ScreenChangeListener game, SpriteBatch batch)
     {
         // Init ScreenChangeListeners and add game (WaifuShogi class) to the list
-        _screenChangeListeners = new LinkedList<>();
-        _screenChangeListeners.add(game);
+        _screenChangeListener = game;
         
         _spriteBatch = batch;
         _assets = new AssetManager();
@@ -37,10 +36,7 @@ public abstract class Screen implements ObjectListener
      */
     public final void changeScreen(ScreenType type)
     {
-        for (ScreenChangeListener l : _screenChangeListeners)
-        {
-            l.onScreenChanged(type);
-        }
+        _screenChangeListener.onScreenChanged(type);
     }
     
     /**
@@ -53,21 +49,6 @@ public abstract class Screen implements ObjectListener
         _assets.load(fileName, c);
     }
     
-    @Override
-    public void onObjectAdded(final Object object)
-    {
-        if (object instanceof ScreenChangeListener)
-        {
-            _screenChangeListeners.add((ScreenChangeListener)object);
-        }
-    }
-    
-    @Override
-    public void onObjectRemoved(final Object object)
-    {
-        _screenChangeListeners.remove(object);
-    }
-    
     
     public SpriteBatch getSpriteBatch() { return _spriteBatch; }
     
@@ -76,6 +57,8 @@ public abstract class Screen implements ObjectListener
     public abstract void create();
     
     public abstract void render(float delta);
+    
+    public abstract boolean  touchDown(int screenX, int screenY, int pointer, int button);
     
     public abstract void resume();
     
