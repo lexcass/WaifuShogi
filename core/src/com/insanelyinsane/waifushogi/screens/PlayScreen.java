@@ -27,8 +27,6 @@ public class PlayScreen extends Screen
     
     // Assets to load
     Texture _woodTex;
-    Texture _boardTex;
-    Texture _pawnTex;
     
     // Objects to update
     GameObject<Board> _boardObj;
@@ -40,9 +38,9 @@ public class PlayScreen extends Screen
         super(game, batch);
         
         // Load assets
-        loadAsset("woodbg.jpg", Texture.class);
-        loadAsset("ShogiBoard.png", Texture.class);
-        loadAsset("Pawn.png", Texture.class);
+        loadAsset("textures/woodbg.jpg", Texture.class);
+        loadAsset("textures/ShogiBoard.png", Texture.class);
+        loadAsset("textures/Pawn.png", Texture.class);
         
         _pieceObjects = new LinkedList<>();
     }
@@ -53,21 +51,21 @@ public class PlayScreen extends Screen
         // Create assets
         AssetManager assets = getAssets();
         
-        _woodTex = assets.get("woodbg.jpg");
-        _boardTex = assets.get("ShogiBoard.png");
-        _pawnTex = assets.get("Pawn.png");
+        _woodTex = assets.get("textures/woodbg.jpg");
+        Texture boardTex = assets.get("textures/ShogiBoard.png");
+        Texture pawnTex = assets.get("textures/Pawn.png");
         
         
         // Initialize board
-        int boardX = Gdx.graphics.getWidth() / 2 - _boardTex.getWidth() / 2;
-        int boardY = Gdx.graphics.getHeight() / 2 - _boardTex.getHeight() / 2;
+        int boardX = Gdx.graphics.getWidth() / 2 - boardTex.getWidth() / 2;
+        int boardY = Gdx.graphics.getHeight() / 2 - boardTex.getHeight() / 2;
         Board board = new Board();
-        _boardObj = new GameObject<>(_boardTex, board, boardX, boardY);
+        _boardObj = new GameObject<>(boardTex, board, boardX, boardY);
         
         // Create pieces and place into cells
         Pawn pawn = new Pawn();
         board.getCellAt(0, 0).setPiece(pawn);
-        _pieceObjects.add(new GameObject<>(_pawnTex, pawn, boardX, boardY));
+        _pieceObjects.add(new GameObject<>(pawnTex, pawn, boardX, boardY));
     }
     
     
