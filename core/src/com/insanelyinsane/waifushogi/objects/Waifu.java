@@ -16,25 +16,25 @@ import java.util.List;
  *
  * @author alex
  */
-public class GameObject<TObject> implements TouchListener
+public class Waifu implements TouchListener
 {
-    private TObject _object;
+    private Piece _piece;
     private Texture _texture;
     private float _xPos;
     private float _yPos;
     
     //private List<SelectionListener> _selectionListeners;
     
-    public GameObject(Texture tex, TObject obj, float x, float y)
+    public Waifu(Texture tex, Piece obj, float x, float y)
     {
         _texture = tex;
-        _object = obj;
+        _piece = obj;
         _xPos = x;
         _yPos = y;
         //_selectionListeners = new LinkedList<SelectionListener>();
     }
     
-    public TObject getObject() { return _object; }
+    public Piece getPiece() { return _piece; }
     public Texture getTexture() { return _texture; }
     
     public float getX() { return _xPos; }
@@ -59,12 +59,9 @@ public class GameObject<TObject> implements TouchListener
     @Override
     public void onTouch(float x, float y)
     {
-        if (_object instanceof Piece)
+        if (containsPoint(x, y))
         {
-            if (containsPoint(x, y))
-            {
-                
-            }
+
         }
     }
     

@@ -13,7 +13,7 @@ import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Cell;
-import com.insanelyinsane.waifushogi.objects.GameObject;
+import com.insanelyinsane.waifushogi.objects.Waifu;
 import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import java.util.LinkedList;
@@ -36,7 +36,7 @@ public class PlayScreen extends Screen
     Texture _boardTex;
     int _boardX;
     int _boardY;
-    List<GameObject<Piece>> _pieceObjects;
+    List<Waifu> _waifus;
     List<TouchListener> _touchListeners;
     
     
@@ -49,7 +49,7 @@ public class PlayScreen extends Screen
         loadAsset("textures/ShogiBoard.png", Texture.class);
         loadAsset("textures/Pawn.png", Texture.class);
         
-        _pieceObjects = new LinkedList<>();
+        _waifus = new LinkedList<>();
         _touchListeners = new LinkedList<>();
     }
     
@@ -68,7 +68,7 @@ public class PlayScreen extends Screen
         _boardX = Gdx.graphics.getWidth() / 2 - _boardTex.getWidth() / 2;
         _boardY = Gdx.graphics.getHeight() / 2 - _boardTex.getHeight() / 2;
         _board = new Board();
-        //_boardObj = new GameObject<>(boardTex, board, boardX, boardY);
+        //_boardObj = new Waifu<>(boardTex, board, boardX, boardY);
         
         // Create pieces and place into cells
         addPiece(new Pawn(), pawnTex, 2, 3);
@@ -89,8 +89,8 @@ public class PlayScreen extends Screen
     {
         _board.getCellAt(row, col).setPiece(piece);
         
-        GameObject<Piece> obj = new GameObject<>(tex, piece, _boardX + col * Cell.WIDTH, _boardY + row * Cell.HEIGHT);
-        _pieceObjects.add(obj);
+        Waifu obj = new Waifu(tex, piece, _boardX + col * Cell.WIDTH, _boardY + row * Cell.HEIGHT);
+        _waifus.add(obj);
         _touchListeners.add(obj);
     }
     
@@ -107,7 +107,7 @@ public class PlayScreen extends Screen
         batch.draw(_woodTex, 0, 0);
         batch.draw(_boardTex, _boardX, _boardY);
         
-        for (GameObject<Piece> pieceObj : _pieceObjects)
+        for (Waifu pieceObj : _waifus)
         {
             pieceObj.draw(batch);
         }
