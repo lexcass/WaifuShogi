@@ -7,6 +7,8 @@ package com.insanelyinsane.waifushogi.objects;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.events.SelectionEvent;
+import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
@@ -58,13 +60,13 @@ public class Waifu implements TouchListener
      * @param y 
      */
     @Override
-    public void onTouch(float x, float y)
+    public void onTouch(TouchEvent e)
     {
-        if (containsPoint(x, y))
+        if (containsPoint(e.getX(), e.getY()))
         {
             for (SelectionListener l : _selectionListeners)
             {
-                l.onWaifuSelected(this);
+                l.onWaifuSelected(new SelectionEvent(this));
             }
         }
     }

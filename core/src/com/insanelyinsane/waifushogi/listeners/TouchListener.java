@@ -5,11 +5,13 @@
  */
 package com.insanelyinsane.waifushogi.listeners;
 
+import com.insanelyinsane.waifushogi.events.TouchEvent;
+
 /**
  *
  * @author alex
  */
 public interface TouchListener 
 {
-    public void onTouch(float x, float y);
+    public void onTouch(TouchEvent e);
 }

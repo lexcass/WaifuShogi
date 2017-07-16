@@ -5,7 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.listeners;
 
-import com.insanelyinsane.waifushogi.objects.Waifu;
+import com.insanelyinsane.waifushogi.events.SelectionEvent;
 
 /**
  *
@@ -13,5 +13,5 @@ import com.insanelyinsane.waifushogi.objects.Waifu;
  */
 public interface SelectionListener 
 {
-    public void onWaifuSelected(Waifu waifu);
+    public void onWaifuSelected(SelectionEvent e);
 }

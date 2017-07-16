@@ -7,10 +7,8 @@ package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.insanelyinsane.waifushogi.listeners.ObjectListener;
+import com.insanelyinsane.waifushogi.events.ScreenChangeEvent;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
-import java.util.LinkedList;
-
 /**
  *
  * @author alex
@@ -36,7 +34,7 @@ public abstract class Screen
      */
     public final void changeScreen(ScreenType type)
     {
-        _screenChangeListener.onScreenChanged(type);
+        _screenChangeListener.onScreenChanged(new ScreenChangeEvent(type));
     }
     
     /**

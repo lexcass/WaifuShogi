@@ -5,7 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.listeners;
 
-import com.insanelyinsane.waifushogi.screens.ScreenType;
+import com.insanelyinsane.waifushogi.events.ScreenChangeEvent;
 
 /**
  *
@@ -13,5 +13,5 @@ import com.insanelyinsane.waifushogi.screens.ScreenType;
  */
 public interface ScreenChangeListener 
 {
-    public void onScreenChanged(ScreenType type);
+    public void onScreenChanged(ScreenChangeEvent e);
 }

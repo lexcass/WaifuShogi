@@ -5,12 +5,14 @@
  */
 package com.insanelyinsane.waifushogi.listeners;
 
+import com.insanelyinsane.waifushogi.events.ObjectEvent;
+
 /**
  *
  * @author alex
  */
 public interface ObjectListener 
 {
-    public void onObjectAdded(final Object object);
-    public void onObjectRemoved(final Object object);
+    public void onObjectAdded(ObjectEvent e);
+    public void onObjectRemoved(ObjectEvent e);
 }

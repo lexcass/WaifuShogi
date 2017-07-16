@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
@@ -129,7 +130,7 @@ public class PlayScreen extends Screen
     {
         for (TouchListener l : _touchListeners)
         {
-            l.onTouch(screenX, screenY);
+            l.onTouch(new TouchEvent(true, screenX, screenY));
         }
         
         return true;
