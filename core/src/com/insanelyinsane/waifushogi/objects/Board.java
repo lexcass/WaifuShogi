@@ -5,6 +5,8 @@
  */
 package com.insanelyinsane.waifushogi.objects;
 
+import com.badlogic.gdx.Gdx;
+
 /**
  *
  * @author alex
@@ -34,6 +36,8 @@ public class Board
     
     public Cell getCellAt(int r, int c)
     {
+        if (r >= ROWS || c >= COLS) Gdx.app.debug("Error", "No cell at (" + r + ", " + c + "), out of bounds.");
+        
         return _cells[r][c];
     }
 }

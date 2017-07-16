@@ -7,17 +7,23 @@ package com.insanelyinsane.waifushogi.objects;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.listeners.TouchListener;
+import com.insanelyinsane.waifushogi.objects.pieces.Piece;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author alex
  */
-public class GameObject<TObject>
+public class GameObject<TObject> implements TouchListener
 {
     private TObject _object;
     private Texture _texture;
     private float _xPos;
     private float _yPos;
+    
+    //private List<SelectionListener> _selectionListeners;
     
     public GameObject(Texture tex, TObject obj, float x, float y)
     {
@@ -25,6 +31,7 @@ public class GameObject<TObject>
         _object = obj;
         _xPos = x;
         _yPos = y;
+        //_selectionListeners = new LinkedList<SelectionListener>();
     }
     
     public TObject getObject() { return _object; }
@@ -42,5 +49,27 @@ public class GameObject<TObject>
     public void draw(SpriteBatch batch)
     {
         batch.draw(_texture, _xPos, _yPos);
+    }
+    
+    /**
+     * Respond to touch event
+     * @param x
+     * @param y 
+     */
+    @Override
+    public void onTouch(float x, float y)
+    {
+        if (_object instanceof Piece)
+        {
+            if (containsPoint(x, y))
+            {
+                
+            }
+        }
+    }
+    
+    public boolean containsPoint(float x, float y)
+    {
+        return (x >= _xPos) && (y >= _yPos) && (x <= (_xPos + _texture.getWidth()) && y <= (_yPos + _texture.getHeight()));
     }
 }
