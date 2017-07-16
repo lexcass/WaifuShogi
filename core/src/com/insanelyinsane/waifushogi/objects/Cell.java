@@ -8,6 +8,10 @@ import com.insanelyinsane.waifushogi.objects.pieces.Piece;
  */
 public class Cell
 {
+    public static final int WIDTH = 53;
+    public static final int HEIGHT = 71;
+    
+    
     private Piece _piece;
     
     public Cell()

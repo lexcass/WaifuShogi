@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.objects.Board;
+import com.insanelyinsane.waifushogi.objects.Cell;
 import com.insanelyinsane.waifushogi.objects.GameObject;
 import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
@@ -63,9 +64,26 @@ public class PlayScreen extends Screen
         _boardObj = new GameObject<>(boardTex, board, boardX, boardY);
         
         // Create pieces and place into cells
-        Pawn pawn = new Pawn();
-        board.getCellAt(0, 0).setPiece(pawn);
-        _pieceObjects.add(new GameObject<>(pawnTex, pawn, boardX, boardY));
+//        Pawn pawn = new Pawn();
+//        board.getCellAt(0, 0).setPiece(pawn);
+//        _pieceObjects.add(new GameObject<>(pawnTex, pawn, boardX, boardY));
+
+        addPiece(new Pawn(), pawnTex, 2, 3);
+    }
+    
+    
+    /**
+     * Add a piece with texture to cell at row, col on board.
+     * Also adds piece as a new game object for the PlayScreen.
+     * @param piece
+     * @param tex
+     * @param row
+     * @param col 
+     */
+    public void addPiece(Piece piece, Texture tex, int row, int col)
+    {
+        _boardObj.getObject().getCellAt(row, col).setPiece(piece);
+        _pieceObjects.add(new GameObject<>(tex, piece, _boardObj.getX() + col * Cell.WIDTH, _boardObj.getY() + row * Cell.HEIGHT));
     }
     
     

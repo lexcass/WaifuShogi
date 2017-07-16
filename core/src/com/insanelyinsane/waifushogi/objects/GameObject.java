@@ -30,6 +30,9 @@ public class GameObject<TObject>
     public TObject getObject() { return _object; }
     public Texture getTexture() { return _texture; }
     
+    public float getX() { return _xPos; }
+    public float getY() { return _yPos; }
+    
     public void updatePosition(float x, float y)
     {
         _xPos = x;
