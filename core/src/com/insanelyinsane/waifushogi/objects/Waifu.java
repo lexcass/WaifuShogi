@@ -7,6 +7,7 @@ package com.insanelyinsane.waifushogi.objects;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import java.util.LinkedList;
@@ -23,7 +24,7 @@ public class Waifu implements TouchListener
     private float _xPos;
     private float _yPos;
     
-    //private List<SelectionListener> _selectionListeners;
+    private List<SelectionListener> _selectionListeners;
     
     public Waifu(Texture tex, Piece obj, float x, float y)
     {
@@ -31,7 +32,7 @@ public class Waifu implements TouchListener
         _piece = obj;
         _xPos = x;
         _yPos = y;
-        //_selectionListeners = new LinkedList<SelectionListener>();
+        _selectionListeners = new LinkedList<SelectionListener>();
     }
     
     public Piece getPiece() { return _piece; }
@@ -52,7 +53,7 @@ public class Waifu implements TouchListener
     }
     
     /**
-     * Respond to touch event
+     * Respond to touch event by informing selection listeners this waifu was selected.
      * @param x
      * @param y 
      */
@@ -61,7 +62,10 @@ public class Waifu implements TouchListener
     {
         if (containsPoint(x, y))
         {
-
+            for (SelectionListener l : _selectionListeners)
+            {
+                l.onWaifuSelected(this);
+            }
         }
     }
     

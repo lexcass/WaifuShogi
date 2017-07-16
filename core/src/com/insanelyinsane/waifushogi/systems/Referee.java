@@ -3,15 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.listeners;
+package com.insanelyinsane.waifushogi.systems;
 
+import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.objects.Waifu;
 
 /**
  *
  * @author alex
  */
-public interface SelectionListener 
+public class Referee implements SelectionListener
 {
-    public void onWaifuSelected(Waifu waifu);
+    @Override
+    public void onWaifuSelected(Waifu waifu)
+    {
+        
+    }
 }

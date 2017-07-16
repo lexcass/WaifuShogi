@@ -116,12 +116,21 @@ public class PlayScreen extends Screen
     }
     
     
+    /**
+     * Inform all touch listeners of the location the screen was touched (clicked) at.
+     * @param screenX
+     * @param screenY
+     * @param pointer
+     * @param button
+     * @return 
+     */
     @Override
     public boolean  touchDown(int screenX, int screenY, int pointer, int button)
     {
-        // Touch board
-        
-        // Touch hand
+        for (TouchListener l : _touchListeners)
+        {
+            l.onTouch(screenX, screenY);
+        }
         
         return true;
     }
