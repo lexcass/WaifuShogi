@@ -7,6 +7,7 @@ package com.insanelyinsane.waifushogi.systems;
 
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
+import com.insanelyinsane.waifushogi.objects.Board;
 
 /**
  *
@@ -14,6 +15,15 @@ import com.insanelyinsane.waifushogi.listeners.SelectionListener;
  */
 public class Referee implements SelectionListener
 {
+    private final Board _board;
+    
+    
+    public Referee(Board board)
+    {
+        _board = board;
+    }
+    
+    
     @Override
     public void onWaifuSelected(SelectionEvent e)
     {

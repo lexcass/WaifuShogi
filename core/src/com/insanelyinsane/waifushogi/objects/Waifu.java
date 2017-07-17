@@ -21,12 +21,24 @@ import java.util.List;
  */
 public class Waifu implements TouchListener
 {
-    private Piece _piece;
-    private Texture _texture;
+    private final Piece _piece;
+    private final Texture _texture;
     private float _xPos;
     private float _yPos;
     
-    private List<SelectionListener> _selectionListeners;
+    private final List<SelectionListener> _selectionListeners;
+    
+    /**
+     * Checks if the given coords intersect this waifu.
+     * @param x
+     * @param y
+     * @return boolean
+     */
+    private boolean containsPoint(float x, float y)
+    {
+        return (x >= _xPos) && (y >= _yPos) && (x <= (_xPos + _texture.getWidth()) && y <= (_yPos + _texture.getHeight()));
+    }
+    
     
     public Waifu(Texture tex, Piece obj, float x, float y)
     {
@@ -34,9 +46,10 @@ public class Waifu implements TouchListener
         _piece = obj;
         _xPos = x;
         _yPos = y;
-        _selectionListeners = new LinkedList<SelectionListener>();
+        _selectionListeners = new LinkedList<>();
     }
     
+    // Getters
     public Piece getPiece() { return _piece; }
     public Texture getTexture() { return _texture; }
     
@@ -49,6 +62,10 @@ public class Waifu implements TouchListener
         _yPos = y;
     }
     
+    /**
+     * Draw the texture of this waifu to the given SpriteBatch.
+     * @param batch 
+     */
     public void draw(SpriteBatch batch)
     {
         batch.draw(_texture, _xPos, _yPos);
@@ -56,8 +73,7 @@ public class Waifu implements TouchListener
     
     /**
      * Respond to touch event by informing selection listeners this waifu was selected.
-     * @param x
-     * @param y 
+     * @param e
      */
     @Override
     public void onTouch(TouchEvent e)
@@ -69,10 +85,5 @@ public class Waifu implements TouchListener
                 l.onWaifuSelected(new SelectionEvent(this));
             }
         }
-    }
-    
-    public boolean containsPoint(float x, float y)
-    {
-        return (x >= _xPos) && (y >= _yPos) && (x <= (_xPos + _texture.getWidth()) && y <= (_yPos + _texture.getHeight()));
     }
 }
