@@ -16,11 +16,15 @@ import java.util.List;
 public class SelectionEvent 
 {
     private final List<Cell> _cells;
+    private boolean _selected;
     
-    public SelectionEvent(List<Cell> w)
+    public SelectionEvent(List<Cell> w, boolean selected)
     {
         _cells = w;
+        _selected = selected;
     }
     
     public List<Cell> getCells() { return _cells; }
+    
+    public boolean isSelected() { return _selected; }
 }
