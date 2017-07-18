@@ -6,11 +6,13 @@
 package com.insanelyinsane.waifushogi.systems;
 
 import com.insanelyinsane.waifushogi.events.TouchEvent;
+import com.insanelyinsane.waifushogi.listeners.MoveListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Cell;
 import com.insanelyinsane.waifushogi.objects.GameObject;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -19,13 +21,19 @@ import java.util.List;
  */
 public class Referee implements TouchListener
 {
+    // Board and Hands
     private final GameObject<Board> _board;
-    private int _boardX;
+    
+    // Listeners
+    private final List<MoveListener> _moveListeners;
     
     
     public Referee(GameObject<Board> board)
     {
         _board = board;
+        
+        _moveListeners = new LinkedList<>();
+        _moveListeners.add(_board.getObject());
     }
     
     
@@ -46,9 +54,7 @@ public class Referee implements TouchListener
             
             if (validMoves.size() > 0)
             {
-                // Dispatch MoveEvent
-                
-                // Dispatch CaptureEvent
+                // Dispatch SelectionEvent
             }
         }
     }

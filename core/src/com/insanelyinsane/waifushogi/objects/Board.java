@@ -6,15 +6,14 @@
 package com.insanelyinsane.waifushogi.objects;
 
 import com.badlogic.gdx.Gdx;
-import com.insanelyinsane.waifushogi.events.SelectionEvent;
-import com.insanelyinsane.waifushogi.listeners.SelectionListener;
-import com.insanelyinsane.waifushogi.objects.pieces.Piece;
+import com.insanelyinsane.waifushogi.events.MoveEvent;
+import com.insanelyinsane.waifushogi.listeners.MoveListener;
 
 /**
  *
  * @author alex
  */
-public class Board
+public class Board implements MoveListener
 {
     public static final int ROWS = 9;
     public static final int COLS = 9;
@@ -43,5 +42,15 @@ public class Board
         if (r >= ROWS || c >= COLS) Gdx.app.debug("Error", "No cell at (" + r + ", " + c + "), out of bounds.");
         
         return _cells[r][c];
+    }
+    
+    /**
+     * Move a piece from one cell to another.
+     * @param e 
+     */
+    @Override
+    public void onWaifuMoved(MoveEvent e)
+    {
+        
     }
 }

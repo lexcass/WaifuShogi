@@ -5,7 +5,9 @@
  */
 package com.insanelyinsane.waifushogi.events;
 
+import com.insanelyinsane.waifushogi.objects.Cell;
 import com.insanelyinsane.waifushogi.objects.GameObject;
+import java.util.List;
 
 /**
  *
@@ -13,12 +15,12 @@ import com.insanelyinsane.waifushogi.objects.GameObject;
  */
 public class SelectionEvent 
 {
-    private final GameObject _waifu;
+    private final List<Cell> _cells;
     
-    public SelectionEvent(GameObject w)
+    public SelectionEvent(List<Cell> w)
     {
-        _waifu = w;
+        _cells = w;
     }
     
-    public GameObject getWaifu() { return _waifu; }
+    public List<Cell> getCells() { return _cells; }
 }
