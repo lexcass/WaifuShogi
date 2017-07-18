@@ -14,7 +14,7 @@ import com.insanelyinsane.waifushogi.objects.pieces.Piece;
  *
  * @author alex
  */
-public class Board implements SelectionListener
+public class Board
 {
     public static final int ROWS = 9;
     public static final int COLS = 9;
@@ -36,37 +36,12 @@ public class Board implements SelectionListener
         }
     }
     
+    public Cell[][] getCells() { return _cells; }
     
     public Cell getCellAt(int r, int c)
     {
         if (r >= ROWS || c >= COLS) Gdx.app.debug("Error", "No cell at (" + r + ", " + c + "), out of bounds.");
         
         return _cells[r][c];
-    }
-    
-    
-    /**
-     * Use Waifu's piece valid moves method to determine cells that are valid moves.
-     * Dispatch highlight event containing these cells.
-     * @param e 
-     */
-    @Override
-    public void onWaifuSelected(SelectionEvent e)
-    {
-        Piece piece = e.getWaifu().getPiece();
-        
-        boolean endLoop = false;
-        Cell cell;
-        for (int r = 0; r < ROWS && !endLoop; r++)
-        {
-            for (int c = 0; c < COLS && !endLoop; c++)
-            {
-                if (_cells[r][c].getPiece().equals(piece)) 
-                {
-                    endLoop = true;
-                    cell = _cells[r][c];
-                }
-            }
-        }
     }
 }

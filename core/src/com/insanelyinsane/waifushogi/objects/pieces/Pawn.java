@@ -15,12 +15,36 @@ import java.util.List;
  */
 public class Pawn extends Piece
 {
-    public List<Cell> getValidMoves()
+    public Pawn(Team team)
     {
-        return new LinkedList<>();
+        super(team);
     }
     
-    public List<Cell> getValidReplacements()
+    @Override
+    public List<Cell> getValidMoves(final Cell[][] cells, int row, int col)
+    {
+        List<Cell> valid = new LinkedList<>();
+        
+        Cell cell = cells[row + 1][col];
+        if (cell != null)
+        {
+            Piece piece = cell.getPiece();
+            if (piece != null)
+            {
+                if (piece.getTeam().equals(getTeam())) valid.add(cell);
+            }
+            else
+            {
+                valid.add(cell);
+            }
+        }
+        
+        return valid;
+    }
+    
+    
+    @Override
+    public List<Cell> getValidReplacements(final Cell[][] cells)
     {
         return new LinkedList<>();
     }

@@ -5,7 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.events;
 
-import com.insanelyinsane.waifushogi.objects.Waifu;
+import com.insanelyinsane.waifushogi.objects.GameObject;
 
 /**
  *
@@ -13,12 +13,12 @@ import com.insanelyinsane.waifushogi.objects.Waifu;
  */
 public class SelectionEvent 
 {
-    private final Waifu _waifu;
+    private final GameObject _waifu;
     
-    public SelectionEvent(Waifu w)
+    public SelectionEvent(GameObject w)
     {
         _waifu = w;
     }
     
-    public Waifu getWaifu() { return _waifu; }
+    public GameObject getWaifu() { return _waifu; }
 }

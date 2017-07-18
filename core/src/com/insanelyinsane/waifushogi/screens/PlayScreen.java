@@ -14,9 +14,11 @@ import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Cell;
-import com.insanelyinsane.waifushogi.objects.Waifu;
+import com.insanelyinsane.waifushogi.objects.GameObject;
 import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
+import com.insanelyinsane.waifushogi.objects.pieces.Team;
+import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,12 +34,10 @@ public class PlayScreen extends Screen
     Texture _woodTex;
     
     // Objects to update
-    //GameObject<Board> _boardObj;
-    Board _board;
-    Texture _boardTex;
-    int _boardX;
-    int _boardY;
-    List<Waifu> _waifus;
+    GameObject<Board> _board;
+    List<GameObject> _waifus;
+    Referee _referee;
+    
     List<TouchListener> _touchListeners;
     
     
@@ -45,13 +45,13 @@ public class PlayScreen extends Screen
     {
         super(game, batch);
         
+        _waifus = new LinkedList<>();
+        _touchListeners = new LinkedList<>();
+        
         // Load assets
         loadAsset("textures/woodbg.jpg", Texture.class);
         loadAsset("textures/ShogiBoard.png", Texture.class);
         loadAsset("textures/Pawn.png", Texture.class);
-        
-        _waifus = new LinkedList<>();
-        _touchListeners = new LinkedList<>();
     }
     
     @Override
@@ -61,19 +61,18 @@ public class PlayScreen extends Screen
         AssetManager assets = getAssets();
         
         _woodTex = assets.get("textures/woodbg.jpg");
-        _boardTex = assets.get("textures/ShogiBoard.png");
+        Texture boardTex = assets.get("textures/ShogiBoard.png");
         Texture pawnTex = assets.get("textures/Pawn.png");
         
         
         // Initialize board
-        _boardX = Gdx.graphics.getWidth() / 2 - _boardTex.getWidth() / 2;
-        _boardY = Gdx.graphics.getHeight() / 2 - _boardTex.getHeight() / 2;
-        _board = new Board();
-        //_boardObj = new Waifu<>(boardTex, board, boardX, boardY);
+        int boardX = Gdx.graphics.getWidth() / 2 - boardTex.getWidth() / 2;
+        int boardY = Gdx.graphics.getHeight() / 2 - boardTex.getHeight() / 2;
+        _board = new GameObject<>(boardTex, new Board(), boardX, boardY);
         
         // Create pieces and place into cells
-        addPiece(new Pawn(), pawnTex, 2, 3);
-        addPiece(new Pawn(), pawnTex, 8, 7);
+        addPiece(new Pawn(Team.ONE), pawnTex, 2, 3);
+        addPiece(new Pawn(Team.ONE), pawnTex, 8, 7);
     }
     
     
@@ -88,11 +87,10 @@ public class PlayScreen extends Screen
      */
     public void addPiece(Piece piece, Texture tex, int row, int col)
     {
-        _board.getCellAt(row, col).setPiece(piece);
+        _board.getObject().getCellAt(row, col).setPiece(piece);
         
-        Waifu obj = new Waifu(tex, piece, _boardX + col * Cell.WIDTH, _boardY + row * Cell.HEIGHT);
+        GameObject obj = new GameObject(tex, piece, _board.getX() + col * Cell.WIDTH, _board.getY() + row * Cell.HEIGHT);
         _waifus.add(obj);
-        _touchListeners.add(obj);
     }
     
     
@@ -106,9 +104,9 @@ public class PlayScreen extends Screen
         // Draw textures and text to the screen
         batch.begin();
         batch.draw(_woodTex, 0, 0);
-        batch.draw(_boardTex, _boardX, _boardY);
+        _board.draw(batch);
         
-        for (Waifu pieceObj : _waifus)
+        for (GameObject pieceObj : _waifus)
         {
             pieceObj.draw(batch);
         }

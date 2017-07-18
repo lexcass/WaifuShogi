@@ -7,26 +7,19 @@ package com.insanelyinsane.waifushogi.objects;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.insanelyinsane.waifushogi.events.SelectionEvent;
-import com.insanelyinsane.waifushogi.events.TouchEvent;
-import com.insanelyinsane.waifushogi.listeners.SelectionListener;
-import com.insanelyinsane.waifushogi.listeners.TouchListener;
-import com.insanelyinsane.waifushogi.objects.pieces.Piece;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  *
  * @author alex
  */
-public class Waifu implements TouchListener
+public class GameObject<TObject>
 {
-    private final Piece _piece;
+    private final TObject _object;
     private final Texture _texture;
     private float _xPos;
     private float _yPos;
-    
-    private final List<SelectionListener> _selectionListeners;
+//    
+//    private final List<SelectionListener> _selectionListeners;
     
     /**
      * Checks if the given coords intersect this waifu.
@@ -34,23 +27,23 @@ public class Waifu implements TouchListener
      * @param y
      * @return boolean
      */
-    private boolean containsPoint(float x, float y)
+    public boolean containsPoint(float x, float y)
     {
         return (x >= _xPos) && (y >= _yPos) && (x <= (_xPos + _texture.getWidth()) && y <= (_yPos + _texture.getHeight()));
     }
     
     
-    public Waifu(Texture tex, Piece obj, float x, float y)
+    public GameObject(final Texture tex, final TObject obj, float x, float y)
     {
         _texture = tex;
-        _piece = obj;
+        _object = obj;
         _xPos = x;
         _yPos = y;
-        _selectionListeners = new LinkedList<>();
+        //_selectionListeners = new LinkedList<>();
     }
     
     // Getters
-    public Piece getPiece() { return _piece; }
+    public TObject getObject() { return _object; }
     public Texture getTexture() { return _texture; }
     
     public float getX() { return _xPos; }
@@ -66,7 +59,7 @@ public class Waifu implements TouchListener
      * Draw the texture of this waifu to the given SpriteBatch.
      * @param batch 
      */
-    public void draw(SpriteBatch batch)
+    public void draw(final SpriteBatch batch)
     {
         batch.draw(_texture, _xPos, _yPos);
     }
@@ -75,15 +68,15 @@ public class Waifu implements TouchListener
      * Respond to touch event by informing selection listeners this waifu was selected.
      * @param e
      */
-    @Override
-    public void onTouch(TouchEvent e)
-    {
-        if (containsPoint(e.getX(), e.getY()))
-        {
-            for (SelectionListener l : _selectionListeners)
-            {
-                l.onWaifuSelected(new SelectionEvent(this));
-            }
-        }
-    }
+//    @Override
+//    public void onTouch(TouchEvent e)
+//    {
+//        if (containsPoint(e.getX(), e.getY()))
+//        {
+//            for (SelectionListener l : _selectionListeners)
+//            {
+//                l.onWaifuSelected(new SelectionEvent(this));
+//            }
+//        }
+//    }
 }

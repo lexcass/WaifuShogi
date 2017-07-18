@@ -14,15 +14,27 @@ import java.util.List;
  */
 public abstract class Piece 
 {
+    private final Team _team;
+    
+    public Piece(Team team)
+    {
+        _team = team;
+    }
+    
+    public Team getTeam() { return _team; }
+    
     /**
      * Returns a list of cells that the piece can move to when in play.
+     * @param cells
+     * @param row
+     * @param col
      * @return 
      */
-    public abstract List<Cell> getValidMoves();
+    public abstract List<Cell> getValidMoves(final Cell[][] cells, int row, int col);
     
     /**
      * Returns a list of cells a place can be placed into after being captured.
      * @return 
      */
-    public abstract List<Cell> getValidReplacements();
+    public abstract List<Cell> getValidReplacements(final Cell[][] cells);
 }

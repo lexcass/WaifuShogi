@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.events.ScreenChangeEvent;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
+import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.screens.LoadScreen;
 import com.insanelyinsane.waifushogi.screens.Screen;
 import com.insanelyinsane.waifushogi.screens.ScreenFactory;
@@ -19,6 +20,7 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
 	SpriteBatch _batch;
         Screen _activeScreen;
         Screen _nextScreen;
+        
 	
 	@Override
 	public void create() 

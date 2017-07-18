@@ -17,7 +17,7 @@ public class Cell
     public Cell()
     {
         _piece = null;
-    }   
+    }
     
     public Piece getPiece() { return _piece; }
     
