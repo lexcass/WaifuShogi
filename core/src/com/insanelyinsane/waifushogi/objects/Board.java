@@ -18,7 +18,7 @@ public class Board implements MoveListener
     public static final int ROWS = 9;
     public static final int COLS = 9;
     
-    private Cell[][] _cells;
+    private final Cell[][] _cells;
     
     
     public Board()

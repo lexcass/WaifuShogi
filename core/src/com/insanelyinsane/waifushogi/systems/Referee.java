@@ -5,6 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.systems;
 
+import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
@@ -25,32 +26,21 @@ public class Referee implements TouchListener
 {
     // Board and Hands
     private final GameObject<Board> _board;
-    private List<GameObject<Cell>> _cellObjects;
     
     // Listeners
     private final List<SelectionListener> _selectionListeners;
     private final List<MoveListener> _moveListeners;
     
     
-    public Referee(GameObject<Board> board)
+    public Referee(GameObject<Board> board, Highlighter h)
     {
         _board = board;
-        _cellObjects = new LinkedList<>();
         
         _selectionListeners = new LinkedList<>();
         _moveListeners = new LinkedList<>();
         
         _moveListeners.add(_board.getObject());
-        
-        // Get list of board's cells as cell objects
-        Cell[][] boardCells = _board.getObject().getCells();
-        for (int r = 0; r < boardCells.length; r++)
-        {
-            for (int c = 0; c < boardCells[r].length; c++)
-            {
-                _cellObjects.add(new GameObject<>(null, boardCells[r][c], Cell.WIDTH * c, Cell.HEIGHT * r));
-            }
-        }
+        _selectionListeners.add(h);
     }
     
     
@@ -61,21 +51,26 @@ public class Referee implements TouchListener
         if (_board.containsPoint(e.getX(), e.getY()))
         {
             // Get piece touched on board
-            int r = (int)e.getY() / Cell.HEIGHT;
-            int c = (int)e.getX() / Cell.WIDTH;
+            int r = (int)(e.getY() - _board.getY()) / Cell.HEIGHT;
+            int c = (int)(e.getX() - _board.getX()) / Cell.WIDTH;
             
             Piece piece = _board.getObject().getCellAt(r, c).getPiece();
             
-            // Retrieve vaild moves
-            List<Cell> validMoves = piece.getValidMoves(_board.getObject().getCells(), r, c);
-            
-            if (validMoves.size() > 0)
+            if (piece != null)
             {
+                // Retrieve valid moves
+                Cell[][] validMoves = piece.getValidMoves(_board.getObject().getCells(), r, c);
+
                 // Dispatch SelectionEvent
                 for (SelectionListener l : _selectionListeners)
                 {
                     l.onWaifuSelected(new SelectionEvent(validMoves, true));
                 }
+            }
+            else
+            {
+                Gdx.app.debug("Piece", "is null at " + r + ", " + c + ".");
+                Gdx.app.debug("Touch", "at " + e.getX() + ", " + e.getY() + ".");
             }
         }
     }

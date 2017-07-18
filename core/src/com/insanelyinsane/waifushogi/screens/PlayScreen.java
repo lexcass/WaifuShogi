@@ -18,6 +18,7 @@ import com.insanelyinsane.waifushogi.objects.GameObject;
 import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.objects.pieces.Team;
+import com.insanelyinsane.waifushogi.systems.Highlighter;
 import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +37,10 @@ public class PlayScreen extends Screen
     // Objects to update
     GameObject<Board> _board;
     List<GameObject> _waifus;
+    
+    // Systems
     Referee _referee;
+    Highlighter _highlighter;
     
     List<TouchListener> _touchListeners;
     
@@ -73,6 +77,12 @@ public class PlayScreen extends Screen
         // Create pieces and place into cells
         addPiece(new Pawn(Team.ONE), pawnTex, 2, 3);
         addPiece(new Pawn(Team.ONE), pawnTex, 8, 7);
+        
+        // Initialize systems
+        _highlighter = new Highlighter(_board);
+        _referee = new Referee(_board, _highlighter);
+        
+        _touchListeners.add(_referee);
     }
     
     
@@ -106,6 +116,9 @@ public class PlayScreen extends Screen
         batch.draw(_woodTex, 0, 0);
         _board.draw(batch);
         
+        // Draw highlighted cells to the screen
+        _highlighter.draw(batch);
+        
         for (GameObject pieceObj : _waifus)
         {
             pieceObj.draw(batch);
@@ -116,7 +129,8 @@ public class PlayScreen extends Screen
     
     
     /**
-     * Inform all touch listeners of the location the screen was touched (clicked) at.
+     * Inform all touch listeners of the location the screen was touched (clicked) at in
+     * render coordinates (bottom-to-top, left-to-right).
      * @param screenX
      * @param screenY
      * @param pointer
@@ -128,7 +142,11 @@ public class PlayScreen extends Screen
     {
         for (TouchListener l : _touchListeners)
         {
-            l.onTouch(new TouchEvent(true, screenX, screenY));
+            // IMPORTANT: Touch coordinates go top-to-bottom left-to-right. This converts
+            // these coordinates to bottom-to-top left-to-right which the rendering system
+            // works with.
+            
+            l.onTouch(new TouchEvent(true, screenX, Gdx.graphics.getHeight() - screenY));
         }
         
         return true;

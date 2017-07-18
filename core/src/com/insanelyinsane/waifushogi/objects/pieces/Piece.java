@@ -24,17 +24,19 @@ public abstract class Piece
     public Team getTeam() { return _team; }
     
     /**
-     * Returns a list of cells that the piece can move to when in play.
+     * Returns a 2d array of cells corresponding to rows and cols on board
+     * that the piece can move to when in play.
      * @param cells
      * @param row
      * @param col
      * @return 
      */
-    public abstract List<Cell> getValidMoves(final Cell[][] cells, int row, int col);
+    public abstract Cell[][] getValidMoves(final Cell[][] cells, int row, int col);
     
     /**
-     * Returns a list of cells a place can be placed into after being captured.
+     * Returns a 2d array of cells corresponding to rows and cols on board
+     * that a piece can be placed into after being captured.
      * @return 
      */
-    public abstract List<Cell> getValidReplacements(final Cell[][] cells);
+    public abstract Cell[][] getValidReplacements(final Cell[][] cells);
 }
