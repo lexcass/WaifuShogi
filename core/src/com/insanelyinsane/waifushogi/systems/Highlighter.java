@@ -22,8 +22,8 @@ import com.insanelyinsane.waifushogi.objects.GameObject;
  */
 public class Highlighter implements SelectionListener
 {
-    private ShapeRenderer _renderer;
-    private GameObject<Board> _board;
+    private final ShapeRenderer _renderer;
+    private final GameObject<Board> _board;
     private Cell[][] _cells;
     
     
@@ -78,16 +78,19 @@ public class Highlighter implements SelectionListener
         _renderer.setColor(0.0f, 1.0f, 0.75f, 0.33f);
         _renderer.begin(ShapeType.Filled);
         
-        for (int r = 0; r < _cells.length; r++)
+        if (_cells != null)
         {
-            for (int c = 0; c < _cells[r].length; c++)
+            for (int r = 0; r < _cells.length; r++)
             {
-                if (_cells[r][c] != null)
+                for (int c = 0; c < _cells[r].length; c++)
                 {
-                    _renderer.rect(_board.getX() + c * Cell.WIDTH,
-                                  _board.getY() + r * Cell.HEIGHT,
-                                  Cell.WIDTH,
-                                  Cell.HEIGHT);
+                    if (_cells[r][c] != null)
+                    {
+                        _renderer.rect(_board.getX() + c * Cell.WIDTH,
+                                      _board.getY() + r * Cell.HEIGHT,
+                                      Cell.WIDTH,
+                                      Cell.HEIGHT);
+                    }
                 }
             }
         }

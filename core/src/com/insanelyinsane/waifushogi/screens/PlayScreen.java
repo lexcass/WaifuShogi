@@ -76,7 +76,7 @@ public class PlayScreen extends Screen
         
         // Create pieces and place into cells
         addPiece(new Pawn(Team.ONE), pawnTex, 2, 3);
-        addPiece(new Pawn(Team.ONE), pawnTex, 8, 7);
+        addPiece(new Pawn(Team.ONE), pawnTex, 4, 7);
         
         // Initialize systems
         _highlighter = new Highlighter(_board);

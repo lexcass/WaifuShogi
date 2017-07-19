@@ -47,6 +47,12 @@ public class Referee implements TouchListener
     @Override
     public void onTouch(TouchEvent e)
     {
+        // Unhighlight everything
+        for (SelectionListener l : _selectionListeners)
+        {
+            l.onWaifuSelected(new SelectionEvent(null, false));
+        }
+        
         // Board touched
         if (_board.containsPoint(e.getX(), e.getY()))
         {
