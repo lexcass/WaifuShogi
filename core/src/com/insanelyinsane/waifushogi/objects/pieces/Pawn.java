@@ -25,24 +25,7 @@ public class Pawn extends Piece
     {
         Cell[][] valid = new Cell[Board.ROWS][Board.COLS];
         
-        if (row + 1 >= cells.length || col >= cells[0].length)
-        {
-            return valid;
-        }
-        
-        Cell cell = cells[row + 1][col];
-        if (cell != null)
-        {
-            Piece piece = cell.getPiece();
-            if (piece != null)
-            {
-                if (piece.getTeam().equals(getTeam())) valid[row + 1][col] = cell;
-            }
-            else
-            {
-                valid[row + 1][col] = cell;
-            }
-        }
+        addIfValid(cells, valid, row + 1, col);
         
         return valid;
     }

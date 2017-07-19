@@ -44,6 +44,18 @@ public class Board implements MoveListener
         return _cells[r][c];
     }
     
+    
+    /**
+     * Returns whether the given row and col are on the board or out of bounds.
+     * @param r
+     * @param c
+     * @return 
+     */
+    public boolean inBounds(int r, int c)
+    {
+        return r >= 0 && c >= 0 && r < Board.ROWS && c < Board.COLS;
+    }
+    
     /**
      * Move a piece from one cell to another.
      * @param e 
