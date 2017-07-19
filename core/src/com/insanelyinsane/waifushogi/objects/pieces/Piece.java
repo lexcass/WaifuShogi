@@ -6,7 +6,6 @@
 package com.insanelyinsane.waifushogi.objects.pieces;
 
 import com.insanelyinsane.waifushogi.objects.Cell;
-import java.util.List;
 
 /**
  *
@@ -31,12 +30,25 @@ public abstract class Piece
      * @param col
      * @return 
      */
-    public abstract Cell[][] getValidMoves(final Cell[][] cells, int row, int col);
+    protected abstract Cell[][] findValidMoves(final Cell[][] cells, int row, int col);
     
     /**
      * Returns a 2d array of cells corresponding to rows and cols on board
      * that a piece can be placed into after being captured.
+     * @param cells
      * @return 
      */
-    public abstract Cell[][] getValidReplacements(final Cell[][] cells);
+    protected abstract Cell[][] findValidReplacements(final Cell[][] cells);
+    
+    
+    public final Cell[][] getValidMoves(final Cell[][] cells, int row, int col)
+    {
+        return findValidMoves(cells, row, col);
+    }
+    
+    
+    public final Cell[][] getValidReplacements(final Cell[][] cells)
+    {
+        return findValidReplacements(cells);
+    }
 }

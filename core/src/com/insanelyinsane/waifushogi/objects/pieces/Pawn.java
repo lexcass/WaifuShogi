@@ -21,7 +21,7 @@ public class Pawn extends Piece
     }
     
     @Override
-    public Cell[][] getValidMoves(final Cell[][] cells, int row, int col)
+    protected Cell[][] findValidMoves(final Cell[][] cells, int row, int col)
     {
         Cell[][] valid = new Cell[Board.ROWS][Board.COLS];
         
@@ -49,7 +49,7 @@ public class Pawn extends Piece
     
     
     @Override
-    public Cell[][] getValidReplacements(final Cell[][] cells)
+    protected Cell[][] findValidReplacements(final Cell[][] cells)
     {
         return new Cell[0][0];
     }
