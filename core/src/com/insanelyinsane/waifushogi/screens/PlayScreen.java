@@ -14,7 +14,7 @@ import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Cell;
-import com.insanelyinsane.waifushogi.objects.GameObject;
+import com.insanelyinsane.waifushogi.objects.gameobjects.GameObject;
 import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.objects.pieces.Team;
@@ -23,6 +23,8 @@ import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;
 import java.util.List;
 import com.insanelyinsane.waifushogi.listeners.UpdatePositionListener;
+import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
+import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 
 /**
  *
@@ -36,7 +38,7 @@ public class PlayScreen extends Screen implements UpdatePositionListener
     Texture _woodTex;
     
     // Objects to update
-    GameObject<Board> _board;
+    BoardObject  _board;
     List<GameObject> _waifus;
     
     // Systems
@@ -73,7 +75,7 @@ public class PlayScreen extends Screen implements UpdatePositionListener
         // Initialize board
         int boardX = Gdx.graphics.getWidth() / 2 - boardTex.getWidth() / 2;
         int boardY = Gdx.graphics.getHeight() / 2 - boardTex.getHeight() / 2;
-        _board = new GameObject<>(boardTex, new Board(), boardX, boardY);
+        _board = new BoardObject(boardTex, boardX, boardY, new Board());
         
         // Create pieces and place into cells
         addPiece(new Pawn(Team.ONE), pawnTex, 2, 3);
@@ -98,9 +100,9 @@ public class PlayScreen extends Screen implements UpdatePositionListener
      */
     public void addPiece(Piece piece, Texture tex, int row, int col)
     {
-        _board.getObject().getCellAt(row, col).setPiece(piece);
+        _board.getBoard().getCellAt(row, col).setPiece(piece);
         
-        GameObject obj = new GameObject(tex, piece, _board.getX() + col * Cell.WIDTH, _board.getY() + row * Cell.HEIGHT);
+        Waifu obj = new Waifu(tex, _board.getX() + col * Cell.WIDTH, _board.getY() + row * Cell.HEIGHT, piece);
         _waifus.add(obj);
     }
     

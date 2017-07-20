@@ -14,7 +14,8 @@ import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.listeners.UpdatePositionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Cell;
-import com.insanelyinsane.waifushogi.objects.GameObject;
+import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
+import com.insanelyinsane.waifushogi.objects.gameobjects.GameObject;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
 public class Referee implements TouchListener
 {
     // Board and Hands
-    private final GameObject<Board> _board;
+    private final BoardObject _board;
     
     // Selection
     private int _selectedRow;
@@ -40,7 +41,7 @@ public class Referee implements TouchListener
     //private final List<CaptureListener> _captureListeners;
     
     
-    public Referee(GameObject<Board> board, Highlighter h)
+    public Referee(BoardObject board, Highlighter h)
     {
         _board = board;
         
@@ -48,7 +49,7 @@ public class Referee implements TouchListener
         _moveListeners = new LinkedList<>();
         _updateListeners = new LinkedList<>();
         
-        _moveListeners.add(_board.getObject());
+        _moveListeners.add(_board.getBoard());
         _selectionListeners.add(h);
     }
     
@@ -71,13 +72,13 @@ public class Referee implements TouchListener
             
             if (_selectedCell == null)
             {
-                _selectedCell = _board.getObject().getCellAt(r, c);
+                _selectedCell = _board.getBoard().getCellAt(r, c);
                 Piece piece = _selectedCell.getPiece();
 
                 if (piece != null)
                 {
                     // Retrieve valid moves
-                    Cell[][] validMoves = piece.getValidMoves(_board.getObject().getCells(), r, c);
+                    Cell[][] validMoves = piece.getValidMoves(_board.getBoard().getCells(), r, c);
 
                     // Dispatch SelectionEvent
                     _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(validMoves, true)));

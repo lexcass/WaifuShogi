@@ -6,7 +6,7 @@
 package com.insanelyinsane.waifushogi.events;
 
 import com.insanelyinsane.waifushogi.objects.Cell;
-import com.insanelyinsane.waifushogi.objects.GameObject;
+import com.insanelyinsane.waifushogi.objects.gameobjects.GameObject;
 import java.util.List;
 
 /**

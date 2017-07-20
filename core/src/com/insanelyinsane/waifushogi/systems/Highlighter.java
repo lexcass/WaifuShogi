@@ -14,7 +14,7 @@ import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Cell;
-import com.insanelyinsane.waifushogi.objects.GameObject;
+import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
 
 /**
  *
@@ -23,11 +23,11 @@ import com.insanelyinsane.waifushogi.objects.GameObject;
 public class Highlighter implements SelectionListener
 {
     private final ShapeRenderer _renderer;
-    private final GameObject<Board> _board;
+    private final BoardObject _board;
     private Cell[][] _cells;
     
     
-    public Highlighter(GameObject<Board> board)
+    public Highlighter(BoardObject board)
     {
         _renderer = new ShapeRenderer();
         

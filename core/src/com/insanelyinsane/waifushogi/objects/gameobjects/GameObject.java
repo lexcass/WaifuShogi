@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.objects;
+package com.insanelyinsane.waifushogi.objects.gameobjects;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,9 +12,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  *
  * @author alex
  */
-public class GameObject<TObject>
+public class GameObject
 {
-    private final TObject _object;
     private final Texture _texture;
     private float _xPos;
     private float _yPos;
@@ -33,17 +32,15 @@ public class GameObject<TObject>
     }
     
     
-    public GameObject(final Texture tex, final TObject obj, float x, float y)
+    public GameObject(final Texture tex, float x, float y)
     {
         _texture = tex;
-        _object = obj;
         _xPos = x;
         _yPos = y;
         //_selectionListeners = new LinkedList<>();
     }
     
     // Getters
-    public TObject getObject() { return _object; }
     public Texture getTexture() { return _texture; }
     
     public float getX() { return _xPos; }
@@ -63,20 +60,4 @@ public class GameObject<TObject>
     {
         batch.draw(_texture, _xPos, _yPos);
     }
-    
-    /**
-     * Respond to touch event by informing selection listeners this waifu was selected.
-     * @param e
-     */
-//    @Override
-//    public void onTouch(TouchEvent e)
-//    {
-//        if (containsPoint(e.getX(), e.getY()))
-//        {
-//            for (SelectionListener l : _selectionListeners)
-//            {
-//                l.onWaifuSelected(new SelectionEvent(this));
-//            }
-//        }
-//    }
 }
