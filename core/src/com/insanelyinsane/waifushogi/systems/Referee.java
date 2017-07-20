@@ -27,9 +27,15 @@ public class Referee implements TouchListener
     // Board and Hands
     private final GameObject<Board> _board;
     
+    // Selection
+    private int _selectedRow;
+    private int _selectedCol;
+    private Cell _selectedCell;
+    
     // Listeners
     private final List<SelectionListener> _selectionListeners;
     private final List<MoveListener> _moveListeners;
+    //private final List<CaptureListener> _captureListeners;
     
     
     public Referee(GameObject<Board> board, Highlighter h)
@@ -60,24 +66,40 @@ public class Referee implements TouchListener
             int r = (int)(e.getY() - _board.getY()) / Cell.HEIGHT;
             int c = (int)(e.getX() - _board.getX()) / Cell.WIDTH;
             
-            Piece piece = _board.getObject().getCellAt(r, c).getPiece();
-            
-            if (piece != null)
+            if (_selectedCell == null)
             {
-                // Retrieve valid moves
-                Cell[][] validMoves = piece.getValidMoves(_board.getObject().getCells(), r, c);
+                _selectedCell = _board.getObject().getCellAt(r, c);
+                Piece piece = _selectedCell.getPiece();
 
-                // Dispatch SelectionEvent
-                for (SelectionListener l : _selectionListeners)
+                if (piece != null)
                 {
-                    l.onWaifuSelected(new SelectionEvent(validMoves, true));
+                    // Retrieve valid moves
+                    Cell[][] validMoves = piece.getValidMoves(_board.getObject().getCells(), r, c);
+
+                    // Dispatch SelectionEvent
+//                    for (SelectionListener l : _selectionListeners)
+//                    {
+//                        l.onWaifuSelected(new SelectionEvent(validMoves, true));
+//                    }
+                    _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(validMoves, true)));
                 }
             }
             else
             {
-                Gdx.app.debug("Piece", "is null at " + r + ", " + c + ".");
-                Gdx.app.debug("Touch", "at " + e.getX() + ", " + e.getY() + ".");
+                // Tell the capture listeners what piece was captured
+//                for (CaptureListener l : _captureListeners)
+//                {
+//                    
+//                }
+                
+                // Move the selected piece to the new cell
+//                for (MoveListener l : _moveListeners)
+//                {
+//                    l.onWaifuMoved(new MoveEvent(_selectedCell.getPiece(), ));
+//                }
+               // _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedCell.getPiece())));
             }
+            
         }
     }
 }
