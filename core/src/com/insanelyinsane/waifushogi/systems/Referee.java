@@ -11,11 +11,9 @@ import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
-import com.insanelyinsane.waifushogi.listeners.UpdatePositionListener;
-import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Cell;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
-import com.insanelyinsane.waifushogi.objects.gameobjects.GameObject;
+import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,26 +28,25 @@ public class Referee implements TouchListener
     private final BoardObject _board;
     
     // Selection
-    private int _selectedRow;
-    private int _selectedCol;
     private Cell _selectedCell;
+    private Cell[][] _validMoves; 
     
     // Listeners
-    private final List<UpdatePositionListener> _updateListeners;
     private final List<SelectionListener> _selectionListeners;
     private final List<MoveListener> _moveListeners;
     //private final List<CaptureListener> _captureListeners;
     
     
-    public Referee(BoardObject board, Highlighter h)
+    public Referee(BoardObject board, Highlighter h, List<Waifu> waifus)
     {
         _board = board;
         
         _selectionListeners = new LinkedList<>();
         _moveListeners = new LinkedList<>();
-        _updateListeners = new LinkedList<>();
         
         _moveListeners.add(_board.getBoard());
+        waifus.forEach(w -> _moveListeners.add(w));
+        
         _selectionListeners.add(h);
     }
     
@@ -57,12 +54,6 @@ public class Referee implements TouchListener
     @Override
     public void onTouch(TouchEvent e)
     {
-        // Unhighlight everything
-        for (SelectionListener l : _selectionListeners)
-        {
-            l.onWaifuSelected(new SelectionEvent(null, false));
-        }
-        
         // Board touched
         if (_board.containsPoint(e.getX(), e.getY()))
         {
@@ -77,34 +68,50 @@ public class Referee implements TouchListener
 
                 if (piece != null)
                 {
-                    // Retrieve valid moves
-                    Cell[][] validMoves = piece.getValidMoves(_board.getBoard().getCells(), r, c);
-
-                    // Dispatch SelectionEvent
-                    _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(validMoves, true)));
+                    showValidMoves(piece, r, c);
                 }
             }
             else
             {
-                // Tell the capture listeners what piece was captured
-//                for (CaptureListener l : _captureListeners)
-//                {
-//                    
-//                }
+                // If the target cell has a piece on the same team, select that piece instead
+                Cell target = _board.getBoard().getCellAt(r, c);
                 
-                // Move the selected piece to the new cell
-                _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent
-                                        (
-                                            _selectedCell.getPiece(),
-                                            _selectedCell.getRow(),
-                                            _selectedCell.getCol(),
-                                            r, c
-                                        )));
+                if (target != null)
+                {
+                    if (target.getPiece() != null)
+                    {
+                        _selectedCell = target;
+                        showValidMoves(target.getPiece(), r, c);
+                    }
+                    
+                    else
+                    {
+                        if (target.equals(_validMoves[r][c]))
+                        {
+                            // Tell the capture listeners what piece was captured
+
+                            // Move the selected piece to the new cell
+                            _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedCell.getPiece(), _selectedCell, target)));
+
+                            // Reset the selection
+                            _selectedCell = null;
+                            _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, false)));
+                        }
+                    }
+                }
                 
-                // Reset the selection
-                _selectedCell = null;
             }
             
         }
+    }
+    
+    
+    public void showValidMoves(Piece piece, int r, int c)
+    {
+        // Retrieve valid moves
+        _validMoves = piece.getValidMoves(_board.getBoard().getCells(), r, c);
+
+        // Dispatch SelectionEvent
+        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(_validMoves, true)));
     }
 }

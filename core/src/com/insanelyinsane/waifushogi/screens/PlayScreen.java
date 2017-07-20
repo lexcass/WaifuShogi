@@ -30,7 +30,7 @@ import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
  *
  * @author alex
  */
-public class PlayScreen extends Screen implements UpdatePositionListener
+public class PlayScreen extends Screen
 {
     // Constants
     
@@ -39,7 +39,7 @@ public class PlayScreen extends Screen implements UpdatePositionListener
     
     // Objects to update
     BoardObject  _board;
-    List<GameObject> _waifus;
+    List<Waifu> _waifus;
     
     // Systems
     Referee _referee;
@@ -83,7 +83,7 @@ public class PlayScreen extends Screen implements UpdatePositionListener
         
         // Initialize systems
         _highlighter = new Highlighter(_board);
-        _referee = new Referee(_board, _highlighter);
+        _referee = new Referee(_board, _highlighter, _waifus);
         
         _touchListeners.add(_referee);
     }
@@ -100,17 +100,11 @@ public class PlayScreen extends Screen implements UpdatePositionListener
      */
     public void addPiece(Piece piece, Texture tex, int row, int col)
     {
-        _board.getBoard().getCellAt(row, col).setPiece(piece);
+        Cell c = _board.getBoard().getCellAt(row, col);
+        c.setPiece(piece);
         
-        Waifu obj = new Waifu(tex, _board.getX() + col * Cell.WIDTH, _board.getY() + row * Cell.HEIGHT, piece);
+        Waifu obj = new Waifu(tex, _board.getX() + col * Cell.WIDTH, _board.getY() + row * Cell.HEIGHT, _board, c);
         _waifus.add(obj);
-    }
-    
-    
-    @Override
-    public void onUpdatePosition(int row, int col)
-    {
-        //_waifus.forEach(w -> w.updatePosition(delta, delta));
     }
     
     
@@ -120,6 +114,7 @@ public class PlayScreen extends Screen implements UpdatePositionListener
         SpriteBatch batch = getSpriteBatch();
         
         // Update objects here
+        _waifus.forEach(w -> w.update(delta));
 
         // Draw textures and text to the screen
         batch.begin();
@@ -148,7 +143,7 @@ public class PlayScreen extends Screen implements UpdatePositionListener
      * @return 
      */
     @Override
-    public boolean  touchDown(int screenX, int screenY, int pointer, int button)
+    public boolean touchDown(int screenX, int screenY, int pointer, int button)
     {
         for (TouchListener l : _touchListeners)
         {

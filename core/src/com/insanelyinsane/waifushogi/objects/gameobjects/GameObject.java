@@ -46,6 +46,10 @@ public class GameObject
     public float getX() { return _xPos; }
     public float getY() { return _yPos; }
     
+    // Setters
+    protected void setX(float x) { _xPos = x; }
+    protected void setY(float y) { _yPos = y; }
+    
     public void updatePosition(float x, float y)
     {
         _xPos = x;
