@@ -5,12 +5,13 @@
  */
 package com.insanelyinsane.waifushogi.systems;
 
-import com.badlogic.gdx.Gdx;
+import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
+import com.insanelyinsane.waifushogi.listeners.UpdatePositionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Cell;
 import com.insanelyinsane.waifushogi.objects.GameObject;
@@ -33,6 +34,7 @@ public class Referee implements TouchListener
     private Cell _selectedCell;
     
     // Listeners
+    private final List<UpdatePositionListener> _updateListeners;
     private final List<SelectionListener> _selectionListeners;
     private final List<MoveListener> _moveListeners;
     //private final List<CaptureListener> _captureListeners;
@@ -44,6 +46,7 @@ public class Referee implements TouchListener
         
         _selectionListeners = new LinkedList<>();
         _moveListeners = new LinkedList<>();
+        _updateListeners = new LinkedList<>();
         
         _moveListeners.add(_board.getObject());
         _selectionListeners.add(h);
@@ -77,10 +80,6 @@ public class Referee implements TouchListener
                     Cell[][] validMoves = piece.getValidMoves(_board.getObject().getCells(), r, c);
 
                     // Dispatch SelectionEvent
-//                    for (SelectionListener l : _selectionListeners)
-//                    {
-//                        l.onWaifuSelected(new SelectionEvent(validMoves, true));
-//                    }
                     _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(validMoves, true)));
                 }
             }
@@ -93,11 +92,16 @@ public class Referee implements TouchListener
 //                }
                 
                 // Move the selected piece to the new cell
-//                for (MoveListener l : _moveListeners)
-//                {
-//                    l.onWaifuMoved(new MoveEvent(_selectedCell.getPiece(), ));
-//                }
-               // _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedCell.getPiece())));
+                _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent
+                                        (
+                                            _selectedCell.getPiece(),
+                                            _selectedCell.getRow(),
+                                            _selectedCell.getCol(),
+                                            r, c
+                                        )));
+                
+                // Reset the selection
+                _selectedCell = null;
             }
             
         }

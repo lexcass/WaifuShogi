@@ -19,6 +19,15 @@ public class MoveEvent
     private int _fromRow;
     private int _fromCol;
     
+    public MoveEvent(Piece p, int fr, int fc, int tr, int tc)
+    {
+        _piece = p;
+        _toRow = tr;
+        _toCol = tc;
+        _fromRow  = fr;
+        _fromCol = fc;
+    }
+    
     public Piece getPiece() { return _piece; }
     
     public int toRow() { return _toRow; }

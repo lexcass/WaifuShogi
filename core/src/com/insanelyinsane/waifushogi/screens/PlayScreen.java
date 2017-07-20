@@ -22,12 +22,13 @@ import com.insanelyinsane.waifushogi.systems.Highlighter;
 import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;
 import java.util.List;
+import com.insanelyinsane.waifushogi.listeners.UpdatePositionListener;
 
 /**
  *
  * @author alex
  */
-public class PlayScreen extends Screen
+public class PlayScreen extends Screen implements UpdatePositionListener
 {
     // Constants
     
@@ -101,6 +102,13 @@ public class PlayScreen extends Screen
         
         GameObject obj = new GameObject(tex, piece, _board.getX() + col * Cell.WIDTH, _board.getY() + row * Cell.HEIGHT);
         _waifus.add(obj);
+    }
+    
+    
+    @Override
+    public void onUpdatePosition(int row, int col)
+    {
+        //_waifus.forEach(w -> w.updatePosition(delta, delta));
     }
     
     

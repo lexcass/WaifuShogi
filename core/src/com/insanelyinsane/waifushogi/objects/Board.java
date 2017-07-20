@@ -30,7 +30,7 @@ public class Board implements MoveListener
         {
             for (int j = 0; j < COLS; j++)
             {
-                _cells[i][j] = new Cell();
+                _cells[i][j] = new Cell(i, j);
             }
         }
     }
