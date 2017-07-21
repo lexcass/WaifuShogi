@@ -16,7 +16,7 @@ public class Pawn extends Piece
 {
     public Pawn(Team team)
     {
-        super(team);
+        super(Type.PAWN, team);
     }
     
     @Override

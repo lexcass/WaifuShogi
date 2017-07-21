@@ -14,9 +14,16 @@ import com.insanelyinsane.waifushogi.objects.Board;
 public abstract class Piece 
 {
     private final Team _team;
+    private final Type _type;
     
-    public Piece(Team team)
+    public enum Type
     {
+        PAWN, ROOK, BISHOP, KNIGHT, LANCE, SILVER, GOLD, JADE
+    }
+    
+    public Piece(Type type, Team team)
+    {
+        _type = type;
         _team = team;
     }
     

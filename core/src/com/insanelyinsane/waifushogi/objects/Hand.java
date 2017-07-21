@@ -12,9 +12,12 @@ import com.insanelyinsane.waifushogi.listeners.CaptureListener;
  *
  * @author alex
  */
-public class Hand extends Board implements CaptureListener
+public class Hand implements CaptureListener
 {
-    
+    public Hand()
+    {
+        
+    }
     
     @Override
     public void onWaifuCaptured(CaptureEvent e)
