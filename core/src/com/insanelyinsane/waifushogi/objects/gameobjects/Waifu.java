@@ -8,25 +8,22 @@ package com.insanelyinsane.waifushogi.objects.gameobjects;
 import com.badlogic.gdx.graphics.Texture;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
-import com.insanelyinsane.waifushogi.objects.Cell;
+import com.insanelyinsane.waifushogi.objects.Board;
+import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 
 /**
  *
  * @author alex
  */
 public class Waifu extends GameObject implements MoveListener
-{
-    // Board containing this waifu
-    private BoardObject _board;
+{   
+    // Piece representing logical unit
+    private Piece _piece;
     
-    // Cell containing this waifu
-    private Cell _cell;
-    
-    public Waifu(Texture tex, float x, float y, BoardObject board, Cell cell)
+    public Waifu(Texture tex, float x, float y, Piece piece)
     {
         super(tex, x, y);
-        _board = board;
-        _cell = cell;
+        _piece = piece;
     }
     
     
@@ -36,21 +33,21 @@ public class Waifu extends GameObject implements MoveListener
      */
     public void update(float delta)
     {
-        setX(_board.getX() + _cell.getCol() * Cell.WIDTH);
-        setY(_board.getY() + _cell.getRow() * Cell.HEIGHT);
+//        setX(_board.getX() + _cell.getCol() * Cell.WIDTH);
+//        setY(_board.getY() + _cell.getRow() * Cell.HEIGHT);
     }
     
     
     @Override
     public void onWaifuMoved(MoveEvent e)
     {
-        if (e.from().equals(_cell))
+        if (e.getPiece().equals(getPiece()))
         {
-            _cell = e.to();
-            System.out.println("from equals cell");
+            setX(BoardObject.X_POS + e.toCol() * Board.CELL_WIDTH);
+            setY(BoardObject.Y_POS + e.toRow() * Board.CELL_HEIGHT);
         }
     }
     
     
-    public Cell getCell() { return _cell; }
+    public Piece getPiece() { return _piece; }
 }

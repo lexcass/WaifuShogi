@@ -8,6 +8,7 @@ package com.insanelyinsane.waifushogi.objects;
 import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
+import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 
 /**
  *
@@ -17,31 +18,42 @@ public class Board implements MoveListener
 {
     public static final int ROWS = 9;
     public static final int COLS = 9;
+    public static final int CELL_WIDTH = 53;
+    public static final int CELL_HEIGHT = 71;
     
-    private final Cell[][] _cells;
+    private final Piece[][] _pieces;
     
     
     public Board()
     {
-        _cells = new Cell[ROWS][COLS];
-        
-        // Add cells to board
-        for (int i = 0; i < ROWS; i++)
+        _pieces = new Piece[ROWS][COLS];
+    }
+    
+    /**
+     * Add a piece at this cell on the board if it's unoccupied.
+     * @param p
+     * @param r
+     * @param c 
+     */
+    public void addPiece(Piece p, int r, int c)
+    {
+        if (_pieces[r][c] == null)
         {
-            for (int j = 0; j < COLS; j++)
-            {
-                _cells[i][j] = new Cell(i, j);
-            }
+            _pieces[r][c] = p;
+        }
+        else
+        {
+            Gdx.app.debug("Warning", "Piece wasn't added. Cell not empty.");
         }
     }
     
-    public Cell[][] getCells() { return _cells; }
+    public Piece[][] getPieces() { return _pieces; }
     
-    public Cell getCellAt(int r, int c)
+    public Piece getPieceAt(int r, int c)
     {
         if (r >= ROWS || c >= COLS) Gdx.app.debug("Error", "No cell at (" + r + ", " + c + "), out of bounds.");
         
-        return _cells[r][c];
+        return _pieces[r][c];
     }
     
     
@@ -63,7 +75,10 @@ public class Board implements MoveListener
     @Override
     public void onWaifuMoved(MoveEvent e)
     {   
-        e.from().setPiece(null);
-        e.to().setPiece(e.getPiece());
+//        e.from().setPiece(null);
+//        e.to().setPiece(e.getPiece());
+        
+        _pieces[e.fromRow()][e.fromCol()] = null;
+        _pieces[e.toRow()][e.toCol()] = e.getPiece();
     }
 }

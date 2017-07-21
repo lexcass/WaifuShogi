@@ -11,7 +11,7 @@ import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
-import com.insanelyinsane.waifushogi.objects.Cell;
+import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
@@ -30,8 +30,10 @@ public class Referee implements TouchListener
     
     // Selection
     private Team _currentTeam;
-    private Cell _selectedCell;
-    private Cell[][] _validMoves; 
+    private Piece _selectedPiece;
+    private int _selectedRow;
+    private int _selectedCol;
+    private boolean[][] _validMoves; 
     
     // Listeners
     private final List<SelectionListener> _selectionListeners;
@@ -62,70 +64,58 @@ public class Referee implements TouchListener
         // Board touched
         if (_board.containsPoint(e.getX(), e.getY()))
         {
-            
-            
-            
-            
-            
             // Get piece touched on board
-            int r = (int)(e.getY() - _board.getY()) / Cell.HEIGHT;
-            int c = (int)(e.getX() - _board.getX()) / Cell.WIDTH;
+            int r = (int)(e.getY() - _board.getY()) / Board.CELL_HEIGHT;
+            int c = (int)(e.getX() - _board.getX()) / Board.CELL_WIDTH;
+            Piece target = _board.getBoard().getPieceAt(r, c);
             
-            // If no cell is selected
-            if (_selectedCell == null)
+            // If no piece is selected
+            if (_selectedPiece == null)
             {
-                _selectedCell = _board.getBoard().getCellAt(r, c);
-                Piece piece = _selectedCell.getPiece();
-
-                if (piece != null)
+                // Select the piece if its on the team of the player whose turn it is
+                if (target != null)
                 {
-                    if (piece.getTeam().equals(_currentTeam))
+                    if (target.getTeam() == _currentTeam)
                     {
-                        showValidMoves(piece, r, c);
+                        
+                        _selectedPiece = target;
+                        _selectedRow = r;
+                        _selectedCol = c;
+                        showValidMoves(_selectedPiece, r, c);
                     }
                 }
             }
             
-            // If a cell is selected
+            // If a piece is selected
             else
             {
-                
-                
-                System.out.println(_selectedCell.getRow() + ", " + _selectedCell.getCol());
-                
-                
-                // If the target cell has a piece on the same team, select that piece instead
-                Cell target = _board.getBoard().getCellAt(r, c);
-                
-                if (target != null)
+                // If the target row and col is a valid move
+                if (_validMoves[r][c])
                 {
-                    // If the target is a valid move for the selected piece
-                    if (target.equals(_validMoves[r][c]))
-                    {
-                        // Tell the capture listeners what piece was captured
+                    // Tell the capture listeners what piece was captured
 
-                        // Move the selected piece to the new cell
-                        _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedCell.getPiece(), _selectedCell, target)));
+                    // Move the selected piece to the new cell
+                    _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c)));
 
-                        // Reset the selection
-                        _selectedCell = null;
-                        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, false)));
+                    // Reset the selection
+                    _selectedPiece = null;
+                    _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, false)));
 
-                        // Switch to other player
-                        //_currentTeam = _currentTeam.equals(Team.RED) ? Team.BLUE : Team.RED;
-                    }
-                    
-                    // If the target is invalid, see if the target contains one of the player's pieces and select it
-                    else if (target.getPiece() != null)
-                    {
-                        if (target.getPiece().getTeam().equals(_currentTeam))
-                        {
-                            _selectedCell = target;
-                            showValidMoves(target.getPiece(), r, c);
-                        }
-                    }
+                    // Switch to other player
+                    //_currentTeam = _currentTeam.equals(Team.RED) ? Team.BLUE : Team.RED;
                 }
                 
+                // If the target is invalid, see if the target contains one of the player's pieces and select it
+                else if (target != null)
+                {
+                    if (target.getTeam().equals(_currentTeam))
+                    {
+                        showValidMoves(_selectedPiece, r, c);
+                        _selectedPiece = target;
+                        _selectedRow = r;
+                        _selectedCol = c;
+                    }
+                }
             }
             
         }
@@ -135,7 +125,7 @@ public class Referee implements TouchListener
     public void showValidMoves(Piece piece, int r, int c)
     {
         // Retrieve valid moves
-        _validMoves = piece.getValidMoves(_board.getBoard().getCells(), r, c);
+        _validMoves = piece.getValidMoves(_board.getBoard().getPieces(), r, c);
 
         // Dispatch SelectionEvent
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(_validMoves, true)));

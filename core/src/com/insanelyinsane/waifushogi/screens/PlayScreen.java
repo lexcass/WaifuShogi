@@ -14,8 +14,6 @@ import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.objects.Cell;
-import com.insanelyinsane.waifushogi.objects.gameobjects.GameObject;
 import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.objects.pieces.Team;
@@ -103,10 +101,9 @@ public class PlayScreen extends Screen
      */
     public void addPiece(Piece piece, Texture tex, int row, int col)
     {
-        Cell c = _board.getBoard().getCellAt(row, col);
-        c.setPiece(piece);
+        _board.getBoard().addPiece(piece, row, col);
         
-        Waifu obj = new Waifu(tex, _board.getX() + col * Cell.WIDTH, _board.getY() + row * Cell.HEIGHT, _board, c);
+        Waifu obj = new Waifu(tex, _board.getX() + col * Board.CELL_WIDTH, _board.getY() + row * Board.CELL_HEIGHT, piece);
         _waifus.add(obj);
     }
     
@@ -130,7 +127,7 @@ public class PlayScreen extends Screen
         // Draw waifu textures to th escreen
         for (Waifu waifu : _waifus)
         {
-            Piece p = waifu.getCell().getPiece();
+            Piece p = waifu.getPiece();
             
             // Only draw waifus that have pieces
             if (p != null)

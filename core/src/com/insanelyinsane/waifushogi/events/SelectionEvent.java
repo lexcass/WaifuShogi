@@ -5,9 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.events;
 
-import com.insanelyinsane.waifushogi.objects.Cell;
-import com.insanelyinsane.waifushogi.objects.gameobjects.GameObject;
-import java.util.List;
+import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 
 /**
  *
@@ -15,12 +13,12 @@ import java.util.List;
  */
 public class SelectionEvent 
 {
-    private final Cell[][] _cells;
+    private final boolean[][] _board;
     private boolean _selected;
     
-    public SelectionEvent(Cell[][] w, boolean selected)
+    public SelectionEvent(boolean[][] w, boolean selected)
     {
-        _cells = w;
+        _board = w;
         _selected = selected;
     }
     
@@ -30,7 +28,7 @@ public class SelectionEvent
      * Note: Null entries mean the cell at row, col will not be highlighted.
      * @return 
      */
-    public Cell[][] getCells() { return _cells; }
+    public boolean[][] getValidMoves() { return _board; }
     
     public boolean isSelected() { return _selected; }
 }

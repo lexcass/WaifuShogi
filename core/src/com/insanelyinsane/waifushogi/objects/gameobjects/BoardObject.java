@@ -12,14 +12,21 @@ import com.insanelyinsane.waifushogi.objects.Board;
  *
  * @author alex
  */
-public class BoardObject extends GameObject
-{
+public final class BoardObject extends GameObject
+{   
+    public static float X_POS;
+    public static float Y_POS;
+    
     private Board _board;
+    
     
     public BoardObject(Texture tex, float x, float y, Board board)
     {
         super(tex, x, y);
         _board = board;
+        
+        X_POS = x;
+        Y_POS = y;
     }
     
     

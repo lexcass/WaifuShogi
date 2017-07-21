@@ -7,7 +7,6 @@ package com.insanelyinsane.waifushogi.objects.pieces;
 
 import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.objects.Cell;
 
 /**
  *
@@ -21,9 +20,9 @@ public class Pawn extends Piece
     }
     
     @Override
-    protected Cell[][] findValidMoves(final Cell[][] cells, int row, int col)
+    protected boolean[][] findValidMoves(final Piece[][] cells, int row, int col)
     {
-        Cell[][] valid = new Cell[Board.ROWS][Board.COLS];
+        boolean[][] valid = new boolean[Board.ROWS][Board.COLS];
         
         addIfValid(cells, valid, row + 1, col);
         
@@ -32,8 +31,8 @@ public class Pawn extends Piece
     
     
     @Override
-    protected Cell[][] findValidReplacements(final Cell[][] cells)
+    protected Piece[][] findValidReplacements(final Piece[][] cells)
     {
-        return new Cell[0][0];
+        return new Piece[0][0];
     }
 }

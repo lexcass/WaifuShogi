@@ -13,8 +13,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.objects.Cell;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
+import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 
 /**
  *
@@ -24,7 +24,7 @@ public class Highlighter implements SelectionListener
 {
     private final ShapeRenderer _renderer;
     private final BoardObject _board;
-    private Cell[][] _cells;
+    private boolean[][] _validMoves;
     
     
     public Highlighter(BoardObject board)
@@ -32,7 +32,7 @@ public class Highlighter implements SelectionListener
         _renderer = new ShapeRenderer();
         
         _board = board;
-        _cells = new Cell[Board.ROWS][Board.COLS];
+        _validMoves = new boolean[Board.ROWS][Board.COLS];
     }
     
     /**
@@ -42,9 +42,9 @@ public class Highlighter implements SelectionListener
      * Note: A null entry means there is no cell to be highlighted.
      * @param cells 
      */
-    public void highlight(Cell[][] cells) { _cells = cells; }
+    public void highlight(boolean[][] valid) { _validMoves = valid; }
     
-    public void unhighlight() { _cells = null; }
+    public void unhighlight() { _validMoves = null; }
     
     
     /**
@@ -57,7 +57,7 @@ public class Highlighter implements SelectionListener
     {
         if (e.isSelected())
         {
-            highlight(e.getCells());
+            highlight(e.getValidMoves());
         }
         else
         {
@@ -78,18 +78,18 @@ public class Highlighter implements SelectionListener
         _renderer.setColor(0.0f, 1.0f, 0.75f, 0.33f);
         _renderer.begin(ShapeType.Filled);
         
-        if (_cells != null)
+        if (_validMoves != null)
         {
-            for (int r = 0; r < _cells.length; r++)
+            for (int r = 0; r < _validMoves.length; r++)
             {
-                for (int c = 0; c < _cells[r].length; c++)
+                for (int c = 0; c < _validMoves[r].length; c++)
                 {
-                    if (_cells[r][c] != null)
+                    if (_validMoves[r][c])
                     {
-                        _renderer.rect(_board.getX() + c * Cell.WIDTH,
-                                      _board.getY() + r * Cell.HEIGHT,
-                                      Cell.WIDTH,
-                                      Cell.HEIGHT);
+                        _renderer.rect(_board.getX() + c * Board.CELL_WIDTH,
+                                      _board.getY() + r * Board.CELL_HEIGHT,
+                                      Board.CELL_WIDTH,
+                                      Board.CELL_HEIGHT);
                     }
                 }
             }

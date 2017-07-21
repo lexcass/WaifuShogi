@@ -5,7 +5,6 @@
  */
 package com.insanelyinsane.waifushogi.events;
 
-import com.insanelyinsane.waifushogi.objects.Cell;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 
 /**
@@ -15,20 +14,23 @@ import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 public class MoveEvent 
 {
     private Piece _piece;
-    private Cell _from;
-    private Cell _to;
+    private int _toRow;
+    private int _toCol;
+    private int _fromRow;
+    private int _fromCol;
     
-    public MoveEvent(Piece p, Cell from, Cell to)
+    public MoveEvent(Piece p, int fr, int fc, int tr, int tc)
     {
         _piece = p;
-        _to = to;
-        _from = from;
+        _fromRow = fr;
+        _fromCol = fc;
+        _toRow = tr;
+        _toCol = tc;
     }
     
     public Piece getPiece() { return _piece; }
-    
-    public Cell from() { return _from; }
-    
-    public Cell to() { return _to; }
-    
+    public int fromRow() { return _fromRow; }
+    public int fromCol() { return _fromCol; }
+    public int toRow() { return _toRow; }
+    public int toCol() { return _toCol; }
 }
