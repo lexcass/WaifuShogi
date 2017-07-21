@@ -5,11 +5,13 @@
  */
 package com.insanelyinsane.waifushogi.listeners;
 
+import com.insanelyinsane.waifushogi.events.CaptureEvent;
+
 /**
  *
  * @author alex
  */
-public interface UpdatePositionListener 
+public interface CaptureListener 
 {
-    public void onUpdatePosition(int row, int col);
+    public void onWaifuCaptured(CaptureEvent e);
 }

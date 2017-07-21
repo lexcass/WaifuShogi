@@ -15,6 +15,7 @@ import com.insanelyinsane.waifushogi.objects.Cell;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
+import com.insanelyinsane.waifushogi.objects.pieces.Team;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class Referee implements TouchListener
     private final BoardObject _board;
     
     // Selection
+    private Team _currentTeam;
     private Cell _selectedCell;
     private Cell[][] _validMoves; 
     
@@ -48,6 +50,9 @@ public class Referee implements TouchListener
         waifus.forEach(w -> _moveListeners.add(w));
         
         _selectionListeners.add(h);
+        
+        // Red goes first
+        _currentTeam = Team.RED;
     }
     
     
@@ -57,10 +62,16 @@ public class Referee implements TouchListener
         // Board touched
         if (_board.containsPoint(e.getX(), e.getY()))
         {
+            
+            
+            
+            
+            
             // Get piece touched on board
             int r = (int)(e.getY() - _board.getY()) / Cell.HEIGHT;
             int c = (int)(e.getX() - _board.getX()) / Cell.WIDTH;
             
+            // If no cell is selected
             if (_selectedCell == null)
             {
                 _selectedCell = _board.getBoard().getCellAt(r, c);
@@ -68,34 +79,49 @@ public class Referee implements TouchListener
 
                 if (piece != null)
                 {
-                    showValidMoves(piece, r, c);
+                    if (piece.getTeam().equals(_currentTeam))
+                    {
+                        showValidMoves(piece, r, c);
+                    }
                 }
             }
+            
+            // If a cell is selected
             else
             {
+                
+                
+                System.out.println(_selectedCell.getRow() + ", " + _selectedCell.getCol());
+                
+                
                 // If the target cell has a piece on the same team, select that piece instead
                 Cell target = _board.getBoard().getCellAt(r, c);
                 
                 if (target != null)
                 {
-                    if (target.getPiece() != null)
+                    // If the target is a valid move for the selected piece
+                    if (target.equals(_validMoves[r][c]))
                     {
-                        _selectedCell = target;
-                        showValidMoves(target.getPiece(), r, c);
+                        // Tell the capture listeners what piece was captured
+
+                        // Move the selected piece to the new cell
+                        _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedCell.getPiece(), _selectedCell, target)));
+
+                        // Reset the selection
+                        _selectedCell = null;
+                        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, false)));
+
+                        // Switch to other player
+                        //_currentTeam = _currentTeam.equals(Team.RED) ? Team.BLUE : Team.RED;
                     }
                     
-                    else
+                    // If the target is invalid, see if the target contains one of the player's pieces and select it
+                    else if (target.getPiece() != null)
                     {
-                        if (target.equals(_validMoves[r][c]))
+                        if (target.getPiece().getTeam().equals(_currentTeam))
                         {
-                            // Tell the capture listeners what piece was captured
-
-                            // Move the selected piece to the new cell
-                            _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedCell.getPiece(), _selectedCell, target)));
-
-                            // Reset the selection
-                            _selectedCell = null;
-                            _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, false)));
+                            _selectedCell = target;
+                            showValidMoves(target.getPiece(), r, c);
                         }
                     }
                 }

@@ -11,5 +11,5 @@ package com.insanelyinsane.waifushogi.objects.pieces;
  */
 public enum Team 
 {
-    ONE, TWO
+    RED, BLUE
 }

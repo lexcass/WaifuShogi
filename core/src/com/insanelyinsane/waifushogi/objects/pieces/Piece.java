@@ -83,7 +83,7 @@ public abstract class Piece
 
                 if (piece != null)
                 {
-                    if (piece.getTeam() == _team) toAdd = toCheck;
+                    if (piece.getTeam() != _team) toAdd = toCheck;
                 }
                 else
                 {

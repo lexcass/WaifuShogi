@@ -62,12 +62,7 @@ public class Board implements MoveListener
      */
     @Override
     public void onWaifuMoved(MoveEvent e)
-    {
-//        int fromRow = e.from().getRow();
-//        int fromCol = e.from().getCol();
-//        int toRow = e.to().getRow();
-//        int toCol = e.to().getCol();
-        
+    {   
         e.from().setPiece(null);
         e.to().setPiece(e.getPiece());
     }

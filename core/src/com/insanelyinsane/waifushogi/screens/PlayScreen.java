@@ -7,6 +7,7 @@ package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.events.TouchEvent;
@@ -22,7 +23,6 @@ import com.insanelyinsane.waifushogi.systems.Highlighter;
 import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;
 import java.util.List;
-import com.insanelyinsane.waifushogi.listeners.UpdatePositionListener;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 
@@ -33,6 +33,8 @@ import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 public class PlayScreen extends Screen
 {
     // Constants
+    final Color RED_TINT = new Color(1.0f, 0.8f, 0.8f, 1.0f);
+    final Color BLUE_TINT = new Color(0.8f, 0.8f, 1.0f, 1.0f);
     
     // Assets to load
     Texture _woodTex;
@@ -78,8 +80,9 @@ public class PlayScreen extends Screen
         _board = new BoardObject(boardTex, boardX, boardY, new Board());
         
         // Create pieces and place into cells
-        addPiece(new Pawn(Team.ONE), pawnTex, 2, 3);
-        addPiece(new Pawn(Team.ONE), pawnTex, 4, 7);
+        addPiece(new Pawn(Team.RED), pawnTex, 2, 3);
+        addPiece(new Pawn(Team.RED), pawnTex, 4, 7);
+        addPiece(new Pawn(Team.BLUE), pawnTex, 3, 3);
         
         // Initialize systems
         _highlighter = new Highlighter(_board);
@@ -124,10 +127,20 @@ public class PlayScreen extends Screen
         // Draw highlighted cells to the screen
         _highlighter.draw(batch);
         
-        for (GameObject pieceObj : _waifus)
+        // Draw waifu textures to th escreen
+        for (Waifu waifu : _waifus)
         {
-            pieceObj.draw(batch);
+            Piece p = waifu.getCell().getPiece();
+            
+            // Only draw waifus that have pieces
+            if (p != null)
+            {
+                Color c = p.getTeam() == Team.RED ? RED_TINT : BLUE_TINT;
+                batch.setColor(c);
+                waifu.draw(batch);
+            }
         }
+        batch.setColor(Color.WHITE);
         
         batch.end();
     }
