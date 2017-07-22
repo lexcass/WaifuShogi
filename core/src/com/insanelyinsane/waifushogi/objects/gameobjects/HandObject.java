@@ -16,9 +16,9 @@ public final class HandObject extends GameObject
     private Hand _hand;
     
     
-    public HandObject(float x, float y, Hand hand)
+    public HandObject(float x, float y, int w, int h, Hand hand)
     {
-        super(null, x, y);
+        super(x, y, w, h);
         _hand = hand;
     }
     

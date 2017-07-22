@@ -14,10 +14,12 @@ import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 public class SelectionEvent 
 {
     private final boolean[][] _board;
+    private Piece _piece;
     private boolean _selected;
     
-    public SelectionEvent(boolean[][] w, boolean selected)
+    public SelectionEvent(boolean[][] w, Piece p, boolean selected)
     {
+        _piece = p;
         _board = w;
         _selected = selected;
     }
@@ -29,6 +31,9 @@ public class SelectionEvent
      * @return 
      */
     public boolean[][] getValidMoves() { return _board; }
+    
+    
+    public Piece getPiece() { return _piece; }
     
     public boolean isSelected() { return _selected; }
 }

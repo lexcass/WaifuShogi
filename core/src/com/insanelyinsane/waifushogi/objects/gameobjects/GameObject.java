@@ -17,19 +17,8 @@ public class GameObject
     private final Texture _texture;
     private float _xPos;
     private float _yPos;
-//    
-//    private final List<SelectionListener> _selectionListeners;
-    
-    /**
-     * Checks if the given coords intersect this waifu.
-     * @param x
-     * @param y
-     * @return boolean
-     */
-    public boolean containsPoint(float x, float y)
-    {
-        return (x >= _xPos) && (y >= _yPos) && (x <= (_xPos + _texture.getWidth()) && y <= (_yPos + _texture.getHeight()));
-    }
+    private int _width;
+    private int _height;
     
     
     public GameObject(final Texture tex, float x, float y)
@@ -37,7 +26,17 @@ public class GameObject
         _texture = tex;
         _xPos = x;
         _yPos = y;
-        //_selectionListeners = new LinkedList<>();
+        _width = tex.getWidth();
+        _height = tex.getHeight();
+    }
+    
+    public GameObject(float x, float y, int width, int height)
+    {
+        _texture = null;
+        _xPos = x;
+        _yPos = y;
+        _width = width;
+        _height = height;
     }
     
     // Getters
@@ -50,12 +49,28 @@ public class GameObject
     protected void setX(float x) { _xPos = x; }
     protected void setY(float y) { _yPos = y; }
     
+    
     /**
-     * Draw the texture of this waifu to the given SpriteBatch.
+     * Checks if the given coords intersect this object.
+     * @param x
+     * @param y
+     * @return boolean
+     */
+    public boolean containsPoint(float x, float y)
+    {
+        return (x >= _xPos) && (y >= _yPos) && (x <= (_xPos + _width) && y <= (_yPos + _height));
+    }
+    
+    
+    /**
+     * Draw the texture of this object to the given SpriteBatch.
      * @param batch 
      */
     public void draw(final SpriteBatch batch)
     {
-        batch.draw(_texture, _xPos, _yPos);
+        if (_texture != null)
+        {
+            batch.draw(_texture, _xPos, _yPos);
+        }
     }
 }

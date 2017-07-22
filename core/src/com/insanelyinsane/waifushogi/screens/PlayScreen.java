@@ -36,8 +36,7 @@ import java.util.Stack;
 public class PlayScreen extends Screen
 {
     // Constants
-    final Color RED_TINT = new Color(1.0f, 0.8f, 0.8f, 1.0f);
-    final Color BLUE_TINT = new Color(0.8f, 0.8f, 1.0f, 1.0f);
+    
     
     // Assets to load
     Texture _woodTex;
@@ -92,8 +91,12 @@ public class PlayScreen extends Screen
         
         //////////////////////////////////
         // Initialize player hands
-        _blueHand = new HandObject(0, Gdx.graphics.getHeight() - Board.CELL_HEIGHT * 2, new Hand(Team.BLUE));
-        _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, new Hand(Team.RED));
+        
+        //Gdx.graphics.getHeight() - 
+        _blueHand = new HandObject(0, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.BLUE));
+        
+        // The red hand builds from bottom to top (x, y is bottom-left), so negative width and height will give proper bounds for touch coords.
+        _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.RED));
         
         // Create pieces and place into cells
         addPiece(new Pawn(Team.RED), pawnTex, 2, 3);
@@ -159,8 +162,6 @@ public class PlayScreen extends Screen
             // Only draw waifus that have pieces
             if (p != null)
             {
-                Color c = p.getTeam() == Team.RED ? RED_TINT : BLUE_TINT;
-                batch.setColor(c);
                 waifu.draw(batch);
             }
         }
@@ -175,7 +176,7 @@ public class PlayScreen extends Screen
             if (!s.empty())
             {
                 Piece p = s.peek();
-                _font.draw(batch, s.size() + "", _blueHand.getX() + xOffset, _blueHand.getY() - (p.getType().getValue() - 1) * Board.CELL_HEIGHT );
+                _font.draw(batch, s.size() + "", _blueHand.getX() + xOffset, Gdx.graphics.getHeight() - _blueHand.getY() - p.getType().getIndex() * Board.CELL_HEIGHT);
             }
         }
         
@@ -184,7 +185,7 @@ public class PlayScreen extends Screen
             if (!s.empty())
             {
                 Piece p = s.peek();
-                _font.draw(batch, s.size() + "", _redHand.getX() + xOffset, _redHand.getY() + (p.getType().getValue() + 1) * Board.CELL_HEIGHT );
+                _font.draw(batch, s.size() + "", _redHand.getX() + xOffset, _redHand.getY() + (p.getType().getIndex() + 1) * Board.CELL_HEIGHT );
             }
         }
         

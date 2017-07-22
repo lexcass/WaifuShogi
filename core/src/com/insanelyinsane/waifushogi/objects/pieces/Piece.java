@@ -26,13 +26,16 @@ public abstract class Piece
         PAWN(0), ROOK(1), BISHOP(2), KNIGHT(3), LANCE(4), SILVER(5), GOLD(6), JADE(7);
         
         private int _i;
+        public static final int SIZE = 8;
         
         private Type(int i)
         {
             _i = i;
         }
         
-        public int getValue() { return _i; }
+        public int getIndex() { return _i; }
+        
+        
     }
     
     public Piece(Type type, Team team)

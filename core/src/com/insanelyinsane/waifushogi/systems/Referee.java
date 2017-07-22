@@ -62,6 +62,7 @@ public class Referee implements TouchListener
         
         // Add selection event listeners
         _selectionListeners.add(h);
+        waifus.forEach(w -> _selectionListeners.add(w));
         
         // Add capture event listeners
         _captureListeners.add(_redHand.getHand());
@@ -122,8 +123,8 @@ public class Referee implements TouchListener
 
                     
                     // Reset the selection
+                    _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _selectedPiece, false)));
                     _selectedPiece = null;
-                    _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, false)));
 
                     
                     // Switch to other player
@@ -135,6 +136,7 @@ public class Referee implements TouchListener
                 {
                     if (target.getTeam().equals(_currentTeam))
                     {
+                        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _selectedPiece, false)));
                         validateMoves(target, r, c);
                     }
                 }
@@ -143,14 +145,26 @@ public class Referee implements TouchListener
         }
         
         
-        /////////////////////////////////////
-        // If red hand is touched
-        /////////////////////////////////////
+        //////////////////////////////////////////////////////////////
+        // If red hand is touched   (hand on right with red pieces)
+        //////////////////////////////////////////////////////////////
+        if (_redHand.containsPoint(e.getX(), e.getY()))
+        {
+            int r = (int)(e.getY() - _redHand.getY()) / Board.CELL_HEIGHT;
+            Piece.Type type = Piece.Type.values()[r];
+        }
         
         
-        /////////////////////////////////////
-        // If blue hand is touched
-        /////////////////////////////////////
+        
+        //////////////////////////////////////////////////////////////
+        // If blue hand is touched  (hand on left with blue pieces)
+        //////////////////////////////////////////////////////////////
+        if (_blueHand.containsPoint(e.getX(), e.getY()))
+        {
+            int r = (Piece.Type.SIZE - 1) - (int)(e.getY() - _blueHand.getY()) / Board.CELL_HEIGHT;
+            Piece.Type type = Piece.Type.values()[r];
+        }
+        
     }
     
     
@@ -165,6 +179,6 @@ public class Referee implements TouchListener
         _validMoves = piece.getValidMoves(_board.getBoard().getPieces(), r, c);
 
         // Dispatch SelectionEvent
-        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(_validMoves, true)));
+        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(_validMoves, _selectedPiece, true)));
     }
 }
