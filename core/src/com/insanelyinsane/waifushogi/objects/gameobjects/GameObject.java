@@ -50,12 +50,6 @@ public class GameObject
     protected void setX(float x) { _xPos = x; }
     protected void setY(float y) { _yPos = y; }
     
-    public void updatePosition(float x, float y)
-    {
-        _xPos = x;
-        _yPos = y;
-    }
-    
     /**
      * Draw the texture of this waifu to the given SpriteBatch.
      * @param batch 

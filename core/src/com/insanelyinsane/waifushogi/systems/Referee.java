@@ -5,14 +5,17 @@
  */
 package com.insanelyinsane.waifushogi.systems;
 
+import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.events.TouchEvent;
+import com.insanelyinsane.waifushogi.listeners.CaptureListener;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
+import com.insanelyinsane.waifushogi.objects.gameobjects.HandObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.objects.pieces.Team;
@@ -27,6 +30,8 @@ public class Referee implements TouchListener
 {
     // Board and Hands
     private final BoardObject _board;
+    private final HandObject _redHand;
+    private final HandObject _blueHand;
     
     // Selection
     private Team _currentTeam;
@@ -38,20 +43,30 @@ public class Referee implements TouchListener
     // Listeners
     private final List<SelectionListener> _selectionListeners;
     private final List<MoveListener> _moveListeners;
-    //private final List<CaptureListener> _captureListeners;
+    private final List<CaptureListener> _captureListeners;
     
     
-    public Referee(BoardObject board, Highlighter h, List<Waifu> waifus)
+    public Referee(BoardObject board, Highlighter h, List<Waifu> waifus, HandObject redHand, HandObject blueHand)
     {
         _board = board;
+        _redHand = redHand;
+        _blueHand = blueHand;
         
         _selectionListeners = new LinkedList<>();
         _moveListeners = new LinkedList<>();
+        _captureListeners = new LinkedList<>();
         
+        // Add move event listeners
         _moveListeners.add(_board.getBoard());
         waifus.forEach(w -> _moveListeners.add(w));
         
+        // Add selection event listeners
         _selectionListeners.add(h);
+        
+        // Add capture event listeners
+        _captureListeners.add(_redHand.getHand());
+        //_captureListeners.add(_redHand);
+        waifus.forEach(w -> _captureListeners.add(w));
         
         // Red goes first
         _currentTeam = Team.RED;
@@ -61,15 +76,15 @@ public class Referee implements TouchListener
     @Override
     public void onTouch(TouchEvent e)
     {
-        // Board touched
+        // If the board is touched
         if (_board.containsPoint(e.getX(), e.getY()))
         {
-            // Get piece touched on board
+            // The target is the piece in the row/col touched
             int r = (int)(e.getY() - _board.getY()) / Board.CELL_HEIGHT;
             int c = (int)(e.getX() - _board.getX()) / Board.CELL_WIDTH;
             Piece target = _board.getBoard().getPieceAt(r, c);
             
-            // If no piece is selected
+            // If there is currently no piece selected
             if (_selectedPiece == null)
             {
                 // Select the piece if its on the team of the player whose turn it is
@@ -77,11 +92,7 @@ public class Referee implements TouchListener
                 {
                     if (target.getTeam() == _currentTeam)
                     {
-                        
-                        _selectedPiece = target;
-                        _selectedRow = r;
-                        _selectedCol = c;
-                        showValidMoves(_selectedPiece, r, c);
+                        validateMoves(target, r, c);
                     }
                 }
             }
@@ -89,10 +100,19 @@ public class Referee implements TouchListener
             // If a piece is selected
             else
             {
-                // If the target row and col is a valid move
+                // And the target row and col is a valid move
                 if (_validMoves[r][c])
                 {
                     // Tell the capture listeners what piece was captured
+                    Piece captured = target;
+                    if (captured != null)
+                    {
+                        if (captured.getTeam() != _currentTeam)
+                        {
+                            //captured.setCaptured(true);
+                            _captureListeners.forEach(l -> l.onWaifuCaptured(new CaptureEvent(captured)));
+                        }
+                    }
 
                     // Move the selected piece to the new cell
                     _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c)));
@@ -110,10 +130,7 @@ public class Referee implements TouchListener
                 {
                     if (target.getTeam().equals(_currentTeam))
                     {
-                        showValidMoves(_selectedPiece, r, c);
-                        _selectedPiece = target;
-                        _selectedRow = r;
-                        _selectedCol = c;
+                        validateMoves(target, r, c);
                     }
                 }
             }
@@ -122,8 +139,13 @@ public class Referee implements TouchListener
     }
     
     
-    public void showValidMoves(Piece piece, int r, int c)
+    public void validateMoves(Piece piece, int r, int c)
     {
+        // Set selections
+        _selectedPiece = piece;
+        _selectedRow = r;
+        _selectedCol = c;
+        
         // Retrieve valid moves
         _validMoves = piece.getValidMoves(_board.getBoard().getPieces(), r, c);
 

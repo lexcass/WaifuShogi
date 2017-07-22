@@ -6,7 +6,9 @@
 package com.insanelyinsane.waifushogi.objects.gameobjects;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
+import com.insanelyinsane.waifushogi.listeners.CaptureListener;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
@@ -15,7 +17,7 @@ import com.insanelyinsane.waifushogi.objects.pieces.Piece;
  *
  * @author alex
  */
-public class Waifu extends GameObject implements MoveListener
+public class Waifu extends GameObject implements MoveListener, CaptureListener
 {   
     // Piece representing logical unit
     private Piece _piece;
@@ -45,6 +47,18 @@ public class Waifu extends GameObject implements MoveListener
         {
             setX(BoardObject.X_POS + e.toCol() * Board.CELL_WIDTH);
             setY(BoardObject.Y_POS + e.toRow() * Board.CELL_HEIGHT);
+        }
+    }
+    
+    
+    @Override
+    public void onWaifuCaptured(CaptureEvent e)
+    {
+        if (e.getPiece().equals(getPiece()))
+        {
+            setX(HandObject.X_POS);
+            setY(HandObject.START_Y_POS - e.getPiece().getType().ordinal() * Board.CELL_HEIGHT);
+            e.getPiece().setCaptured(true);
         }
     }
     

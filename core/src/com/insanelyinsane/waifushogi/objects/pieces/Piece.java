@@ -15,6 +15,7 @@ public abstract class Piece
 {
     private final Team _team;
     private final Type _type;
+    private boolean _captured;
     
     public enum Type
     {
@@ -25,9 +26,15 @@ public abstract class Piece
     {
         _type = type;
         _team = team;
+        _captured = false;
     }
     
+    
+    public Type getType() { return _type; }
     public Team getTeam() { return _team; }
+    
+    public void setCaptured(boolean c) { _captured = c; }
+    public boolean isCaptured() { return _captured; }
     
     
     protected abstract boolean[][] findValidMoves(final Piece[][] cells, int row, int col);
@@ -86,8 +93,10 @@ public abstract class Piece
             {
                 valid[r][c] = (toCheck.getTeam() != _team);
             }
-            
-            valid[r][c] = true;
+            else
+            {
+                valid[r][c] = true;
+            }
         }
     }
 }

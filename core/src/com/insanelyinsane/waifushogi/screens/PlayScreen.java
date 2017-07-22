@@ -9,11 +9,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
+import com.insanelyinsane.waifushogi.objects.Hand;
 import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.objects.pieces.Team;
@@ -22,7 +24,9 @@ import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;
 import java.util.List;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
+import com.insanelyinsane.waifushogi.objects.gameobjects.HandObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
+import java.util.Stack;
 
 /**
  *
@@ -36,9 +40,12 @@ public class PlayScreen extends Screen
     
     // Assets to load
     Texture _woodTex;
+    BitmapFont _font = new BitmapFont();    // This is TEMPORARY!!!
     
     // Objects to update
     BoardObject  _board;
+    HandObject _redHand;
+    HandObject _blueHand;
     List<Waifu> _waifus;
     
     // Systems
@@ -77,14 +84,18 @@ public class PlayScreen extends Screen
         int boardY = Gdx.graphics.getHeight() / 2 - boardTex.getHeight() / 2;
         _board = new BoardObject(boardTex, boardX, boardY, new Board());
         
+        _redHand = new HandObject(0, Gdx.graphics.getHeight() - Board.CELL_HEIGHT * 2, new Hand(Team.RED));
+        
         // Create pieces and place into cells
         addPiece(new Pawn(Team.RED), pawnTex, 2, 3);
         addPiece(new Pawn(Team.RED), pawnTex, 4, 7);
         addPiece(new Pawn(Team.BLUE), pawnTex, 3, 3);
+        addPiece(new Pawn(Team.RED), pawnTex, 4, 3);
+        addPiece(new Pawn(Team.BLUE), pawnTex, 5, 7);
         
         // Initialize systems
         _highlighter = new Highlighter(_board);
-        _referee = new Referee(_board, _highlighter, _waifus);
+        _referee = new Referee(_board, _highlighter, _waifus, _redHand, _blueHand);
         
         _touchListeners.add(_referee);
     }
@@ -124,7 +135,7 @@ public class PlayScreen extends Screen
         // Draw highlighted cells to the screen
         _highlighter.draw(batch);
         
-        // Draw waifu textures to th escreen
+        // Draw waifu textures to the screen
         for (Waifu waifu : _waifus)
         {
             Piece p = waifu.getPiece();
@@ -138,6 +149,18 @@ public class PlayScreen extends Screen
             }
         }
         batch.setColor(Color.WHITE);
+        
+        
+        // Draw quantity at corner of captured pieces
+        for (Stack<Piece> s  : _redHand.getHand().getPieces().values())
+        {
+            if (!s.empty())
+            {
+                Piece p = s.peek();
+                _font.draw(batch, s.size() + "", HandObject.X_POS + 4, HandObject.START_Y_POS - (p.getType().ordinal() - 1) * Board.CELL_HEIGHT );
+            }
+        }
+        
         
         batch.end();
     }
