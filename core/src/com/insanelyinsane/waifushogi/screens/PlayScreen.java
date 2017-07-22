@@ -26,6 +26,7 @@ import java.util.List;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.HandObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
+import com.insanelyinsane.waifushogi.objects.pieces.Rook;
 import java.util.Stack;
 
 /**
@@ -66,6 +67,7 @@ public class PlayScreen extends Screen
         loadAsset("textures/woodbg.jpg", Texture.class);
         loadAsset("textures/ShogiBoard.png", Texture.class);
         loadAsset("textures/Pawn.png", Texture.class);
+        loadAsset("textures/Rook.png", Texture.class);
     }
     
     @Override
@@ -77,6 +79,7 @@ public class PlayScreen extends Screen
         _woodTex = assets.get("textures/woodbg.jpg");
         Texture boardTex = assets.get("textures/ShogiBoard.png");
         Texture pawnTex = assets.get("textures/Pawn.png");
+        Texture rookTex = assets.get("textures/Rook.png");
         
         
         // Initialize board
@@ -88,9 +91,9 @@ public class PlayScreen extends Screen
         
         // Create pieces and place into cells
         addPiece(new Pawn(Team.RED), pawnTex, 2, 3);
-        addPiece(new Pawn(Team.RED), pawnTex, 4, 7);
+        addPiece(new Rook(Team.RED), rookTex, 4, 7);
         addPiece(new Pawn(Team.BLUE), pawnTex, 3, 3);
-        addPiece(new Pawn(Team.RED), pawnTex, 4, 3);
+        addPiece(new Rook(Team.RED), rookTex, 4, 3);
         addPiece(new Pawn(Team.BLUE), pawnTex, 5, 7);
         
         // Initialize systems

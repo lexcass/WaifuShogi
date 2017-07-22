@@ -83,9 +83,9 @@ public abstract class Piece
      * @param r
      * @param c
      */
-    public final void addIfValid(final Piece[][] board, boolean[][] valid, int r, int c)
+    public final boolean addIfValid(final Piece[][] board, boolean[][] valid, int r, int c)
     {
-        if (r >= 0 && c >=0 && r < Board.ROWS && c < Board.COLS)
+        if (inBounds(r, c))
         {
             Piece toCheck = board[r][c];
 
@@ -97,6 +97,13 @@ public abstract class Piece
             {
                 valid[r][c] = true;
             }
+            
+            return valid[r][c];
         }
+        
+        return false;
     }
+    
+    
+    public final boolean inBounds(int r, int c) { return r >= 0 && c >=0 && r < Board.ROWS && c < Board.COLS; }
 }
