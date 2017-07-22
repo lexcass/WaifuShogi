@@ -13,13 +13,26 @@ import com.insanelyinsane.waifushogi.objects.Board;
  */
 public abstract class Piece 
 {
-    private final Team _team;
+    private Team _team;
     private final Type _type;
     private boolean _captured;
     
+    
+    /**
+     * Types of pieces; these are given to child classes through constructor.
+     */
     public enum Type
     {
-        PAWN, ROOK, BISHOP, KNIGHT, LANCE, SILVER, GOLD, JADE
+        PAWN(0), ROOK(1), BISHOP(2), KNIGHT(3), LANCE(4), SILVER(5), GOLD(6), JADE(7);
+        
+        private int _i;
+        
+        private Type(int i)
+        {
+            _i = i;
+        }
+        
+        public int getValue() { return _i; }
     }
     
     public Piece(Type type, Team team)
@@ -30,16 +43,19 @@ public abstract class Piece
     }
     
     
+    /////////////////////////////////////
+    // Getters and setters
     public Type getType() { return _type; }
     public Team getTeam() { return _team; }
+    public void setTeam(Team newTeam) { _team = newTeam; }
     
     public void setCaptured(boolean c) { _captured = c; }
     public boolean isCaptured() { return _captured; }
     
     
+    /////////////////////////////////
+    // Overrideable methods
     protected abstract boolean[][] findValidMoves(final Piece[][] cells, int row, int col);
-    
-    
     protected abstract Piece[][] findValidReplacements(final Piece[][] cells);
     
     
@@ -77,7 +93,8 @@ public abstract class Piece
     
     
     /**
-     * A helper method for checking validity of a move.
+     * A helper method for checking validity of a move. Returns true if the cell is empty
+     * or contains a piece from the other team.
      * @param board
      * @param valid
      * @param r
@@ -105,5 +122,11 @@ public abstract class Piece
     }
     
     
+    /**
+     * Returns true if the given row/col are in the bounds of the board.
+     * @param r
+     * @param c
+     * @return 
+     */
     public final boolean inBounds(int r, int c) { return r >= 0 && c >=0 && r < Board.ROWS && c < Board.COLS; }
 }

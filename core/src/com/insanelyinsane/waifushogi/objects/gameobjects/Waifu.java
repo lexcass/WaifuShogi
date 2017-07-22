@@ -5,6 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.objects.gameobjects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
@@ -12,6 +13,7 @@ import com.insanelyinsane.waifushogi.listeners.CaptureListener;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
+import com.insanelyinsane.waifushogi.objects.pieces.Team;
 
 /**
  *
@@ -19,13 +21,29 @@ import com.insanelyinsane.waifushogi.objects.pieces.Piece;
  */
 public class Waifu extends GameObject implements MoveListener, CaptureListener
 {   
+    // Constants
+    private final float BOARD_X;
+    private final float BOARD_Y;
+    private final float RED_HAND_X;
+    private final float RED_HAND_Y;
+    private final float BLUE_HAND_X;
+    private final float BLUE_HAND_Y;
+    
+    
     // Piece representing logical unit
     private Piece _piece;
     
-    public Waifu(Texture tex, float x, float y, Piece piece)
+    public Waifu(Texture tex, float x, float y, Piece piece, BoardObject board, HandObject red, HandObject blue)
     {
         super(tex, x, y);
         _piece = piece;
+        
+        BOARD_X = board.getX();
+        BOARD_Y = board.getY();
+        RED_HAND_X = red.getX();
+        RED_HAND_Y = red.getY();
+        BLUE_HAND_X = blue.getX();
+        BLUE_HAND_Y = blue.getY();
     }
     
     
@@ -35,8 +53,7 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener
      */
     public void update(float delta)
     {
-//        setX(_board.getX() + _cell.getCol() * Cell.WIDTH);
-//        setY(_board.getY() + _cell.getRow() * Cell.HEIGHT);
+        // NOTHING SPECIAL!!
     }
     
     
@@ -45,8 +62,8 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener
     {
         if (e.getPiece().equals(getPiece()))
         {
-            setX(BoardObject.X_POS + e.toCol() * Board.CELL_WIDTH);
-            setY(BoardObject.Y_POS + e.toRow() * Board.CELL_HEIGHT);
+            setX(BOARD_X+ e.toCol() * Board.CELL_WIDTH);
+            setY(BOARD_Y + e.toRow() * Board.CELL_HEIGHT);
         }
     }
     
@@ -54,11 +71,18 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener
     @Override
     public void onWaifuCaptured(CaptureEvent e)
     {
-        if (e.getPiece().equals(getPiece()))
+        Piece p = e.getPiece();
+        
+        if (p.equals(getPiece()))
         {
-            setX(HandObject.X_POS);
-            setY(HandObject.START_Y_POS - e.getPiece().getType().ordinal() * Board.CELL_HEIGHT);
-            e.getPiece().setCaptured(true);
+            float offset = p.getType().getValue() * Board.CELL_HEIGHT;
+            float x = p.getTeam() == Team.BLUE ? RED_HAND_X : BLUE_HAND_X;//HandObject.X_POS : Gdx.graphics.getWidth() - HandObject.X_POS;
+            float y = p.getTeam() == Team.BLUE ? RED_HAND_Y + offset : BLUE_HAND_Y - offset;//: (Gdx.graphics.getHeight() - HandObject.START_Y_POS) - p.getType().ordinal() * Board.CELL_HEIGHT;
+            
+            setX(x);
+            setY(y);
+            p.setCaptured(true);
+            p.setTeam(p.getTeam() == Team.RED ? Team.BLUE : Team.RED);
         }
     }
     

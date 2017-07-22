@@ -73,6 +73,7 @@ public class PlayScreen extends Screen
     @Override
     public void create()
     {
+        //////////////////////////////
         // Create assets
         AssetManager assets = getAssets();
         
@@ -82,20 +83,27 @@ public class PlayScreen extends Screen
         Texture rookTex = assets.get("textures/Rook.png");
         
         
+        ///////////////////////////////
         // Initialize board
         int boardX = Gdx.graphics.getWidth() / 2 - boardTex.getWidth() / 2;
         int boardY = Gdx.graphics.getHeight() / 2 - boardTex.getHeight() / 2;
         _board = new BoardObject(boardTex, boardX, boardY, new Board());
         
-        _redHand = new HandObject(0, Gdx.graphics.getHeight() - Board.CELL_HEIGHT * 2, new Hand(Team.RED));
+        
+        //////////////////////////////////
+        // Initialize player hands
+        _blueHand = new HandObject(0, Gdx.graphics.getHeight() - Board.CELL_HEIGHT * 2, new Hand(Team.BLUE));
+        _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, new Hand(Team.RED));
         
         // Create pieces and place into cells
         addPiece(new Pawn(Team.RED), pawnTex, 2, 3);
         addPiece(new Rook(Team.RED), rookTex, 4, 7);
-        addPiece(new Pawn(Team.BLUE), pawnTex, 3, 3);
-        addPiece(new Rook(Team.RED), rookTex, 4, 3);
+        addPiece(new Pawn(Team.RED), pawnTex, 3, 3);
+        addPiece(new Rook(Team.BLUE), rookTex, 4, 3);
         addPiece(new Pawn(Team.BLUE), pawnTex, 5, 7);
         
+        
+        /////////////////////////////////////////
         // Initialize systems
         _highlighter = new Highlighter(_board);
         _referee = new Referee(_board, _highlighter, _waifus, _redHand, _blueHand);
@@ -117,7 +125,7 @@ public class PlayScreen extends Screen
     {
         _board.getBoard().addPiece(piece, row, col);
         
-        Waifu obj = new Waifu(tex, _board.getX() + col * Board.CELL_WIDTH, _board.getY() + row * Board.CELL_HEIGHT, piece);
+        Waifu obj = new Waifu(tex, _board.getX() + col * Board.CELL_WIDTH, _board.getY() + row * Board.CELL_HEIGHT, piece, _board, _redHand, _blueHand);
         _waifus.add(obj);
     }
     
@@ -127,14 +135,19 @@ public class PlayScreen extends Screen
     {
         SpriteBatch batch = getSpriteBatch();
         
+        //////////////////////////////////////
         // Update objects here
         _waifus.forEach(w -> w.update(delta));
 
+        
+        ////////////////////////////////////////
         // Draw textures and text to the screen
         batch.begin();
         batch.draw(_woodTex, 0, 0);
         _board.draw(batch);
         
+        
+        //////////////////////////////////////////
         // Draw highlighted cells to the screen
         _highlighter.draw(batch);
         
@@ -153,14 +166,25 @@ public class PlayScreen extends Screen
         }
         batch.setColor(Color.WHITE);
         
-        
+        /////////////////////////////////////////////////
         // Draw quantity at corner of captured pieces
+        final int xOffset = 4;
+        
+        for (Stack<Piece> s  : _blueHand.getHand().getPieces().values())
+        {
+            if (!s.empty())
+            {
+                Piece p = s.peek();
+                _font.draw(batch, s.size() + "", _blueHand.getX() + xOffset, _blueHand.getY() - (p.getType().getValue() - 1) * Board.CELL_HEIGHT );
+            }
+        }
+        
         for (Stack<Piece> s  : _redHand.getHand().getPieces().values())
         {
             if (!s.empty())
             {
                 Piece p = s.peek();
-                _font.draw(batch, s.size() + "", HandObject.X_POS + 4, HandObject.START_Y_POS - (p.getType().ordinal() - 1) * Board.CELL_HEIGHT );
+                _font.draw(batch, s.size() + "", _redHand.getX() + xOffset, _redHand.getY() + (p.getType().getValue() + 1) * Board.CELL_HEIGHT );
             }
         }
         
@@ -203,7 +227,7 @@ public class PlayScreen extends Screen
     @Override
     public void pause()
     {
-        
+        _font.dispose();
     }
     
     @Override

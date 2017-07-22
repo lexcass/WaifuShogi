@@ -13,10 +13,6 @@ import com.insanelyinsane.waifushogi.objects.Hand;
  */
 public final class HandObject extends GameObject
 {
-    public static float X_POS;
-    public static float START_Y_POS;
-    
-    
     private Hand _hand;
     
     
@@ -24,9 +20,6 @@ public final class HandObject extends GameObject
     {
         super(null, x, y);
         _hand = hand;
-        
-        X_POS = x;
-        START_Y_POS = y;
     }
     
     

@@ -23,6 +23,10 @@ public class Hand implements CaptureListener
     public Team _team;
     
     
+    /**
+     * Create a new hand with stacks for each piece type.
+     * @param team 
+     */
     public Hand(Team team)
     {
         _team = team;

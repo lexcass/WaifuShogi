@@ -65,7 +65,7 @@ public class Referee implements TouchListener
         
         // Add capture event listeners
         _captureListeners.add(_redHand.getHand());
-        //_captureListeners.add(_redHand);
+        _captureListeners.add(_blueHand.getHand());
         waifus.forEach(w -> _captureListeners.add(w));
         
         // Red goes first
@@ -76,7 +76,9 @@ public class Referee implements TouchListener
     @Override
     public void onTouch(TouchEvent e)
     {
+        //////////////////////////////////////////
         // If the board is touched
+        //////////////////////////////////////////
         if (_board.containsPoint(e.getX(), e.getY()))
         {
             // The target is the piece in the row/col touched
@@ -114,15 +116,18 @@ public class Referee implements TouchListener
                         }
                     }
 
+                    
                     // Move the selected piece to the new cell
                     _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c)));
 
+                    
                     // Reset the selection
                     _selectedPiece = null;
                     _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, false)));
 
+                    
                     // Switch to other player
-                    //_currentTeam = _currentTeam.equals(Team.RED) ? Team.BLUE : Team.RED;
+                    _currentTeam = _currentTeam.equals(Team.RED) ? Team.BLUE : Team.RED;
                 }
                 
                 // If the target is invalid, see if the target contains one of the player's pieces and select it
@@ -136,6 +141,16 @@ public class Referee implements TouchListener
             }
             
         }
+        
+        
+        /////////////////////////////////////
+        // If red hand is touched
+        /////////////////////////////////////
+        
+        
+        /////////////////////////////////////
+        // If blue hand is touched
+        /////////////////////////////////////
     }
     
     

@@ -9,14 +9,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.insanelyinsane.waifushogi.objects.Board;
 
 /**
- *
+ * A GameObject that contains a board. Acts as a visual representation of the board.
  * @author alex
  */
 public final class BoardObject extends GameObject
 {   
-    public static float X_POS;
-    public static float Y_POS;
-    
     private Board _board;
     
     
@@ -24,9 +21,6 @@ public final class BoardObject extends GameObject
     {
         super(tex, x, y);
         _board = board;
-        
-        X_POS = x;
-        Y_POS = y;
     }
     
     
