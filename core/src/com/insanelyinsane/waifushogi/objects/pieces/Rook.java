@@ -33,7 +33,7 @@ public class Rook extends Piece
             if (!stopUp)
             {
                 // If not valid, stop looking this direction
-                if (!addIfValid(cells, valid, row + r, col))
+                if (!addIfValidMove(cells, valid, row + r, col))
                 {
                     stopUp = true;
                 }
@@ -46,7 +46,7 @@ public class Rook extends Piece
             
             if (!stopDown)
             {
-                if (!addIfValid(cells, valid, row - r, col))
+                if (!addIfValidMove(cells, valid, row - r, col))
                 {
                     stopDown = true;
                 }
@@ -61,7 +61,7 @@ public class Rook extends Piece
         {
             if (!stopRight)
             {
-                if (!addIfValid(cells, valid, row, col + c))
+                if (!addIfValidMove(cells, valid, row, col + c))
                 {
                     stopRight = true;
                 }
@@ -73,7 +73,7 @@ public class Rook extends Piece
             
             if (!stopLeft)
             {
-                if (!addIfValid(cells, valid, row, col - c))
+                if (!addIfValidMove(cells, valid, row, col - c))
                 {
                     stopLeft = true;
                 }
@@ -89,8 +89,8 @@ public class Rook extends Piece
     
     
     @Override
-    protected Piece[][] findValidReplacements(final Piece[][] cells)
+    protected boolean[][] findValidReplacements(final Piece[][] cells)
     {
-        return new Piece[0][0];
+        return checkAllForReplacement(cells);
     }
 }

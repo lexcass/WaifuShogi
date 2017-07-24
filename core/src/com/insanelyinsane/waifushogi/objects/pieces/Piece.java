@@ -59,7 +59,7 @@ public abstract class Piece
     /////////////////////////////////
     // Overrideable methods
     protected abstract boolean[][] findValidMoves(final Piece[][] cells, int row, int col);
-    protected abstract Piece[][] findValidReplacements(final Piece[][] cells);
+    protected abstract boolean[][] findValidReplacements(final Piece[][] cells);
     
     
     /**
@@ -89,7 +89,7 @@ public abstract class Piece
      * @param cells
      * @return 
      */
-    public final Piece[][] getValidReplacements(final Piece[][] cells)
+    public final boolean[][] getValidReplacements(final Piece[][] cells)
     {
         return findValidReplacements(cells);
     }
@@ -103,7 +103,7 @@ public abstract class Piece
      * @param r
      * @param c
      */
-    public final boolean addIfValid(final Piece[][] board, boolean[][] valid, int r, int c)
+    public final boolean addIfValidMove(final Piece[][] board, boolean[][] valid, int r, int c)
     {
         if (inBounds(r, c))
         {
@@ -122,6 +122,47 @@ public abstract class Piece
         }
         
         return false;
+    }
+    
+    
+    /**
+     * A helper method for checking validity of a replacement. Returns true if the cell is empty..
+     * @param board
+     * @param valid
+     * @param r
+     * @param c
+     */
+    public final boolean addIfValidReplacement(final Piece[][] board, boolean[][] valid, int r, int c)
+    {
+        if (inBounds(r, c))
+        {
+            valid[r][c] = (board[r][c] == null);
+            return valid[r][c];
+        }
+        
+        return false;
+    }
+    
+    
+    /**
+     * Return validity array after checking every cell on the board. Convenience method
+     * covers most drop conditions.
+     * @param board
+     * @return 
+     */
+    public final boolean[][] checkAllForReplacement(final Piece[][] board)
+    {
+        boolean[][] valid = new boolean[Board.ROWS][Board.COLS];
+        
+        for (int r = 0; r < Board.ROWS; r++)
+        {
+            for (int c = 0; c < Board.COLS; c++)
+            {
+                addIfValidReplacement(board, valid, r, c);
+            }
+        }
+        
+        return valid;
     }
     
     

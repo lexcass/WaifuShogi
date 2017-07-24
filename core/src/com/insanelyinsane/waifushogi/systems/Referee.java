@@ -38,7 +38,9 @@ public class Referee implements TouchListener
     private Piece _selectedPiece;
     private int _selectedRow;
     private int _selectedCol;
-    private boolean[][] _validMoves; 
+    private boolean[][] _validMoves;
+    private boolean[][] _validReplacements;
+    private boolean _shouldReplace;
     
     // Listeners
     private final List<SelectionListener> _selectionListeners;
@@ -71,6 +73,7 @@ public class Referee implements TouchListener
         
         // Red goes first
         _currentTeam = Team.RED;
+        _shouldReplace = false;
     }
     
     
@@ -104,40 +107,30 @@ public class Referee implements TouchListener
             else
             {
                 // And the target row and col is a valid move
-                if (_validMoves[r][c])
+                if (!_shouldReplace)
                 {
-                    // Tell the capture listeners what piece was captured
-                    Piece captured = target;
-                    if (captured != null)
+                    if (_validMoves[r][c])
                     {
-                        if (captured.getTeam() != _currentTeam)
+                        // Tell the capture listeners what piece was captured
+                        if (target != null)
                         {
-                            //captured.setCaptured(true);
-                            _captureListeners.forEach(l -> l.onWaifuCaptured(new CaptureEvent(captured)));
+                            if (target.getTeam() != _currentTeam)
+                            {
+                                _captureListeners.forEach(l -> l.onWaifuCaptured(new CaptureEvent(target)));
+                            }
                         }
+                        
+                        movePieceTo(r, c);
                     }
-
-                    
-                    // Move the selected piece to the new cell
-                    _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c)));
-
-                    
-                    // Reset the selection
-                    _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _selectedPiece, false)));
-                    _selectedPiece = null;
-
-                    
-                    // Switch to other player
-                    _currentTeam = _currentTeam.equals(Team.RED) ? Team.BLUE : Team.RED;
                 }
-                
-                // If the target is invalid, see if the target contains one of the player's pieces and select it
-                else if (target != null)
+                else
                 {
-                    if (target.getTeam().equals(_currentTeam))
+                    if (_validReplacements[r][c])
                     {
-                        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _selectedPiece, false)));
-                        validateMoves(target, r, c);
+                        if (target == null)
+                        {
+                            movePieceTo(r, c);
+                        }
                     }
                 }
             }
@@ -150,8 +143,12 @@ public class Referee implements TouchListener
         //////////////////////////////////////////////////////////////
         if (_redHand.containsPoint(e.getX(), e.getY()))
         {
+            // Get the piece at the top of the captured piece stack given the type
             int r = (int)(e.getY() - _redHand.getY()) / Board.CELL_HEIGHT;
             Piece.Type type = Piece.Type.values()[r];
+            
+            Piece piece = _redHand.getHand().getPiecesOfType(type).peek();
+            validateReplacements(piece);
         }
         
         
@@ -163,6 +160,9 @@ public class Referee implements TouchListener
         {
             int r = (Piece.Type.SIZE - 1) - (int)(e.getY() - _blueHand.getY()) / Board.CELL_HEIGHT;
             Piece.Type type = Piece.Type.values()[r];
+            
+            Piece piece = _blueHand.getHand().getPiecesOfType(type).peek();
+            validateReplacements(piece);
         }
         
     }
@@ -180,5 +180,30 @@ public class Referee implements TouchListener
 
         // Dispatch SelectionEvent
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(_validMoves, _selectedPiece, true)));
+    }
+    
+    
+    public void validateReplacements(Piece piece)
+    {
+        _selectedPiece = piece;
+        
+        _validReplacements = piece.getValidReplacements(_board.getBoard().getPieces());
+        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(_validReplacements, _selectedPiece, true)));
+    }
+    
+    
+    public void movePieceTo(int r, int c)
+    {
+        // Move the selected piece to the new cell
+        _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c)));
+
+
+        // Reset the selection
+        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _selectedPiece, false)));
+        _selectedPiece = null;
+
+
+        // Switch to other player
+        _currentTeam = _currentTeam.equals(Team.RED) ? Team.BLUE : Team.RED;
     }
 }

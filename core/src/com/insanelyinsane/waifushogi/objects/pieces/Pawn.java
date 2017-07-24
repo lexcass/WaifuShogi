@@ -24,15 +24,15 @@ public class Pawn extends Piece
     {
         boolean[][] valid = new boolean[Board.ROWS][Board.COLS];
         
-        addIfValid(cells, valid, row + 1, col);
+        addIfValidMove(cells, valid, row + 1, col);
         
         return valid;
     }
     
     
     @Override
-    protected Piece[][] findValidReplacements(final Piece[][] cells)
+    protected boolean[][] findValidReplacements(final Piece[][] cells)
     {
-        return new Piece[0][0];
+        return checkAllForReplacement(cells);
     }
 }
