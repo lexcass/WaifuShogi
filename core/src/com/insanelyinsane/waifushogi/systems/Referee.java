@@ -106,12 +106,13 @@ public class Referee implements TouchListener
             // If a piece is selected
             else
             {
-                // And the target row and col is a valid move
+                // And the piece is on the board
                 if (!_shouldReplace)
                 {
+                    // Check if the move is valid
                     if (_validMoves[r][c])
                     {
-                        // Tell the capture listeners what piece was captured
+                        // And tell the capture listeners if a piece was captured
                         if (target != null)
                         {
                             if (target.getTeam() != _currentTeam)
@@ -120,16 +121,37 @@ public class Referee implements TouchListener
                             }
                         }
                         
+                        // Move the piece to the target row/col
                         movePieceTo(r, c);
                     }
+                    else
+                    {
+                        if (target.getTeam() == _currentTeam)
+                        {
+                            _selectedPiece = target;
+                            _shouldReplace = false;
+                        }
+                    }
                 }
+                
+                // If the piece is in a player's hand
                 else
                 {
+                    // And the replacement is valid for this piece
                     if (_validReplacements[r][c])
                     {
                         if (target == null)
                         {
+                            // Move the piece from the player's hand to this row/col
                             movePieceTo(r, c);
+                        }
+                    }
+                    else
+                    {
+                        if (target.getTeam() == _currentTeam)
+                        {
+                            _selectedPiece = target;
+                            _shouldReplace = true;
                         }
                     }
                 }
@@ -149,6 +171,8 @@ public class Referee implements TouchListener
             
             Piece piece = _redHand.getHand().getPiecesOfType(type).peek();
             validateReplacements(piece);
+            
+            _shouldReplace = true;
         }
         
         
@@ -163,6 +187,8 @@ public class Referee implements TouchListener
             
             Piece piece = _blueHand.getHand().getPiecesOfType(type).peek();
             validateReplacements(piece);
+            
+            _shouldReplace = true;
         }
         
     }
@@ -205,5 +231,6 @@ public class Referee implements TouchListener
 
         // Switch to other player
         _currentTeam = _currentTeam.equals(Team.RED) ? Team.BLUE : Team.RED;
+        _shouldReplace = !_shouldReplace;
     }
 }
