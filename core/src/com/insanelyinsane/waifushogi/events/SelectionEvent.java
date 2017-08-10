@@ -19,6 +19,8 @@ public class SelectionEvent
     
     public SelectionEvent(boolean[][] w, Piece p, boolean selected)
     {
+        if (p == null) throw new NullPointerException();
+        
         _piece = p;
         _board = w;
         _selected = selected;

@@ -19,6 +19,8 @@ public class ReplaceEvent
     
     public ReplaceEvent(Piece p, int tr, int tc)
     {
+        if (p == null) throw new NullPointerException();
+        
         _piece = p;
         _toRow = tr;
         _toCol = tc;

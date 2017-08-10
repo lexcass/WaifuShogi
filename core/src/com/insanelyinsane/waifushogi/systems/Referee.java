@@ -8,10 +8,12 @@ package com.insanelyinsane.waifushogi.systems;
 import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
+import com.insanelyinsane.waifushogi.events.ReplaceEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.CaptureListener;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
+import com.insanelyinsane.waifushogi.listeners.ReplaceListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
@@ -47,6 +49,7 @@ public class Referee implements TouchListener
     // Listeners
     private final List<SelectionListener> _selectionListeners;
     private final List<MoveListener> _moveListeners;
+    private final List<ReplaceListener> _replaceListeners;
     private final List<CaptureListener> _captureListeners;
     
     
@@ -58,11 +61,18 @@ public class Referee implements TouchListener
         
         _selectionListeners = new LinkedList<>();
         _moveListeners = new LinkedList<>();
+        _replaceListeners = new LinkedList<>();
         _captureListeners = new LinkedList<>();
         
         // Add move event listeners
         _moveListeners.add(_board.getBoard());
         waifus.forEach(w -> _moveListeners.add(w));
+        
+        // Add replace event listeners
+        _replaceListeners.add(_board.getBoard());
+        _replaceListeners.add(_blueHand.getHand());
+        _replaceListeners.add(_redHand.getHand());
+        waifus.forEach(w -> _replaceListeners.add(w));
         
         // Add selection event listeners
         _selectionListeners.add(h);
@@ -136,9 +146,7 @@ public class Referee implements TouchListener
                     if (_validReplacements[r][c])
                     {
                         // Move the piece from the player's hand to this row/col
-                        HandObject hand = _currentTeam == Team.RED ? _redHand : _blueHand;
-                        hand.getHand().removePiece(_selectedPiece.getType());
-                        movePieceTo(r, c);
+                        replacePieceTo(r, c);
                     }
                     else
                     {
@@ -157,6 +165,8 @@ public class Referee implements TouchListener
         {
             // Get the piece at the top of the captured piece stack given the type
             int r = (int)(e.getY() - _redHand.getY()) / Board.CELL_HEIGHT;
+            if (r < 0 || r > Piece.Type.SIZE) return;
+            
             Piece.Type type = Piece.Type.values()[r];
             
             // Peek at the stack to select piece from hand
@@ -176,6 +186,8 @@ public class Referee implements TouchListener
         if (_blueHand.containsPoint(e.getX(), e.getY()))
         {
             int r = (Piece.Type.SIZE - 1) - (int)(e.getY() - _blueHand.getY()) / Board.CELL_HEIGHT;
+            if (r < 0 || r > Piece.Type.SIZE) return;
+            
             Piece.Type type = Piece.Type.values()[r];
             
             // Peek at the stack to select piece from hand
@@ -252,14 +264,30 @@ public class Referee implements TouchListener
         _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c)));
 
         Gdx.app.debug("Move", _selectedPiece.getType().toString() + " moved from (" + _selectedRow + ", " + _selectedCol + ") to (" + r + ", " + c + ")");
-
+        
+        finishTurn();
+    }
+    
+    
+    public void replacePieceTo(int r, int c)
+    {
+        _replaceListeners.forEach(l -> l.onWaifuReplaced(new ReplaceEvent(_selectedPiece, r, c)));
+        
+        Gdx.app.debug("Replace", _selectedPiece.getType().toString() + " replaced from " + _currentTeam.toString() + "'s hand to (" + r + ", " + c + ")");
+        
+        finishTurn();
+    }
+    
+    
+    public void finishTurn()
+    {
         // Reset the selection
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _selectedPiece, false)));
         _selectedPiece = null;
 
 
         // Switch to other player
-        _currentTeam = _currentTeam.equals(Team.RED) ? Team.BLUE : Team.RED;
-        _shouldReplace = !_shouldReplace;
+        _currentTeam = (_currentTeam == Team.RED ? Team.BLUE : Team.RED);
+        _shouldReplace = false;
     }
 }

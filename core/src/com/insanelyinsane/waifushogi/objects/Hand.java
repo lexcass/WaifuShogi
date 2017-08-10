@@ -6,7 +6,9 @@
 package com.insanelyinsane.waifushogi.objects;
 
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
+import com.insanelyinsane.waifushogi.events.ReplaceEvent;
 import com.insanelyinsane.waifushogi.listeners.CaptureListener;
+import com.insanelyinsane.waifushogi.listeners.ReplaceListener;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.objects.pieces.Team;
 import java.util.HashMap;
@@ -17,7 +19,7 @@ import java.util.Stack;
  *
  * @author alex
  */
-public class Hand implements CaptureListener
+public class Hand implements CaptureListener, ReplaceListener
 {
     public HashMap<Piece.Type, Stack<Piece>> _pieceMap;
     public Team _team;
@@ -88,6 +90,18 @@ public class Hand implements CaptureListener
         if (piece.getTeam() != _team)
         {
             _pieceMap.get(piece.getType()).push(piece);
+        }
+    }
+    
+    
+    @Override
+    public void onWaifuReplaced(ReplaceEvent e)
+    {
+        Piece piece = e.getPiece();
+        
+        if (piece.getTeam() == _team)
+        {
+            removePiece(piece.getType());
         }
     }
 }

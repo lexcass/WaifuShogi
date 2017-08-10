@@ -17,6 +17,8 @@ public class CaptureEvent
     
     public CaptureEvent(Piece piece)
     {
+        if (piece == null) throw new NullPointerException();
+        
         _piece = piece;
     }
     

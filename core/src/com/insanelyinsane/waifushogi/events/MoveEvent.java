@@ -21,6 +21,8 @@ public class MoveEvent
     
     public MoveEvent(Piece p, int fr, int fc, int tr, int tc)
     {
+        if (p == null) throw new NullPointerException();
+        
         _piece = p;
         _fromRow = fr;
         _fromCol = fc;

@@ -7,14 +7,16 @@ package com.insanelyinsane.waifushogi.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
+import com.insanelyinsane.waifushogi.events.ReplaceEvent;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
+import com.insanelyinsane.waifushogi.listeners.ReplaceListener;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 
 /**
  *
  * @author alex
  */
-public class Board implements MoveListener
+public class Board implements MoveListener, ReplaceListener
 {
     public static final int ROWS = 9;
     public static final int COLS = 9;
@@ -79,6 +81,13 @@ public class Board implements MoveListener
 //        e.to().setPiece(e.getPiece());
         
         _pieces[e.fromRow()][e.fromCol()] = null;
+        _pieces[e.toRow()][e.toCol()] = e.getPiece();
+    }
+    
+    
+    @Override
+    public void onWaifuReplaced(ReplaceEvent e)
+    {
         _pieces[e.toRow()][e.toCol()] = e.getPiece();
     }
 }

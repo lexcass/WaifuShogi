@@ -10,12 +10,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
+import com.insanelyinsane.waifushogi.events.ReplaceEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.CaptureListener;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
+import com.insanelyinsane.waifushogi.listeners.ReplaceListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
@@ -25,7 +26,7 @@ import com.insanelyinsane.waifushogi.objects.pieces.Team;
  *
  * @author alex
  */
-public class Waifu extends GameObject implements MoveListener, CaptureListener, SelectionListener
+public class Waifu extends GameObject implements MoveListener, CaptureListener, SelectionListener, ReplaceListener
 {   
     // Constants
     private final float BOARD_X;
@@ -110,7 +111,7 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
     {
         if (e.getPiece().equals(getPiece()))
         {
-            setX(BOARD_X+ e.toCol() * Board.CELL_WIDTH);
+            setX(BOARD_X + e.toCol() * Board.CELL_WIDTH);
             setY(BOARD_Y + e.toRow() * Board.CELL_HEIGHT);
         }
     }
@@ -131,6 +132,20 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
             setY(y);
             p.setCaptured(true);
             p.setTeam(p.getTeam() == Team.RED ? Team.BLUE : Team.RED);
+        }
+    }
+    
+    
+    
+    @Override
+    public void onWaifuReplaced(ReplaceEvent e)
+    {
+        Piece p = e.getPiece();
+        
+        if (p.equals(getPiece()))
+        {
+            setX(BOARD_X + e.toCol() * Board.CELL_WIDTH);
+            setY(BOARD_Y + e.toRow() * Board.CELL_HEIGHT);
         }
     }
     
