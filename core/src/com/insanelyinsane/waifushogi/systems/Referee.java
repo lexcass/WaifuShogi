@@ -5,6 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.systems;
 
+import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
@@ -21,6 +22,7 @@ import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.objects.pieces.Team;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  *
@@ -94,13 +96,7 @@ public class Referee implements TouchListener
             if (_selectedPiece == null)
             {
                 // Select the piece if its on the team of the player whose turn it is
-                if (target != null)
-                {
-                    if (target.getTeam() == _currentTeam)
-                    {
-                        validateMoves(target, r, c);
-                    }
-                }
+                selectBoardPiece(target, r, c);
             }
             
             // If a piece is selected
@@ -124,13 +120,12 @@ public class Referee implements TouchListener
                         // Move the piece to the target row/col
                         movePieceTo(r, c);
                     }
+                    
+                    // If the move is invalid, select the piece at the touched cell
+                    // if the piece is on the current player's team.
                     else
                     {
-                        if (target.getTeam() == _currentTeam)
-                        {
-                            _selectedPiece = target;
-                            _shouldReplace = false;
-                        }
+                        selectBoardPiece(target, r, c);
                     }
                 }
                 
@@ -140,19 +135,14 @@ public class Referee implements TouchListener
                     // And the replacement is valid for this piece
                     if (_validReplacements[r][c])
                     {
-                        if (target == null)
-                        {
-                            // Move the piece from the player's hand to this row/col
-                            movePieceTo(r, c);
-                        }
+                        // Move the piece from the player's hand to this row/col
+                        HandObject hand = _currentTeam == Team.RED ? _redHand : _blueHand;
+                        hand.getHand().removePiece(_selectedPiece.getType());
+                        movePieceTo(r, c);
                     }
                     else
                     {
-                        if (target.getTeam() == _currentTeam)
-                        {
-                            _selectedPiece = target;
-                            _shouldReplace = true;
-                        }
+                        selectBoardPiece(target, r, c);
                     }
                 }
             }
@@ -169,10 +159,13 @@ public class Referee implements TouchListener
             int r = (int)(e.getY() - _redHand.getY()) / Board.CELL_HEIGHT;
             Piece.Type type = Piece.Type.values()[r];
             
-            Piece piece = _redHand.getHand().getPiecesOfType(type).peek();
-            validateReplacements(piece);
+            // Peek at the stack to select piece from hand
+            // If stack is empty, return to cancel touch operation
+            Stack<Piece> stack = _redHand.getHand().getPiecesOfType(type);
+            if (stack.empty()) { return; }
             
-            _shouldReplace = true;
+            Piece piece = stack.peek();
+            selectHandPiece(piece);
         }
         
         
@@ -185,17 +178,34 @@ public class Referee implements TouchListener
             int r = (Piece.Type.SIZE - 1) - (int)(e.getY() - _blueHand.getY()) / Board.CELL_HEIGHT;
             Piece.Type type = Piece.Type.values()[r];
             
-            Piece piece = _blueHand.getHand().getPiecesOfType(type).peek();
-            validateReplacements(piece);
+            // Peek at the stack to select piece from hand
+            // If stack is empty, return to cancel touch operation
+            Stack<Piece> stack = _blueHand.getHand().getPiecesOfType(type);
+            if (stack.empty()) { return; }
             
-            _shouldReplace = true;
+            Piece piece = stack.peek();
+            selectHandPiece(piece);
         }
         
     }
     
     
-    public void validateMoves(Piece piece, int r, int c)
+    public void selectBoardPiece(Piece piece, int r, int c)
     {
+        if (piece == null)
+        {
+            Gdx.app.debug("Warning", "board piece selected at (" + r + ", " + c + ") was null");
+            return;
+        }
+        else
+        {
+            if (piece.getTeam() != _currentTeam)
+            {
+                Gdx.app.debug("Warning", "selected board piece not on current team " + _currentTeam.toString());
+                return;
+            }
+        }
+        
         // Set selections
         _selectedPiece = piece;
         _selectedRow = r;
@@ -206,15 +216,33 @@ public class Referee implements TouchListener
 
         // Dispatch SelectionEvent
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(_validMoves, _selectedPiece, true)));
+        
+        _shouldReplace = false;
     }
     
     
-    public void validateReplacements(Piece piece)
+    public void selectHandPiece(Piece piece)
     {
+        if (piece == null)
+        {
+            Gdx.app.debug("Warning", "selected hand piece for team " + _currentTeam.toString() + " was null");
+            return;
+        }
+        else
+        {
+            if (piece.getTeam() != _currentTeam)
+            {
+                Gdx.app.debug("Warning", "selected hand piece was not on team " + _currentTeam.toString());
+                return;
+            }
+        }
+        
         _selectedPiece = piece;
         
         _validReplacements = piece.getValidReplacements(_board.getBoard().getPieces());
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(_validReplacements, _selectedPiece, true)));
+        
+        _shouldReplace = true;
     }
     
     
@@ -223,6 +251,7 @@ public class Referee implements TouchListener
         // Move the selected piece to the new cell
         _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c)));
 
+        Gdx.app.debug("Move", _selectedPiece.getType().toString() + " moved from (" + _selectedRow + ", " + _selectedCol + ") to (" + r + ", " + c + ")");
 
         // Reset the selection
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _selectedPiece, false)));
