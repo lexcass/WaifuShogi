@@ -26,6 +26,7 @@ import java.util.List;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.HandObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
+import com.insanelyinsane.waifushogi.objects.pieces.Bishop;
 import com.insanelyinsane.waifushogi.objects.pieces.Rook;
 import java.util.Stack;
 
@@ -67,6 +68,7 @@ public class PlayScreen extends Screen
         loadAsset("textures/ShogiBoard.png", Texture.class);
         loadAsset("textures/Pawn.png", Texture.class);
         loadAsset("textures/Rook.png", Texture.class);
+        loadAsset("textures/Bishop.png", Texture.class);
     }
     
     @Override
@@ -80,6 +82,7 @@ public class PlayScreen extends Screen
         Texture boardTex = assets.get("textures/ShogiBoard.png");
         Texture pawnTex = assets.get("textures/Pawn.png");
         Texture rookTex = assets.get("textures/Rook.png");
+        Texture bishTex = assets.get("textures/Bishop.png");
         
         
         ///////////////////////////////
@@ -104,6 +107,7 @@ public class PlayScreen extends Screen
         addPiece(new Pawn(Team.RED), pawnTex, 3, 3);
         addPiece(new Rook(Team.BLUE), rookTex, 4, 3);
         addPiece(new Pawn(Team.BLUE), pawnTex, 5, 7);
+        addPiece(new Bishop(Team.BLUE), bishTex, 8, 4);
         
         
         /////////////////////////////////////////
