@@ -38,15 +38,14 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
     
     final Color RED_TINT = new Color(1.0f, 0.8f, 0.8f, 1.0f);
     final Color BLUE_TINT = new Color(0.8f, 0.8f, 1.0f, 1.0f);
-    //private final Color SELECTION_TINT = new Color(0.9f, 1.0f, 0.9f, 1.0f);
-    
-    
-    private final ShapeRenderer _shapeRend = new ShapeRenderer();
     
     // Piece representing logical unit
     private Piece _piece;
     
+    // Tint
+    private Color _tint;
     
+    // Flags
     private boolean _selected;
     
     
@@ -63,6 +62,8 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
         RED_HAND_Y = red.getY();
         BLUE_HAND_X = blue.getX();
         BLUE_HAND_Y = blue.getY();
+        
+        _tint = (_piece.getTeam() == Team.RED ? RED_TINT : BLUE_TINT);
     }
     
     
@@ -79,18 +80,7 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
     @Override
     public void draw(SpriteBatch batch)
     {
-//        if (_selected)
-//        {
-//            _shapeRend.begin(ShapeType.Line);
-//            _shapeRend.setColor(Color.YELLOW);
-//            _shapeRend.rect(getX(), getY(), Board.CELL_WIDTH, Board.CELL_HEIGHT);
-//            _shapeRend.end();
-//        }
-//        else
-//        {
-            batch.setColor(getPiece().getTeam() == Team.RED ? RED_TINT : BLUE_TINT);
-        //}
-        
+        batch.setColor(_tint);
         batch.draw(getTexture(), getX(), getY());
         batch.setColor(Color.WHITE);
     }
