@@ -32,6 +32,8 @@ import java.util.Stack;
  */
 public class Referee implements TouchListener
 {
+    private enum Containers { BOARD, HAND };
+    
     // Board and Hands
     private final BoardObject _board;
     private final HandObject _redHand;
@@ -39,6 +41,7 @@ public class Referee implements TouchListener
     
     // Selection
     private Team _currentTeam;
+    private HandObject _currentHand;
     private Piece _selectedPiece;
     private int _selectedRow;
     private int _selectedCol;
@@ -85,6 +88,7 @@ public class Referee implements TouchListener
         
         // Red goes first
         _currentTeam = Team.RED;
+        _currentHand = _redHand;
         _shouldReplace = false;
     }
     
@@ -167,15 +171,7 @@ public class Referee implements TouchListener
             int r = (int)(e.getY() - _redHand.getY()) / Board.CELL_HEIGHT;
             if (r < 0 || r > Piece.Type.SIZE) return;
             
-            Piece.Type type = Piece.Type.values()[r];
-            
-            // Peek at the stack to select piece from hand
-            // If stack is empty, return to cancel touch operation
-            Stack<Piece> stack = _redHand.getHand().getPiecesOfType(type);
-            if (stack.empty()) { return; }
-            
-            Piece piece = stack.peek();
-            selectHandPiece(piece);
+            selectHandPiece(Piece.Type.values()[r]);
         }
         
         
@@ -188,15 +184,7 @@ public class Referee implements TouchListener
             int r = (Piece.Type.SIZE - 1) - (int)(e.getY() - _blueHand.getY()) / Board.CELL_HEIGHT;
             if (r < 0 || r > Piece.Type.SIZE) return;
             
-            Piece.Type type = Piece.Type.values()[r];
-            
-            // Peek at the stack to select piece from hand
-            // If stack is empty, return to cancel touch operation
-            Stack<Piece> stack = _blueHand.getHand().getPiecesOfType(type);
-            if (stack.empty()) { return; }
-            
-            Piece piece = stack.peek();
-            selectHandPiece(piece);
+            selectHandPiece(Piece.Type.values()[r]);
         }
         
     }
@@ -233,21 +221,14 @@ public class Referee implements TouchListener
     }
     
     
-    public void selectHandPiece(Piece piece)
+    public void selectHandPiece(Piece.Type type)
     {
-        if (piece == null)
-        {
-            Gdx.app.debug("Warning", "selected hand piece for team " + _currentTeam.toString() + " was null");
-            return;
-        }
-        else
-        {
-            if (piece.getTeam() != _currentTeam)
-            {
-                Gdx.app.debug("Warning", "selected hand piece was not on team " + _currentTeam.toString());
-                return;
-            }
-        }
+        // Peek at the stack to select piece from hand
+        // If stack is empty, return to cancel touch operation
+        Stack<Piece> stack = _currentHand.getHand().getPiecesOfType(type);
+        if (stack.empty()) { return; }
+
+        Piece piece = stack.peek();
         
         _selectedPiece = piece;
         
@@ -287,7 +268,17 @@ public class Referee implements TouchListener
 
 
         // Switch to other player
-        _currentTeam = (_currentTeam == Team.RED ? Team.BLUE : Team.RED);
+        if (_currentTeam == Team.RED)
+        {
+            _currentTeam = Team.BLUE;
+            _currentHand = _blueHand;
+        }
+        else
+        {
+            _currentTeam = Team.RED;
+            _currentHand = _redHand;
+        }
+        
         _shouldReplace = false;
     }
 }
