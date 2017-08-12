@@ -190,7 +190,14 @@ public class Referee implements TouchListener
     }
     
     
-    public void selectBoardPiece(Piece piece, int r, int c)
+    /**
+     * Helper method to select a piece on the board and store its valid moves in the validMoves array.
+     * Informs selection listeners that the piece was selected.
+     * @param piece
+     * @param r
+     * @param c 
+     */
+    private void selectBoardPiece(Piece piece, int r, int c)
     {
         if (piece == null)
         {
@@ -221,7 +228,12 @@ public class Referee implements TouchListener
     }
     
     
-    public void selectHandPiece(Piece.Type type)
+    /**
+     * Helper method to select a piece in the current player's hand.
+     * Stores valid replacements in the validReplacements array, and informs Selection listeners of the piece's selection.
+     * @param type 
+     */
+    private void selectHandPiece(Piece.Type type)
     {
         // Peek at the stack to select piece from hand
         // If stack is empty, return to cancel touch operation
@@ -239,7 +251,12 @@ public class Referee implements TouchListener
     }
     
     
-    public void movePieceTo(int r, int c)
+    /**
+     * Inform Move listeners of the moved piece and where on the board it moved from and to.
+     * @param r
+     * @param c 
+     */
+    private void movePieceTo(int r, int c)
     {
         // Move the selected piece to the new cell
         _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c)));
@@ -250,7 +267,12 @@ public class Referee implements TouchListener
     }
     
     
-    public void replacePieceTo(int r, int c)
+    /**
+     * Inform Replace listeners of the replaced piece and where it was placed on the board.
+     * @param r
+     * @param c 
+     */
+    private void replacePieceTo(int r, int c)
     {
         _replaceListeners.forEach(l -> l.onWaifuReplaced(new ReplaceEvent(_selectedPiece, r, c)));
         
@@ -260,7 +282,10 @@ public class Referee implements TouchListener
     }
     
     
-    public void finishTurn()
+    /**
+     * Tell Selection listeners the piece was deselected, switch teams, and set shouldReplace flag to false.
+     */
+    private void finishTurn()
     {
         // Reset the selection
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _selectedPiece, false)));
