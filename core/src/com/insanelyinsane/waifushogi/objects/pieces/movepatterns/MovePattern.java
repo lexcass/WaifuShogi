@@ -23,6 +23,7 @@ public abstract class MovePattern
     
     
     public Team getTeam() { return _team; }
+    public void setTeam(Team newTeam) { _team = newTeam; }
     
     
     public abstract boolean[][] getValidMoves(final Piece[][] cells, int r, int c);

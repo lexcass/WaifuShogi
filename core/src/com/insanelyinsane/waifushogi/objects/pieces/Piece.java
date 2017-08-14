@@ -70,7 +70,12 @@ public abstract class Piece
     // Getters and setters
     public Type getType() { return _type; }
     public Team getTeam() { return _team; }
-    public void setTeam(Team newTeam) { _team = newTeam; }
+    public void setTeam(Team newTeam) 
+    {
+        _team = newTeam;
+        _standardPattern.setTeam(_team);
+        _promotedPattern.setTeam(_team);
+    }
     
     public void setCaptured(boolean c) { _captured = c; }
     public boolean isCaptured() { return _captured; }
