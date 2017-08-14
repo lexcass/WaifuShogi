@@ -158,7 +158,10 @@ public class PlayScreen extends Screen
         // Draw highlighted cells to the screen
         _highlighter.draw(batch);
         
+        
+        //////////////////////////////////////////
         // Draw waifu textures to the screen
+        // Update animations
         for (Waifu waifu : _waifus)
         {
             Piece p = waifu.getPiece();
@@ -166,6 +169,7 @@ public class PlayScreen extends Screen
             // Only draw waifus that have pieces
             if (p != null)
             {
+                waifu.update(delta);
                 waifu.draw(batch);
             }
         }

@@ -72,4 +72,8 @@ public class Bishop extends Piece
     {
         return checkAllForReplacement(cells);
     }
+    
+    
+    @Override
+    public Piece getPromotedVersion() { return this; }
 }

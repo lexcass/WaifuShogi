@@ -93,4 +93,8 @@ public class Rook extends Piece
     {
         return checkAllForReplacement(cells);
     }
+    
+    
+    @Override
+    public Piece getPromotedVersion() { return this; }
 }

@@ -9,7 +9,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.ReplaceEvent;
@@ -21,6 +20,7 @@ import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.objects.pieces.Team;
+import com.insanelyinsane.waifushogi.systems.Animator;
 
 /**
  *
@@ -41,6 +41,14 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
     
     // Piece representing logical unit
     private Piece _piece;
+    private boolean _promoted;
+    private final Piece _standardPiece;
+    private final Piece _promotedPiece;
+    
+    // Animation
+    private Animator _animator;
+    private String _animPrefix;
+    private String _animSuffix;
     
     // Tint
     private Color _tint;
@@ -54,7 +62,10 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
     {
         super(tex, x, y);
         _piece = piece;
+        _standardPiece = piece;
+        _promotedPiece = piece.getPromotedVersion();
         _selected = false;
+        _promoted = false;
         
         BOARD_X = board.getX();
         BOARD_Y = board.getY();
@@ -64,6 +75,13 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
         BLUE_HAND_Y = blue.getY();
         
         _tint = (_piece.getTeam() == Team.RED ? RED_TINT : BLUE_TINT);
+        _animPrefix = (_piece.getTeam() == Team.RED ? "up" : "down");
+        _animSuffix = "";
+        
+        
+        _animator = new Animator(tex, 36, 36);
+        _animator.loadFromFile(piece.getType().toString().toLowerCase());
+        setAnimation("Idle");
     }
     
     
@@ -73,25 +91,31 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
      */
     public void update(float delta)
     {
-        // NOTHING SPECIAL YET!!
+        _animator.update(delta);
     }
     
     
     @Override
     public void draw(SpriteBatch batch)
     {
-        batch.setColor(_tint);
-        batch.draw(getTexture(), getX(), getY());
-        batch.setColor(Color.WHITE);
+        //batch.setColor(_tint);
+        batch.draw(_animator.getFrame(), getX(), getY());
+        //batch.setColor(Color.WHITE);
     }
     
     
     @Override
     public void onWaifuSelected(SelectionEvent e)
     {
-        if (e.getPiece().equals(getPiece()))
+        if (e.getPiece().equals(getPiece()) && !_selected)
         {
             _selected = e.isSelected();
+            setAnimation("Selected");
+        }
+        else
+        {
+            _selected = false;
+            setAnimation("Idle");
         }
     }
     
@@ -103,6 +127,11 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
         {
             setX(BOARD_X + e.toCol() * Board.CELL_WIDTH);
             setY(BOARD_Y + e.toRow() * Board.CELL_HEIGHT);
+            
+            if (e.inPromotionZone())
+            {
+                promote();
+            }
         }
     }
     
@@ -122,6 +151,10 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
             setY(y);
             p.setCaptured(true);
             p.setTeam(p.getTeam() == Team.RED ? Team.BLUE : Team.RED);
+            _animPrefix = (p.getTeam() == Team.RED ? "up" : "down");
+            
+            // Demote piece
+            demote();
         }
     }
     
@@ -136,9 +169,34 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
         {
             setX(BOARD_X + e.toCol() * Board.CELL_WIDTH);
             setY(BOARD_Y + e.toRow() * Board.CELL_HEIGHT);
+            
+            setAnimation("Idle");
         }
     }
     
     
     public Piece getPiece() { return _piece; }
+    
+    
+    public void promote() 
+    {
+        _piece = _promotedPiece;
+        _animSuffix = "Promoted";
+    }
+    
+    
+    public void demote()
+    {
+        _piece = _standardPiece;
+        _animSuffix = "";
+    }
+    
+    /**
+     * Convenience method to set animation based on state.
+     * @param anim 
+     */
+    private void setAnimation(String anim)
+    {
+        _animator.setAnimation(_animPrefix + anim + _animSuffix);
+    }
 }

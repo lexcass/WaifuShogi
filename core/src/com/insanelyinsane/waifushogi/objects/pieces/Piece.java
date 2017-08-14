@@ -53,6 +53,7 @@ public abstract class Piece
     public void setTeam(Team newTeam) { _team = newTeam; }
     
     public void setCaptured(boolean c) { _captured = c; }
+    
     public boolean isCaptured() { return _captured; }
     
     
@@ -60,11 +61,13 @@ public abstract class Piece
     // Overrideable methods
     protected abstract boolean[][] findValidMoves(final Piece[][] cells, int row, int col);
     protected abstract boolean[][] findValidReplacements(final Piece[][] cells);
+    public abstract Piece getPromotedVersion();
     
     
     /**
      * Returns a 2d array of cells corresponding to rows and cols on board
      * that the piece can move to when in play.
+     * If promoted, returns promoted version of piece's valid moves.
      * @param cells
      * @param row
      * @param col

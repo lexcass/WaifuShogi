@@ -5,7 +5,6 @@
  */
 package com.insanelyinsane.waifushogi.objects.pieces;
 
-import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.objects.Board;
 
 /**
@@ -24,7 +23,10 @@ public class Pawn extends Piece
     {
         boolean[][] valid = new boolean[Board.ROWS][Board.COLS];
         
-        addIfValidMove(cells, valid, row + 1, col);
+        if (getTeam() == Team.RED)
+            addIfValidMove(cells, valid, row + 1, col);
+        else
+            addIfValidMove(cells, valid, row - 1, col);
         
         return valid;
     }
@@ -35,4 +37,8 @@ public class Pawn extends Piece
     {
         return checkAllForReplacement(cells);
     }
+    
+    
+    @Override
+    public Piece getPromotedVersion() { return new Rook(getTeam()); }
 }

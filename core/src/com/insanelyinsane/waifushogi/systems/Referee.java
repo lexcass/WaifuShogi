@@ -259,7 +259,9 @@ public class Referee implements TouchListener
     private void movePieceTo(int r, int c)
     {
         // Move the selected piece to the new cell
-        _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c)));
+        
+        // FIX LATER (shouldn't always be true)
+        _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c, true)));
 
         Gdx.app.debug("Move", _selectedPiece.getType().toString() + " moved from (" + _selectedRow + ", " + _selectedCol + ") to (" + r + ", " + c + ")");
         
