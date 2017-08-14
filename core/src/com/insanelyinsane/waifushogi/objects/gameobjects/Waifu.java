@@ -41,9 +41,6 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
     
     // Piece representing logical unit
     private Piece _piece;
-    private boolean _promoted;
-    private final Piece _standardPiece;
-    private final Piece _promotedPiece;
     
     // Animation
     private Animator _animator;
@@ -62,10 +59,7 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
     {
         super(tex, x, y);
         _piece = piece;
-        _standardPiece = piece;
-        _promotedPiece = piece.getPromotedVersion();
         _selected = false;
-        _promoted = false;
         
         BOARD_X = board.getX();
         BOARD_Y = board.getY();
@@ -180,15 +174,15 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
     
     public void promote() 
     {
-        _piece = _promotedPiece;
         _animSuffix = "Promoted";
+        _piece.promote();
     }
     
     
     public void demote()
     {
-        _piece = _standardPiece;
         _animSuffix = "";
+        _piece.demote();
     }
     
     /**

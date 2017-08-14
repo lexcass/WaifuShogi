@@ -5,7 +5,8 @@
  */
 package com.insanelyinsane.waifushogi.objects.pieces;
 
-import com.insanelyinsane.waifushogi.objects.Board;
+import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.PawnPattern;
+import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.RookPattern;
 
 /**
  *
@@ -15,20 +16,7 @@ public class Pawn extends Piece
 {
     public Pawn(Team team)
     {
-        super(Type.PAWN, team);
-    }
-    
-    @Override
-    protected boolean[][] findValidMoves(final Piece[][] cells, int row, int col)
-    {
-        boolean[][] valid = new boolean[Board.ROWS][Board.COLS];
-        
-        if (getTeam() == Team.RED)
-            addIfValidMove(cells, valid, row + 1, col);
-        else
-            addIfValidMove(cells, valid, row - 1, col);
-        
-        return valid;
+        super(Type.PAWN, team, new PawnPattern(team), new RookPattern(team));
     }
     
     
@@ -37,8 +25,4 @@ public class Pawn extends Piece
     {
         return checkAllForReplacement(cells);
     }
-    
-    
-    @Override
-    public Piece getPromotedVersion() { return new Rook(getTeam()); }
 }

@@ -5,7 +5,9 @@
  */
 package com.insanelyinsane.waifushogi.objects.pieces;
 
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.insanelyinsane.waifushogi.objects.Board;
+import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.MovePattern;
 
 /**
  *
@@ -16,6 +18,10 @@ public abstract class Piece
     private Team _team;
     private final Type _type;
     private boolean _captured;
+    private boolean _promoted;
+    
+    private final MovePattern _standardPattern;
+    private final MovePattern _promotedPattern;
     
     
     /**
@@ -38,11 +44,25 @@ public abstract class Piece
         
     }
     
-    public Piece(Type type, Team team)
+    public Piece(Type type, Team team, MovePattern standard, MovePattern promoted)
     {
         _type = type;
         _team = team;
         _captured = false;
+        _standardPattern = standard;
+        
+        if (standard == null)
+        {
+            throw new GdxRuntimeException("Standard move pattern for piece " + type.toString() + " cannot be null.");
+        }
+        if (promoted == null)
+        {
+            _promotedPattern = standard;
+        }
+        else
+        {
+            _promotedPattern = promoted;
+        }
     }
     
     
@@ -53,15 +73,17 @@ public abstract class Piece
     public void setTeam(Team newTeam) { _team = newTeam; }
     
     public void setCaptured(boolean c) { _captured = c; }
-    
     public boolean isCaptured() { return _captured; }
+    public boolean isPromoted() { return _promoted; }
+    
+    public void promote() { _promoted = true; }
+    public void demote() { _promoted = false; }
     
     
     /////////////////////////////////
     // Overrideable methods
-    protected abstract boolean[][] findValidMoves(final Piece[][] cells, int row, int col);
+//    protected abstract boolean[][] findValidMoves(final Piece[][] cells, int row, int col);
     protected abstract boolean[][] findValidReplacements(final Piece[][] cells);
-    public abstract Piece getPromotedVersion();
     
     
     /**
@@ -77,7 +99,7 @@ public abstract class Piece
     {
         if (row >= 0 && col >= 0 && row < Board.ROWS && col < Board.COLS)
         {
-            return findValidMoves(cells, row, col);
+            return (_promoted ? _promotedPattern.getValidMoves(cells, row, col) : _standardPattern.getValidMoves(cells, row, col));
         }
         else
         {
@@ -98,34 +120,7 @@ public abstract class Piece
     }
     
     
-    /**
-     * A helper method for checking validity of a move. Returns true if the cell is empty
-     * or contains a piece from the other team.
-     * @param board
-     * @param valid
-     * @param r
-     * @param c
-     */
-    public final boolean addIfValidMove(final Piece[][] board, boolean[][] valid, int r, int c)
-    {
-        if (inBounds(r, c))
-        {
-            Piece toCheck = board[r][c];
-
-            if (toCheck != null)
-            {
-                valid[r][c] = (toCheck.getTeam() != _team);
-            }
-            else
-            {
-                valid[r][c] = true;
-            }
-            
-            return valid[r][c];
-        }
-        
-        return false;
-    }
+    
     
     
     /**
@@ -175,5 +170,5 @@ public abstract class Piece
      * @param c
      * @return 
      */
-    public final boolean inBounds(int r, int c) { return r >= 0 && c >=0 && r < Board.ROWS && c < Board.COLS; }
+    public final static boolean inBounds(int r, int c) { return r >= 0 && c >=0 && r < Board.ROWS && c < Board.COLS; }
 }
