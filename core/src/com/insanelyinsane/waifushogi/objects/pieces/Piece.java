@@ -8,7 +8,6 @@ package com.insanelyinsane.waifushogi.objects.pieces;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.MovePattern;
-import java.util.Arrays;
 
 /**
  *
@@ -16,9 +15,6 @@ import java.util.Arrays;
  */
 public abstract class Piece 
 {
-    // Array to compare to valid moves array to check for valid replacement (at least one true)
-    private final boolean[][] ALL_FALSE = new boolean[Board.ROWS][Board.COLS];
-    
     private Team _team;
     private final Type _type;
     private boolean _captured;

@@ -26,6 +26,24 @@ public class Pawn extends Piece
     {
         boolean[][] valid = new boolean[Board.ROWS][Board.COLS];
         
+        // Columns that contain an unpromoted pawn from the same team.
+        // Pawns can't be dropped on these columns.
+        boolean[] forbiddenCols = new boolean[Board.COLS];
+        for (int c = 0; c < cells[0].length; c++)
+        {
+            for (int r = 0; r < cells.length; r++)
+            {
+                if (cells[r][c] != null)
+                {
+                    if (cells[r][c].getType() == Piece.Type.PAWN && cells[r][c].getTeam() == getTeam())
+                    {
+                        forbiddenCols[c] = !cells[r][c].isPromoted();
+                        break;
+                    }
+                }
+            }
+        }
+        
         // Iterate over each cell on the board (ignore 9th row since pawn can never be dropped there)
         int start = (getTeam() == Team.RED ? 0 : 1);
         int end   = (getTeam() == Team.RED ? 8 : 9);
@@ -36,6 +54,8 @@ public class Pawn extends Piece
             {
                 // If there is no piece in the current cell
                 addIfValidReplacement(cells, valid, r, c);
+                // And no pawn on the player's team is in the column
+                if (forbiddenCols[c]) valid[r][c] = false;
             }
         }
         
