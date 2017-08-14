@@ -102,12 +102,15 @@ public class PlayScreen extends Screen
         _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.RED));
         
         // Create pieces and place into cells
-        addPiece(new Pawn(Team.RED), pawnTex, 2, 3);
-        addPiece(new Rook(Team.RED), rookTex, 4, 7);
-        addPiece(new Pawn(Team.RED), pawnTex, 3, 3);
-        addPiece(new Rook(Team.BLUE), rookTex, 4, 3);
-        addPiece(new Pawn(Team.BLUE), pawnTex, 5, 7);
-        addPiece(new Bishop(Team.BLUE), bishTex, 8, 4);
+        //addPiece(new Pawn(Team.), pawnTex, );
+        //addPiece(new Rook(Team.), rookTex, );
+        //addPiece(new Bishop(Team.), bishTex, );
+        addPiece(new Pawn(Team.RED), pawnTex, 0, 1);
+        addPiece(new Pawn(Team.RED), pawnTex, 1, 0);
+        addPiece(new Rook(Team.BLUE), rookTex, 5, 5);
+        addPiece(new Pawn(Team.RED), pawnTex, 4, 5);
+        addPiece(new Pawn(Team.BLUE), pawnTex, 7, 7);
+        addPiece(new Pawn(Team.BLUE), pawnTex, 6, 6);
         
         
         /////////////////////////////////////////

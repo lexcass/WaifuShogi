@@ -8,6 +8,7 @@ package com.insanelyinsane.waifushogi.objects.pieces;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.MovePattern;
+import java.util.Arrays;
 
 /**
  *
@@ -15,6 +16,9 @@ import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.MovePattern;
  */
 public abstract class Piece 
 {
+    // Array to compare to valid moves array to check for valid replacement (at least one true)
+    private final boolean[][] ALL_FALSE = new boolean[Board.ROWS][Board.COLS];
+    
     private Team _team;
     private final Type _type;
     private boolean _captured;
@@ -125,9 +129,6 @@ public abstract class Piece
     }
     
     
-    
-    
-    
     /**
      * A helper method for checking validity of a replacement. Returns true if the cell is empty..
      * @param board
@@ -138,7 +139,7 @@ public abstract class Piece
     public final boolean addIfValidReplacement(final Piece[][] board, boolean[][] valid, int r, int c)
     {
         if (inBounds(r, c))
-        {
+        { 
             valid[r][c] = (board[r][c] == null);
             return valid[r][c];
         }
