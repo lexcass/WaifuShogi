@@ -49,6 +49,21 @@ public class Board implements MoveListener, ReplaceListener
         }
     }
     
+    
+    /**
+     * Clears the board of all of its pieces
+     */
+    public void clear()
+    {
+        for (Piece[] arr : _pieces)
+        {
+            for (Piece p : arr)
+            {
+                p = null;
+            }
+        }
+    }
+    
     public Piece[][] getPieces() { return _pieces; }
     
     public Piece getPieceAt(int r, int c)

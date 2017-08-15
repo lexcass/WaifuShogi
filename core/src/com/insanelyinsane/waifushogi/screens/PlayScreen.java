@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
@@ -139,7 +140,7 @@ public class PlayScreen extends Screen
     /**
      * Add a piece with texture to cell at row, col on board.
      * Also adds piece as a new game object for the PlayScreen and adds to touch listeners
-     * to receive touch events.
+ to receive touch events.
      * @param piece
      * @param tex
      * @param row
@@ -151,6 +152,13 @@ public class PlayScreen extends Screen
         
         Waifu obj = new Waifu(tex, _board.getX() + col * Board.CELL_WIDTH, _board.getY() + row * Board.CELL_HEIGHT, piece, _board, _redHand, _blueHand);
         _waifus.add(obj);
+    }
+    
+    
+    public void reset()
+    {
+        _board.getBoard().clear();
+        _waifus.clear();
     }
     
     
