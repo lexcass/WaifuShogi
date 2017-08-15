@@ -7,17 +7,17 @@ package com.insanelyinsane.waifushogi.objects.pieces;
 
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.GoldGeneralPattern;
-import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.LancePattern;
+import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.KnightPattern;
 
 /**
  *
  * @author A Wild Popo Appeared
  */
-public class Lance extends Piece
+public class Knight extends Piece
 {
-    public Lance(Team team)
+    public Knight(Team team)
     {
-        super(Piece.Type.LANCE, team, new LancePattern(team), new GoldGeneralPattern(team));
+        super(Type.KNIGHT, team, new KnightPattern(team), new GoldGeneralPattern(team));
     }
     
     
@@ -25,10 +25,10 @@ public class Lance extends Piece
     protected boolean[][] findValidReplacements(final Piece[][] cells)
     {
         boolean[][] valid = new boolean[Board.ROWS][Board.COLS];
-
-        // Iterate over each cell on the board (ignore 9th row since lance can never be dropped there)
-        int start = (getTeam() == Team.RED ? 0 : 1);
-        int end   = (getTeam() == Team.RED ? 8 : 9);
+        
+        // Iterate over each cell on the board (ignore 8th and 9th rows since knight can never be dropped there)
+        int start = (getTeam() == Team.RED ? 0 : 2);
+        int end   = (getTeam() == Team.RED ? 7 : 9);
         
         for (int r = start; r < end; r++)
         {

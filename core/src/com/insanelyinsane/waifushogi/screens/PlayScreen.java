@@ -26,6 +26,7 @@ import java.util.List;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.HandObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
+import com.insanelyinsane.waifushogi.objects.pieces.Knight;
 import com.insanelyinsane.waifushogi.objects.pieces.Lance;
 import com.insanelyinsane.waifushogi.objects.pieces.Rook;
 import java.util.Stack;
@@ -70,6 +71,10 @@ public class PlayScreen extends Screen
         loadAsset("textures/Rook.png", Texture.class);
         loadAsset("textures/Bishop.png", Texture.class);
         loadAsset("textures/Lance.png", Texture.class);
+        loadAsset("textures/Knight.png", Texture.class);
+        loadAsset("textures/SilverGeneral.png", Texture.class);
+        loadAsset("textures/GoldGeneral.png", Texture.class);
+        loadAsset("textures/JadeGeneral.png", Texture.class);
     }
     
     @Override
@@ -85,6 +90,11 @@ public class PlayScreen extends Screen
         Texture rookTex = assets.get("textures/Rook.png");
         Texture bishTex = assets.get("textures/Bishop.png");
         Texture lanceTex = assets.get("textures/Lance.png");
+        Texture knightTex = assets.get("textures/Knight.png");
+        Texture silverTex = assets.get("textures/SilverGeneral.png");
+        Texture goldTex = assets.get("textures/GoldGeneral.png");
+        Texture jadeTex = assets.get("textures/JadeGeneral.png");
+        
         
         
         ///////////////////////////////
@@ -114,6 +124,7 @@ public class PlayScreen extends Screen
         addPiece(new Pawn(Team.BLUE), pawnTex, 7, 7);
         addPiece(new Pawn(Team.BLUE), pawnTex, 6, 6);
         addPiece(new Lance(Team.RED), lanceTex, 3, 4);
+        addPiece(new Knight(Team.RED), knightTex, 3, 6);
         
         
         /////////////////////////////////////////
