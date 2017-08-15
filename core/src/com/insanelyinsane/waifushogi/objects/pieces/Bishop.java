@@ -6,6 +6,7 @@
 package com.insanelyinsane.waifushogi.objects.pieces;
 
 import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.BishopPattern;
+import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.DragonHorsePattern;
 
 /**
  *
@@ -15,7 +16,7 @@ public class Bishop extends Piece
 {
     public Bishop(Team team)
     {
-        super(Type.BISHOP, team, new BishopPattern(team), null);
+        super(Type.BISHOP, team, new BishopPattern(team), new DragonHorsePattern(team));
     }
     
     

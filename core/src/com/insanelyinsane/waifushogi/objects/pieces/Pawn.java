@@ -6,8 +6,8 @@
 package com.insanelyinsane.waifushogi.objects.pieces;
 
 import com.insanelyinsane.waifushogi.objects.Board;
+import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.GoldGeneralPattern;
 import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.PawnPattern;
-import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.RookPattern;
 
 /**
  *
@@ -17,7 +17,7 @@ public class Pawn extends Piece
 {
     public Pawn(Team team)
     {
-        super(Type.PAWN, team, new PawnPattern(team), new RookPattern(team));
+        super(Type.PAWN, team, new PawnPattern(team), new GoldGeneralPattern(team));
     }
     
     

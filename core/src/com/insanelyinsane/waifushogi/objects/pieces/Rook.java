@@ -5,6 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.objects.pieces;
 
+import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.DragonKnightPattern;
 import com.insanelyinsane.waifushogi.objects.pieces.movepatterns.RookPattern;
 
 /**
@@ -15,7 +16,7 @@ public class Rook extends Piece
 {
     public Rook(Team team)
     {
-        super(Type.ROOK, team, new RookPattern(team), null);
+        super(Type.ROOK, team, new RookPattern(team), new DragonKnightPattern(team));
     }
     
     @Override
