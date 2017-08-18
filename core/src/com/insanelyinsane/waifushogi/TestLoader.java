@@ -64,13 +64,13 @@ public class TestLoader
         {
             loadSilverTest();
         }
-        else if (test.equalsIgnoreCase("gold"))
-        {
-            loadGoldTest();
-        }
         else if (test.equalsIgnoreCase("lance"))
         {
             loadLanceTest();
+        }
+        else if (test.equalsIgnoreCase("gold"))
+        {
+            loadGoldTest();
         }
         else if (test.equalsIgnoreCase("jade"))
         {
@@ -91,36 +91,85 @@ public class TestLoader
     
     private void loadLanceTest()
     {
-        addLance(Team.BLUE, 3, 3);
+        addLance(Team.RED, 0, 0);
+        addLance(Team.BLUE, 8, 8);
+        addLance(Team.RED, 1, 3);
+        addLance(Team.RED, 2, 5);
+        addPawn(Team.BLUE, 3, 5);
+        addLance(Team.RED, 6, 4).promote();
+        addLance(Team.BLUE, 7, 4).promote();
     }
     
     private void loadRookTest()
     {
+        addRook(Team.RED, 0, 0);
+        addRook(Team.RED, 1, 0);
+        addRook(Team.RED, 0, 1);
         
+        addRook(Team.RED, 0, 8).promote();
+        addRook(Team.RED, 1, 8);
+        addRook(Team.RED, 0, 7);
+        
+        addRook(Team.BLUE, 5, 8);
+        addRook(Team.BLUE, 5, 0).promote();
     }
     
     private void loadBishopTest()
     {
+        addBishop(Team.RED, 0, 0);
+        addBishop(Team.RED, 1, 1);
         
+        addBishop(Team.RED, 0, 8).promote();
+        addBishop(Team.RED, 1, 7);
+        
+        addBishop(Team.BLUE, 4, 4).promote();
+        addBishop(Team.BLUE, 3, 5);
     }
     
     private void loadKnightTest()
     {
+        addKnight(Team.RED, 0, 0);
+        addKnight(Team.RED, 2, 1);
         
+        addKnight(Team.RED, 5, 5);
+        addKnight(Team.BLUE, 7, 4);
+        addPawn(Team.BLUE, 6, 5);
+        addPawn(Team.RED, 7, 5);
+        
+        addKnight(Team.BLUE, 8, 7);
+        addRook(Team.BLUE, 8, 8);
     }
     
     private void loadSilverTest()
     {
+        addSilver(Team.RED, 1, 1);
+        addPawn(Team.RED, 0, 0);
+        addPawn(Team.RED, 0, 2);
+        addPawn(Team.RED, 2, 0);
+        addPawn(Team.RED, 2, 1);
+        addPawn(Team.RED, 2, 2);
         
+        addSilver(Team.BLUE, 5, 5).promote();
+        addSilver(Team.BLUE, 7, 8);
+        addSilver(Team.BLUE, 8, 1);
     }
     
     private void loadGoldTest()
     {
-        
+        addGold(Team.RED, 2, 2);
+        addGold(Team.BLUE, 3, 3);
+        addGold(Team.BLUE, 8, 8).promote();
     }
     
     private void loadJadeTest()
     {
+        addJade(Team.RED, 0, 0);
+        addPawn(Team.RED, 1, 0);
+        addPawn(Team.RED, 0, 1);
+        addPawn(Team.RED, 1, 1);
         
+        addJade(Team.RED, 5, 5);
+        addJade(Team.BLUE, 7, 8);
+        addJade(Team.BLUE, 6, 3).promote();
     }
 }
