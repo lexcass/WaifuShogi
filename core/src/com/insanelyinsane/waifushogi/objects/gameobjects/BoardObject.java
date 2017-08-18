@@ -5,10 +5,13 @@
  */
 package com.insanelyinsane.waifushogi.objects.gameobjects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 
 /**
@@ -29,6 +32,17 @@ public final class BoardObject extends Actor
         _sprite.setX(x);
         _sprite.setY(y);
         _board = board;
+        
+        // Handle touch
+        addListener(new InputListener()
+        {
+            @Override
+            public boolean touchDown(InputEvent e, float screenX, float screenY, int pointer, int button)
+            {
+                Gdx.app.debug("Board", "touched");
+                return true;
+            }
+        });
     }
     
     

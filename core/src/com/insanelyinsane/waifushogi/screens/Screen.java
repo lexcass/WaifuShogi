@@ -25,7 +25,6 @@ public abstract class Screen
     private final AssetManager _assets;
     private final Stage _stage;
     
-    private Actor _background;
     private Texture _backgroundTex;
     
     public Screen(WaifuShogi game, SpriteBatch batch)

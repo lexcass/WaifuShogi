@@ -72,8 +72,11 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
             // Report non-existing screen to debug log
             if (_nextScreen == null) Gdx.app.debug("Error", "WaifuShogi::_nextScreen was null in method onScreenChanged.");
             
-            // Fail hard if _nextScreen is null (uncaught NullPointerException). 
-            // This is unacceptable behavior for the end user. 
+            
+            // Clean up previou active screen
+            if (_activeScreen != null) _activeScreen.getAssets().dispose();
+            _stage.clear();
+            
             _activeScreen = new LoadScreen(this, _batch, _nextScreen.getAssets());
             _activeScreen.create();
             
@@ -104,6 +107,7 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
                     if (screen.loadingCompleted())
                     {
                         _activeScreen.getAssets().dispose();
+                        _stage.clear();
                         _activeScreen = _nextScreen;
                         _activeScreen.create();
                     }

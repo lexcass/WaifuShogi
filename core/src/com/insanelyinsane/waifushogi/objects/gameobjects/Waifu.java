@@ -69,7 +69,6 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         setX(x);
         setY(y);
         setSize(tex.getWidth(), tex.getHeight());
-        setTouchable(Touchable.disabled);
         
         _sprite = new Sprite(tex);
         _sprite.setX(getX());
@@ -112,9 +111,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     @Override
     public void draw(Batch batch, float alpha)
     {
-        //batch.setColor(_tint);
         batch.draw(_animator.getFrame(), getX(), getY());
-        //batch.setColor(Color.WHITE);
     }
     
     
