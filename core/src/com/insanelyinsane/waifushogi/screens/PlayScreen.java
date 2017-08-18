@@ -118,11 +118,11 @@ public class PlayScreen extends Screen
         // Initialize player hands
         
         //Gdx.graphics.getHeight() - 
-        _blueHand = new HandObject(0, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.BLUE));
+        _blueHand = new HandObject(0, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.BLUE), _font);
         addActor(_blueHand);
         
         // The red hand builds from bottom to top (x, y is bottom-left), so negative width and height will give proper bounds for touch coords.
-        _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.RED));
+        _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.RED), _font);
         addActor(_redHand);
         
         
@@ -185,7 +185,6 @@ public class PlayScreen extends Screen
     {
         //////////////////////////////////////
         // Update objects here
-        //_waifus.forEach(w -> w.act(delta));
     }
     
     
@@ -195,28 +194,6 @@ public class PlayScreen extends Screen
         //////////////////////////////////////////
         // Draw highlighted cells to the screen
         _highlighter.draw(batch);
-        
-        /////////////////////////////////////////////////
-        // Draw quantity at corner of captured pieces
-        final int xOffset = 4;
-        
-        for (Stack<Piece> s  : _blueHand.getHand().getPieces().values())
-        {
-            if (!s.empty())
-            {
-                Piece p = s.peek();
-                _font.draw(batch, s.size() + "", _blueHand.getX() + xOffset, Gdx.graphics.getHeight() - _blueHand.getY() - p.getType().getIndex() * Board.CELL_HEIGHT);
-            }
-        }
-        
-        for (Stack<Piece> s  : _redHand.getHand().getPieces().values())
-        {
-            if (!s.empty())
-            {
-                Piece p = s.peek();
-                _font.draw(batch, s.size() + "", _redHand.getX() + xOffset, _redHand.getY() + (p.getType().getIndex() + 1) * Board.CELL_HEIGHT );
-            }
-        }
     }
     
     

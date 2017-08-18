@@ -74,8 +74,8 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
             
             
             // Clean up previou active screen
-            if (_activeScreen != null) _activeScreen.getAssets().dispose();
             _stage.clear();
+            if (_activeScreen != null) _activeScreen.getAssets().dispose();
             
             _activeScreen = new LoadScreen(this, _batch, _nextScreen.getAssets());
             _activeScreen.create();
@@ -94,10 +94,8 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
                 
-                //_batch.begin();
                 // Update active screen
                 _activeScreen.render(Gdx.graphics.getDeltaTime());
-                //_batch.end();
                 
                 // If it's a load screen, load the next screen's assets then
                 // switch to it and call its create method.
@@ -106,8 +104,8 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
                     LoadScreen screen = (LoadScreen)_activeScreen;
                     if (screen.loadingCompleted())
                     {
-                        _activeScreen.getAssets().dispose();
                         _stage.clear();
+                        _activeScreen.getAssets().dispose();
                         _activeScreen = _nextScreen;
                         _activeScreen.create();
                     }

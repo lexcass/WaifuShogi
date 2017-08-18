@@ -25,6 +25,7 @@ public abstract class Screen
     private final AssetManager _assets;
     private final Stage _stage;
     
+    private Actor _background;
     private Texture _backgroundTex;
     
     public Screen(WaifuShogi game, SpriteBatch batch)
@@ -38,14 +39,16 @@ public abstract class Screen
         
         
         // Add the background texture first so that it will be drawn first
-        _stage.addActor(new Actor() 
+        _background = new Actor() 
         {
             @Override
             public void draw(Batch batch, float a)
             {
-                if (_backgroundTex != null) batch.draw(_backgroundTex, 0, 0);
+                if (_backgroundTex != null) batch.draw(_backgroundTex, 0, 100);
             }
-        });
+        };
+        _background.toBack();
+        _stage.addActor(_background);
     }
     
     /**
@@ -70,6 +73,7 @@ public abstract class Screen
     public final void setBackground(Texture tex)
     {
         _backgroundTex = tex;
+        _background.setSize(_backgroundTex.getWidth(), _backgroundTex.getHeight());
     }
     
     public final void addActor(Actor a)

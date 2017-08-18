@@ -80,6 +80,8 @@ public class Hand implements CaptureListener, ReplaceListener
     
     public Map<Piece.Type, Stack<Piece>> getPieces() { return _pieceMap; }
     
+    public Team getTeam() { return _team; }
+    
     
     
     @Override
