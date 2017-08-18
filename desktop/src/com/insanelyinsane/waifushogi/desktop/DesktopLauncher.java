@@ -14,9 +14,17 @@ public class DesktopLauncher {
                 config.height = 720;
                 config.title = "Waifu Shogi";
                 
-                System.out.println("Load which test (pawn, knight, silver, etc.)? ");
-                Scanner input = new Scanner(System.in);
-                WaifuShogi game = new WaifuShogi(input.nextLine());
+                WaifuShogi game;
+                if (WaifuShogi.DEBUG)
+                {
+                    System.out.println("Load which test (pawn, knight, silver, etc.)? ");
+                    Scanner input = new Scanner(System.in);
+                    game = new WaifuShogi(input.nextLine());
+                }
+                else
+                {
+                    game = new WaifuShogi("");
+                }
                 
 		new LwjglApplication(game, config);
 	}

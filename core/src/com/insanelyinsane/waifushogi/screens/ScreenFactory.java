@@ -22,8 +22,6 @@ public class ScreenFactory
                 return new MainMenuScreen(l, batch);
             case PLAY:
                 return new PlayScreen(l, batch);
-            case TEST:
-                return new TestScreen(l, batch);
         }
         
         return null;

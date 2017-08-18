@@ -15,7 +15,7 @@ import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.objects.pieces.Rook;
 import com.insanelyinsane.waifushogi.objects.pieces.SilverGeneral;
 import com.insanelyinsane.waifushogi.objects.pieces.Team;
-import com.insanelyinsane.waifushogi.screens.TestScreen;
+import com.insanelyinsane.waifushogi.screens.PlayScreen;
 
 /**
  *
@@ -23,9 +23,9 @@ import com.insanelyinsane.waifushogi.screens.TestScreen;
  */
 public class TestLoader 
 {
-    private final TestScreen _screen;
+    private final PlayScreen _screen;
     
-    public TestLoader(TestScreen screen)
+    public TestLoader(PlayScreen screen)
     {
         _screen = screen;
     }
@@ -41,43 +41,85 @@ public class TestLoader
     private Piece addGold(Team team, int r, int c) { Piece p = new GoldGeneral(team); _screen.addPiece(p, _screen.getAssets().get("textures/GoldGeneral.png"), r, c); return p; }
     private Piece addJade(Team team, int r, int c) { Piece p = new JadeGeneral(team); _screen.addPiece(p, _screen.getAssets().get("textures/JadeGeneral.png"), r, c); return p; }
     
-    public void loadPawnTest()
+    
+    public void loadTest(String test)
     {
-        addPawn(Team.RED, 1, 1);
-        addPawn(Team.BLUE, 2, 2);
+        if (test.equalsIgnoreCase("pawn"))
+        {
+            loadPawnTest();
+        }
+        else if (test.equalsIgnoreCase("rook"))
+        {
+            loadRookTest();
+        }
+        else if (test.equalsIgnoreCase("bishop"))
+        {
+            loadBishopTest();
+        }
+        else if (test.equalsIgnoreCase("knight"))
+        {
+            loadKnightTest();
+        }
+        else if (test.equalsIgnoreCase("silver"))
+        {
+            loadSilverTest();
+        }
+        else if (test.equalsIgnoreCase("gold"))
+        {
+            loadGoldTest();
+        }
+        else if (test.equalsIgnoreCase("lance"))
+        {
+            loadLanceTest();
+        }
+        else if (test.equalsIgnoreCase("jade"))
+        {
+            loadJadeTest();
+        }
     }
     
-    public void loadLanceTest()
+    
+    private void loadPawnTest()
+    {
+        addPawn(Team.RED, 1, 1);
+        addPawn(Team.RED, 2, 2);
+        addPawn(Team.BLUE, 2, 1);
+        addPawn(Team.BLUE, 1, 2);
+        addPawn(Team.RED, 5, 5).promote();
+        addPawn(Team.BLUE, 6, 6).promote();
+    }
+    
+    private void loadLanceTest()
     {
         addLance(Team.BLUE, 3, 3);
     }
     
-    public void loadRookTest()
+    private void loadRookTest()
     {
         
     }
     
-    public void loadBishopTest()
+    private void loadBishopTest()
     {
         
     }
     
-    public void loadKnightTest()
+    private void loadKnightTest()
     {
         
     }
     
-    public void loadSilverTest()
+    private void loadSilverTest()
     {
         
     }
     
-    public void loadGoldTest()
+    private void loadGoldTest()
     {
         
     }
     
-    public void loadJadeTest()
+    private void loadJadeTest()
     {
         
     }

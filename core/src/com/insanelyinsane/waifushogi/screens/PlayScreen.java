@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.TestLoader;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
@@ -58,6 +59,10 @@ public class PlayScreen extends Screen
     List<TouchListener> _touchListeners;
     
     
+    // Debugging
+    TestLoader _testLoader;
+    
+    
     public PlayScreen(ScreenChangeListener game, SpriteBatch batch)
     {
         super(game, batch);
@@ -76,6 +81,9 @@ public class PlayScreen extends Screen
         loadAsset("textures/SilverGeneral.png", Texture.class);
         loadAsset("textures/GoldGeneral.png", Texture.class);
         loadAsset("textures/JadeGeneral.png", Texture.class);
+        
+        
+        _testLoader = new TestLoader(this);
     }
     
     @Override
@@ -115,18 +123,25 @@ public class PlayScreen extends Screen
         _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.RED));
         
         // Create pieces and place into cells
-        //addPiece(new Pawn(Team.), pawnTex, );
-        //addPiece(new Rook(Team.), rookTex, );
-        //addPiece(new Bishop(Team.), bishTex, );
-        addPiece(new Pawn(Team.RED), pawnTex, 0, 1);
-        addPiece(new Pawn(Team.RED), pawnTex, 1, 0);
-        addPiece(new Rook(Team.BLUE), rookTex, 5, 5);
-        addPiece(new Pawn(Team.RED), pawnTex, 4, 5);
-        addPiece(new Pawn(Team.BLUE), pawnTex, 7, 7);
-        addPiece(new Pawn(Team.BLUE), pawnTex, 6, 6);
-        addPiece(new Lance(Team.RED), lanceTex, 3, 4);
-        addPiece(new Knight(Team.RED), knightTex, 3, 6);
         
+        if (WaifuShogi.DEBUG)
+        {
+            _testLoader.loadTest(WaifuShogi.testToLoad);
+        }
+        else
+        {
+            //addPiece(new Pawn(Team.), pawnTex, );
+            //addPiece(new Rook(Team.), rookTex, );
+            //addPiece(new Bishop(Team.), bishTex, );
+            addPiece(new Pawn(Team.RED), pawnTex, 0, 1);
+            addPiece(new Pawn(Team.RED), pawnTex, 1, 0);
+            addPiece(new Rook(Team.BLUE), rookTex, 5, 5);
+            addPiece(new Pawn(Team.RED), pawnTex, 4, 5);
+            addPiece(new Pawn(Team.BLUE), pawnTex, 7, 7);
+            addPiece(new Pawn(Team.BLUE), pawnTex, 6, 6);
+            addPiece(new Lance(Team.RED), lanceTex, 3, 4);
+            addPiece(new Knight(Team.RED), knightTex, 3, 6);
+        }
         
         /////////////////////////////////////////
         // Initialize systems
@@ -159,6 +174,7 @@ public class PlayScreen extends Screen
     {
         _board.getBoard().clear();
         _waifus.clear();
+        System.out.println("Waifus: " + _waifus.size());
     }
     
     

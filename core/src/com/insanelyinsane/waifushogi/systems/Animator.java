@@ -46,12 +46,8 @@ public class Animator
             for (int c = 0; c < regions[r].length; c++)
             {
                 _frames[index++] = regions[r][c];
-                
-                Gdx.app.debug("Current Index", Integer.toString(index));
             }
         }
-        
-        Gdx.app.debug("Frame", String.valueOf(FRAME_RATE));
     }
     
     public void loadFromFile(String fileName)
@@ -59,8 +55,6 @@ public class Animator
         // Read content of .anim file
         FileHandle file = Gdx.files.internal("animations/" + fileName + ".anim");
         String content = file.readString();
-        
-        Gdx.app.debug("Content", content);
         
         // Split into lines since one line is data for one animation
         String[] lines = content.split("\\r?\\n");
@@ -74,7 +68,6 @@ public class Animator
         
         for (String s : lines)
         {
-            Gdx.app.debug("Line", s);
             String[] data = s.split(" ");
             
             // Elements in data except for the 0th element (the string name)

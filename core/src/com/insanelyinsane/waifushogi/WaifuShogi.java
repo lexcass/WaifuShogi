@@ -16,7 +16,7 @@ import com.insanelyinsane.waifushogi.screens.ScreenType;
 
 public class WaifuShogi extends ApplicationAdapter implements InputProcessor, ScreenChangeListener 
 {
-        public static boolean debugMode = true;
+        public static final boolean DEBUG = true;
         public static String testToLoad = "";
     
 	SpriteBatch _batch;
@@ -42,7 +42,7 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
             
             // Screen initialization ( the lazy way -_- )
-            onScreenChanged(new ScreenChangeEvent(ScreenType.TEST));
+            onScreenChanged(new ScreenChangeEvent(ScreenType.PLAY));
 	}
         
         /**
