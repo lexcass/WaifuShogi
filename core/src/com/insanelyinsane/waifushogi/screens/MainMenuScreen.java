@@ -6,8 +6,9 @@
 package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
+import com.insanelyinsane.waifushogi.WaifuShogi;
 
 /**
  *
@@ -15,7 +16,7 @@ import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
  */
 public class MainMenuScreen extends Screen
 {
-    public MainMenuScreen(ScreenChangeListener l, SpriteBatch b)
+    public MainMenuScreen(WaifuShogi l, SpriteBatch b)
     {
         super(l, b);
     }
@@ -26,10 +27,14 @@ public class MainMenuScreen extends Screen
         
     }
     
-    public void render(float delta)
+    @Override
+    public void update(float delta)
     {
         Gdx.app.debug("From main menu", "I work!");
     }
+    
+    @Override
+    public void draw(Batch batch) { };
     
     public boolean  touchDown(int screenX, int screenY, int pointer, int button)
     {

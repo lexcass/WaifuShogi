@@ -6,7 +6,7 @@
 package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
+import com.insanelyinsane.waifushogi.WaifuShogi;
 
 /**
  *
@@ -14,7 +14,7 @@ import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
  */
 public class ScreenFactory 
 {
-    public static Screen createScreen(ScreenType type, ScreenChangeListener l, SpriteBatch batch)
+    public static Screen createScreen(ScreenType type, WaifuShogi l, SpriteBatch batch)
     {
         switch (type)
         {

@@ -6,16 +6,14 @@
 package com.insanelyinsane.waifushogi.systems;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
-import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 
 /**
  *
@@ -67,11 +65,8 @@ public class Highlighter implements SelectionListener
     }
     
     
-    public void draw(SpriteBatch batch)
+    public void draw(Batch batch)
     {
-        // End the current batch for ShapeRenderer
-        batch.end();
-        
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         
@@ -98,8 +93,5 @@ public class Highlighter implements SelectionListener
         
         _renderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
-        
-        // Begin batch again after Shape rendering
-        batch.begin();
     }
 }

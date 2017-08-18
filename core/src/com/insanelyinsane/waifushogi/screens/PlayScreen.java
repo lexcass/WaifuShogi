@@ -9,12 +9,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.TestLoader;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.events.TouchEvent;
-import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Hand;
@@ -63,7 +63,7 @@ public class PlayScreen extends Screen
     TestLoader _testLoader;
     
     
-    public PlayScreen(ScreenChangeListener game, SpriteBatch batch)
+    public PlayScreen(WaifuShogi game, SpriteBatch batch)
     {
         super(game, batch);
         
@@ -104,13 +104,14 @@ public class PlayScreen extends Screen
         Texture goldTex = assets.get("textures/GoldGeneral.png");
         Texture jadeTex = assets.get("textures/JadeGeneral.png");
         
-        
+        setBackground(_woodTex);
         
         ///////////////////////////////
         // Initialize board
         int boardX = Gdx.graphics.getWidth() / 2 - boardTex.getWidth() / 2;
         int boardY = Gdx.graphics.getHeight() / 2 - boardTex.getHeight() / 2;
         _board = new BoardObject(boardTex, boardX, boardY, new Board());
+        addActor(_board);
         
         
         //////////////////////////////////
@@ -118,9 +119,12 @@ public class PlayScreen extends Screen
         
         //Gdx.graphics.getHeight() - 
         _blueHand = new HandObject(0, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.BLUE));
+        addActor(_blueHand);
         
         // The red hand builds from bottom to top (x, y is bottom-left), so negative width and height will give proper bounds for touch coords.
         _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.RED));
+        addActor(_redHand);
+        
         
         // Create pieces and place into cells
         
@@ -130,9 +134,6 @@ public class PlayScreen extends Screen
         }
         else
         {
-            //addPiece(new Pawn(Team.), pawnTex, );
-            //addPiece(new Rook(Team.), rookTex, );
-            //addPiece(new Bishop(Team.), bishTex, );
             addPiece(new Pawn(Team.RED), pawnTex, 0, 1);
             addPiece(new Pawn(Team.RED), pawnTex, 1, 0);
             addPiece(new Rook(Team.BLUE), rookTex, 5, 5);
@@ -167,6 +168,7 @@ public class PlayScreen extends Screen
         
         Waifu obj = new Waifu(tex, _board.getX() + col * Board.CELL_WIDTH, _board.getY() + row * Board.CELL_HEIGHT, piece, _board, _redHand, _blueHand);
         _waifus.add(obj);
+        addActor(obj);
     }
     
     
@@ -179,42 +181,20 @@ public class PlayScreen extends Screen
     
     
     @Override
-    public void render(float delta)
+    public void update(float delta)
     {
-        SpriteBatch batch = getSpriteBatch();
-        
         //////////////////////////////////////
         // Update objects here
-        _waifus.forEach(w -> w.act(delta));
-
-        
-        ////////////////////////////////////////
-        // Draw textures and text to the screen
-        batch.begin();
-        batch.draw(_woodTex, 0, 0);
-        _board.draw(batch, 1.0f);
-        
-        
+        //_waifus.forEach(w -> w.act(delta));
+    }
+    
+    
+    @Override
+    public void draw(Batch batch)
+    {
         //////////////////////////////////////////
         // Draw highlighted cells to the screen
         _highlighter.draw(batch);
-        
-        
-        //////////////////////////////////////////
-        // Draw waifu textures to the screen
-        // Update animations
-        for (Waifu waifu : _waifus)
-        {
-            Piece p = waifu.getPiece();
-            
-            // Only draw waifus that have pieces
-            if (p != null)
-            {
-                waifu.act(delta);
-                waifu.draw(batch, 1.0f);
-            }
-        }
-        batch.setColor(Color.WHITE);
         
         /////////////////////////////////////////////////
         // Draw quantity at corner of captured pieces
@@ -237,9 +217,6 @@ public class PlayScreen extends Screen
                 _font.draw(batch, s.size() + "", _redHand.getX() + xOffset, _redHand.getY() + (p.getType().getIndex() + 1) * Board.CELL_HEIGHT );
             }
         }
-        
-        
-        batch.end();
     }
     
     

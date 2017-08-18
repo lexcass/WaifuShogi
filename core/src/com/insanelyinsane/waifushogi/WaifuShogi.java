@@ -6,9 +6,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.insanelyinsane.waifushogi.events.ScreenChangeEvent;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
-import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.screens.LoadScreen;
 import com.insanelyinsane.waifushogi.screens.Screen;
 import com.insanelyinsane.waifushogi.screens.ScreenFactory;
@@ -23,6 +24,8 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
         Screen _activeScreen;
         Screen _nextScreen;
         
+        Stage _stage;
+        
         
         public WaifuShogi(String test)
         {
@@ -36,7 +39,8 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
         {
             // Application setup
             _batch = new SpriteBatch();
-            Gdx.input.setInputProcessor(this);
+            _stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+            Gdx.input.setInputProcessor(_stage);
             
             // Allow debug logging
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
@@ -49,6 +53,8 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
          * Returns the active screen.
          */
         public final Screen getScreen() { return _activeScreen; }
+        
+        public final Stage getStage() { return _stage; }
         
         
         /**
@@ -85,8 +91,10 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
                 
+                //_batch.begin();
                 // Update active screen
                 _activeScreen.render(Gdx.graphics.getDeltaTime());
+                //_batch.end();
                 
                 // If it's a load screen, load the next screen's assets then
                 // switch to it and call its create method.
@@ -95,6 +103,7 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
                     LoadScreen screen = (LoadScreen)_activeScreen;
                     if (screen.loadingCompleted())
                     {
+                        _activeScreen.getAssets().dispose();
                         _activeScreen = _nextScreen;
                         _activeScreen.create();
                     }
@@ -111,6 +120,7 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
 		_batch.dispose();
                 _activeScreen.getAssets().dispose();
                 _nextScreen.getAssets().dispose();
+                _stage.dispose();
 	}
         
         
