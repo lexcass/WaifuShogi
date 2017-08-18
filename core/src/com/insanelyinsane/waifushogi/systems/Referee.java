@@ -96,10 +96,11 @@ public class Referee implements TouchListener
     @Override
     public void onTouch(TouchEvent e)
     {
+        
         //////////////////////////////////////////
         // If the board is touched
         //////////////////////////////////////////
-        if (_board.containsPoint(e.getX(), e.getY()))
+        if (_board.getSprite().getBoundingRectangle().contains(e.getX(), e.getY()))
         {
             // The target is the piece in the row/col touched
             int r = (int)(e.getY() - _board.getY()) / Board.CELL_HEIGHT;

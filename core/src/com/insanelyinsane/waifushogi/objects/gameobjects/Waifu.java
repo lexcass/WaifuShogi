@@ -8,7 +8,10 @@ package com.insanelyinsane.waifushogi.objects.gameobjects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.ReplaceEvent;
@@ -26,7 +29,7 @@ import com.insanelyinsane.waifushogi.systems.Animator;
  *
  * @author alex
  */
-public class Waifu extends GameObject implements MoveListener, CaptureListener, SelectionListener, ReplaceListener
+public class Waifu extends Actor implements MoveListener, CaptureListener, SelectionListener, ReplaceListener
 {   
     // Constants
     private final float BOARD_X;
@@ -38,6 +41,9 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
     
     final Color RED_TINT = new Color(1.0f, 0.8f, 0.8f, 1.0f);
     final Color BLUE_TINT = new Color(0.8f, 0.8f, 1.0f, 1.0f);
+    
+    // Sprite representing visuals
+    private Sprite _sprite;
     
     // Piece representing logical unit
     private Piece _piece;
@@ -54,10 +60,20 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
     private boolean _selected;
     
     
+    public Sprite getSprite() { return _sprite; }
     
     public Waifu(Texture tex, float x, float y, Piece piece, BoardObject board, HandObject red, HandObject blue)
     {
-        super(tex, x, y);
+        super();
+        
+        setX(x);
+        setY(y);
+        setSize(tex.getWidth(), tex.getHeight());
+        setTouchable(Touchable.disabled);
+        
+        _sprite = new Sprite(tex);
+        _sprite.setX(getX());
+        _sprite.setY(getY());
         _piece = piece;
         _selected = false;
         
@@ -83,14 +99,18 @@ public class Waifu extends GameObject implements MoveListener, CaptureListener, 
      * Runs in the game loop. Update the properties and systems of this waifu.
      * @param delta 
      */
-    public void update(float delta)
+    @Override
+    public void act(float delta)
     {
         _animator.update(delta);
+        
+        _sprite.setX(getX());
+        _sprite.setY(getY());
     }
     
     
     @Override
-    public void draw(SpriteBatch batch)
+    public void draw(Batch batch, float alpha)
     {
         //batch.setColor(_tint);
         batch.draw(_animator.getFrame(), getX(), getY());

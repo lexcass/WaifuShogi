@@ -185,14 +185,14 @@ public class PlayScreen extends Screen
         
         //////////////////////////////////////
         // Update objects here
-        _waifus.forEach(w -> w.update(delta));
+        _waifus.forEach(w -> w.act(delta));
 
         
         ////////////////////////////////////////
         // Draw textures and text to the screen
         batch.begin();
         batch.draw(_woodTex, 0, 0);
-        _board.draw(batch);
+        _board.draw(batch, 1.0f);
         
         
         //////////////////////////////////////////
@@ -210,8 +210,8 @@ public class PlayScreen extends Screen
             // Only draw waifus that have pieces
             if (p != null)
             {
-                waifu.update(delta);
-                waifu.draw(batch);
+                waifu.act(delta);
+                waifu.draw(batch, 1.0f);
             }
         }
         batch.setColor(Color.WHITE);
