@@ -26,9 +26,10 @@ public final class BoardObject extends Actor
     public BoardObject(Texture tex, float x, float y, Board board)
     {
         _sprite = new Sprite(tex);
-        setX(x);
-        setY(y);
-        setSize(tex.getWidth(), tex.getHeight());
+//        setX(x);
+//        setY(y);
+//        setSize(tex.getWidth(), tex.getHeight());
+        setBounds(x, y, tex.getWidth(), tex.getHeight());
         _sprite.setX(x);
         _sprite.setY(y);
         _board = board;

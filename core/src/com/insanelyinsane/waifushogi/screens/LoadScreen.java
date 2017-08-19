@@ -72,26 +72,4 @@ public class LoadScreen extends Screen
     
     @Override
     public void draw(Batch batch) {}
-    
-    
-    @Override
-    public boolean  touchDown(int screenX, int screenY, int pointer, int button)
-    {
-        return true;
-    }
-    
-    @Override
-    public void resume() {}
-    
-    @Override
-    public void pause() {}
-    
-    @Override
-    public void resize(int x, int y) {}
-    
-    @Override
-    public void show() {}
-    
-    @Override
-    public void hide() {}
 }

@@ -15,7 +15,7 @@ import com.insanelyinsane.waifushogi.screens.Screen;
 import com.insanelyinsane.waifushogi.screens.ScreenFactory;
 import com.insanelyinsane.waifushogi.screens.ScreenType;
 
-public class WaifuShogi extends ApplicationAdapter implements InputProcessor, ScreenChangeListener 
+public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListener 
 {
         public static final boolean DEBUG = true;
         public static String testToLoad = "";
@@ -124,36 +124,5 @@ public class WaifuShogi extends ApplicationAdapter implements InputProcessor, Sc
                 _nextScreen.getAssets().dispose();
                 _stage.dispose();
 	}
-        
-        
-        /**
-         * When the screen is touched or clicked, call the touchDown method of
-         * the active screen with the given data.
-         * @param screenX
-         * @param screenY
-         * @param pointer
-         * @param button
-         * @return 
-         */
-        public boolean  touchDown(int screenX, int screenY, int pointer, int button) 
-        { 
-            _activeScreen.touchDown(screenX, screenY, pointer, button);
-            
-            return true; 
-        }
-        
-        
-        // Possibly necessary callbacks that are ignored for now...
-        public boolean	touchDragged(int screenX, int screenY, int pointer) { return true; }
-        public boolean	touchUp(int screenX, int screenY, int pointer, int button) { return true; }
-        
-        
-        
-        // Unnecessary callbacks that will be ignored...
-        public boolean	keyDown(int keycode) { return true; }
-        public boolean	keyTyped(char character) { return true; }
-        public boolean	keyUp(int keycode) { return true; }
-        public boolean	mouseMoved(int screenX, int screenY) { return true; }
-        public boolean	scrolled(int amount) { return true; }
 
 }

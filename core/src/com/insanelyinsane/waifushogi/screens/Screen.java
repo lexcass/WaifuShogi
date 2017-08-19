@@ -98,16 +98,4 @@ public abstract class Screen
     
     public abstract void update(float delta);
     public abstract void draw(Batch batch);
-    
-    public abstract boolean  touchDown(int screenX, int screenY, int pointer, int button);
-    
-    public abstract void resume();
-    
-    public abstract void pause();
-    
-    public abstract void resize(int x, int y);
-    
-    public abstract void show();
-    
-    public abstract void hide();
 }
