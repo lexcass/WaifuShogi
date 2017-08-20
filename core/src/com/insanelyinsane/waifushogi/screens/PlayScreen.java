@@ -7,14 +7,13 @@ package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.RequestHandler;
 import com.insanelyinsane.waifushogi.TestLoader;
 import com.insanelyinsane.waifushogi.WaifuShogi;
-import com.insanelyinsane.waifushogi.events.TouchEvent;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Hand;
@@ -31,7 +30,6 @@ import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 import com.insanelyinsane.waifushogi.objects.pieces.Knight;
 import com.insanelyinsane.waifushogi.objects.pieces.Lance;
 import com.insanelyinsane.waifushogi.objects.pieces.Rook;
-import java.util.Stack;
 
 /**
  *
@@ -53,8 +51,8 @@ public class PlayScreen extends Screen
     List<Waifu> _waifus;
     
     // Systems
-    Referee _referee;
     Highlighter _highlighter;
+    RequestHandler _requestHandler;
     
     List<TouchListener> _touchListeners;
     
@@ -106,28 +104,38 @@ public class PlayScreen extends Screen
         
         setBackground(_woodTex);
         
-        ///////////////////////////////
-        // Initialize board
+        
+        // Initialize logic objects (Hand, Board, Highlighter, RequestHandler, etc.)
+        Hand blue = new Hand(Team.BLUE);
+        Hand red = new Hand(Team.RED);
+        Board board = new Board();
         int boardX = Gdx.graphics.getWidth() / 2 - boardTex.getWidth() / 2;
         int boardY = Gdx.graphics.getHeight() / 2 - boardTex.getHeight() / 2;
-        _board = new BoardObject(boardTex, boardX, boardY, new Board());
+        
+        _highlighter = new Highlighter(boardX, boardY);
+        _requestHandler = new RequestHandler(new Referee(board, red, blue), _highlighter, _waifus);
+        
+        
+        ///////////////////////////////
+        // Initialize board object
+        _board = new BoardObject(boardTex, boardX, boardY, board, _requestHandler);
         addActor(_board);
         
         
         //////////////////////////////////
-        // Initialize player hands
+        // Initialize player hand objects
         
-        //Gdx.graphics.getHeight() - 
-        _blueHand = new HandObject(0, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.BLUE), _font);
+        _blueHand = new HandObject(0, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, blue, _font, _requestHandler);
         addActor(_blueHand);
         
         // The red hand builds from bottom to top (x, y is bottom-left), so negative width and height will give proper bounds for touch coords.
-        _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.RED), _font);
+        
+        _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, red, _font, _requestHandler);
         addActor(_redHand);
         
         
-        // Create pieces and place into cells
         
+        // Create pieces and place into cells
         if (WaifuShogi.DEBUG)
         {
             _testLoader.loadTest(WaifuShogi.testToLoad);
@@ -143,13 +151,6 @@ public class PlayScreen extends Screen
             addPiece(new Lance(Team.RED), lanceTex, 3, 4);
             addPiece(new Knight(Team.RED), knightTex, 3, 6);
         }
-        
-        /////////////////////////////////////////
-        // Initialize systems
-        _highlighter = new Highlighter(_board);
-        _referee = new Referee(_board, _highlighter, _waifus, _redHand, _blueHand);
-        
-        _touchListeners.add(_referee);
     }
     
     
@@ -168,6 +169,7 @@ public class PlayScreen extends Screen
         
         Waifu obj = new Waifu(tex, _board.getX() + col * Board.CELL_WIDTH, _board.getY() + row * Board.CELL_HEIGHT, piece, _board, _redHand, _blueHand);
         _waifus.add(obj);
+        _requestHandler.registerWaifu(obj);
         addActor(obj);
     }
     

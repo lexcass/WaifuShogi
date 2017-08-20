@@ -9,6 +9,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.insanelyinsane.waifushogi.RequestHandler;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Hand;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
@@ -24,15 +27,51 @@ public final class HandObject extends Actor
     private Hand _hand;
     private BitmapFont _font;
     
-    public HandObject(float x, float y, int w, int h, Hand hand, BitmapFont font)
+    private RequestHandler _handler;
+    
+    public HandObject(float x, float y, int w, int h, Hand hand, BitmapFont font, RequestHandler handler)
     {
         super();
-        setX(x);
-        setY(y);
-        setSize(w, h);
+        setBounds(x, y, w, h);
         _hand = hand;
         _font = font;
+        
+        // Proxy between touch input and event dispatching
+        _handler = handler;
+        
+        // Touch event
+        addListener(new InputListener()
+        {
+            @Override
+            public boolean touchDown(InputEvent e, float screenX, float screenY, int pointer, int button)
+            {
+                int r;
+                
+                if (_hand.getTeam() == Team.RED)
+                {
+                    r = (int)(screenY / Board.CELL_HEIGHT);
+                }
+                else
+                {
+                    r = (Piece.Type.SIZE - 1) - (int)(screenY / Board.CELL_HEIGHT);
+                }
+                
+                if (r >= Piece.Type.SIZE) return false;
+                
+                
+                Stack<Piece> st = _hand.getPiecesOfType(Piece.Type.values()[r]);
+                if (st.empty()) { return false; }
+                
+                Piece target = st.peek();
+                _handler.requestSelection(RequestHandler.Sender.HAND, target, -1, -1);
+                
+                return true;
+            }
+        });
     }
+    
+    
+    
     
     
     @Override

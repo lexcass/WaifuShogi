@@ -6,6 +6,7 @@
 package com.insanelyinsane.waifushogi.objects;
 
 import com.badlogic.gdx.Gdx;
+import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.ReplaceEvent;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
@@ -68,7 +69,7 @@ public class Board implements MoveListener, ReplaceListener
     
     public Piece getPieceAt(int r, int c)
     {
-        if (r >= ROWS || c >= COLS) Gdx.app.debug("Error", "No cell at (" + r + ", " + c + "), out of bounds.");
+        if (!inBounds(r, c)) Gdx.app.debug("Error", "No cell at (" + r + ", " + c + "), out of bounds.");
         
         return _pieces[r][c];
     }
@@ -92,9 +93,6 @@ public class Board implements MoveListener, ReplaceListener
     @Override
     public void onWaifuMoved(MoveEvent e)
     {   
-//        e.from().setPiece(null);
-//        e.to().setPiece(e.getPiece());
-        
         _pieces[e.fromRow()][e.fromCol()] = null;
         _pieces[e.toRow()][e.toCol()] = e.getPiece();
     }

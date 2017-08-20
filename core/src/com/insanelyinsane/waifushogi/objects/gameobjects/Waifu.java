@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.ReplaceEvent;
@@ -70,6 +71,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         setX(x);
         setY(y);
         setSize(tex.getWidth(), tex.getHeight());
+        setTouchable(Touchable.disabled);
         
         _sprite = new Sprite(tex);
         _sprite.setX(getX());
@@ -92,18 +94,6 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         _animator = new Animator(tex, 36, 36);
         _animator.loadFromFile(piece.getType().toString().toLowerCase());
         setAnimation("Idle");
-        
-        
-        // Handle touch
-        addListener(new InputListener()
-        {
-            @Override
-            public boolean touchDown(InputEvent e, float screenX, float screenY, int pointer, int button)
-            {
-                Gdx.app.debug("Waifu", "touched");
-                return true;
-            }
-        });
     }
     
     

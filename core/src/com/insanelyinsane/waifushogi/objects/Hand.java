@@ -91,6 +91,7 @@ public class Hand implements CaptureListener, ReplaceListener
         
         if (piece.getTeam() != _team)
         {
+            System.out.println("Piece captured");
             _pieceMap.get(piece.getType()).push(piece);
         }
     }

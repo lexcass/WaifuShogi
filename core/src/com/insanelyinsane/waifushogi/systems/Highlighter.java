@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
 
 /**
  *
@@ -22,15 +21,18 @@ import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
 public class Highlighter implements SelectionListener
 {
     private final ShapeRenderer _renderer;
-    private final BoardObject _board;
+    
+    private final float _boardX;
+    private final float _boardY;
     private boolean[][] _validMoves;
     
     
-    public Highlighter(BoardObject board)
+    public Highlighter(float boardX, float boardY)
     {
         _renderer = new ShapeRenderer();
         
-        _board = board;
+        _boardX = boardX;
+        _boardY = boardY;
         _validMoves = new boolean[Board.ROWS][Board.COLS];
     }
     
@@ -82,8 +84,8 @@ public class Highlighter implements SelectionListener
                 {
                     if (_validMoves[r][c])
                     {
-                        _renderer.rect(_board.getX() + c * Board.CELL_WIDTH,
-                                      _board.getY() + r * Board.CELL_HEIGHT,
+                        _renderer.rect(_boardX + c * Board.CELL_WIDTH,
+                                      _boardY + r * Board.CELL_HEIGHT,
                                       Board.CELL_WIDTH,
                                       Board.CELL_HEIGHT);
                     }
