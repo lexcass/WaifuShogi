@@ -12,13 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.insanelyinsane.waifushogi.RequestHandler;
-import com.insanelyinsane.waifushogi.events.MoveEvent;
-import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 
 /**
- * A GameObject that contains a board. Acts as a visual representation of the board.
+ * A GameObject that contains a Board. This is the visual representation of the Board
+ * that can receive input and sends requests based on this input.
  * @author alex
  */
 public final class BoardObject extends Actor
@@ -29,6 +28,15 @@ public final class BoardObject extends Actor
     private RequestHandler _handler;
     
     
+    /**
+     * Sets the bounds of the object for touch input, initializes its sprite, and adds an InputListener
+     * that communicates with other components via the RequestHandler.
+     * @param tex
+     * @param x
+     * @param y
+     * @param board
+     * @param handler 
+     */
     public BoardObject(Texture tex, float x, float y, Board board, RequestHandler handler)
     {
         setBounds(x, y, tex.getWidth(), tex.getHeight());

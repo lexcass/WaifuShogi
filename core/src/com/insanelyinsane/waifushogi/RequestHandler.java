@@ -14,7 +14,6 @@ import com.insanelyinsane.waifushogi.listeners.MoveListener;
 import com.insanelyinsane.waifushogi.listeners.ReplaceListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.objects.Hand;
 import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.systems.Referee;
@@ -22,11 +21,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ * The RequestHandler acts as a proxy between the Board and Hand objects and the
+ * Referee object (the rule enforcer). The Board and Hands will make requests to the 
+ * RequestHandler (selection, move, etc.), and if the Referee determines the request
+ * is valid, a generated event is dispatched to the respective listeners.
  * @author A Wild Popo Appeared
  */
 public class RequestHandler
 {
+    /**
+     * Represents the type of sender. This is so the RequestHandler can differentiate between
+     * a Board and a Hand object.
+     */
     public enum Sender { BOARD, HAND };
     
     private final Referee _referee;
@@ -37,6 +43,17 @@ public class RequestHandler
     private final List<CaptureListener> _captureListeners;
     
     
+    /**
+     * Stores a reference to the Referee and registered Waifus, and uses the Referee's
+     * references to the Board and Hands to register them (and the highlighter) as listeners.
+     * 
+     * ///////////////////////////////////////////////////////////////////////
+     * Important: Waifus that want to receive events must manually register to the RequestHandler
+     * via RequestHandler::registerWaifu().
+     * @param ref
+     * @param highlighter
+     * @param waifus 
+     */
     public RequestHandler(Referee ref, SelectionListener highlighter, List<Waifu> waifus)
     {
         _selectionListeners = new LinkedList<>();
@@ -50,25 +67,30 @@ public class RequestHandler
         // Register listeners
         // Selection
         _selectionListeners.add(highlighter);
-        //_waifus.forEach(w -> _selectionListeners.add(w));
         
         // Move
         _moveListeners.add(_referee.getBoard());
-        //_waifus.forEach(w -> _moveListeners.add(w));
         
         // Replace
         _replaceListeners.add(_referee.getBoard());
         _replaceListeners.add(_referee.getRedHand());
         _replaceListeners.add(_referee.getBlueHand());
-        //_waifus.forEach(w -> _replaceListeners.add(w));
         
         // Capture
         _captureListeners.add(_referee.getRedHand());
         _captureListeners.add(_referee.getBlueHand());
-        //_waifus.forEach(w -> _captureListeners.add(w));
     }
     
     
+    /**
+     * Request the selection of a piece that's on the Board or a Hand.
+     * Parameters "r" and "c" are required for a request from the Board,
+     * but requests from the Hand can put any "r" or "c" with no effect.
+     * @param from
+     * @param target
+     * @param r
+     * @param c 
+     */
     public void requestSelection(Sender from, Piece target, int r, int c)
     {
         SelectionEvent e;
@@ -85,6 +107,19 @@ public class RequestHandler
     }
     
     
+    /**
+     * Request to move the currently selected Piece (tracked by the Referee) to the 
+     * given row and column. If the move is in bounds and valid, a MoveEvent is generated.
+     * If the piece at (r, c) should be captured, a CaptureEvent is generated and dispatched
+     * first, and then the MoveEvent is dispatched (otherwise the piece that moved is captured).
+     * 
+     * ///////////////////////////////////////////////////////////////////////
+     * Note: Null events are disregarded, so a null event in this case means ignore the request.
+     * This means it's safe to call request move on each touch of the board since it will have
+     * no adverse effects.
+     * @param r
+     * @param c 
+     */
     public void requestMove(int r, int c)
     {
         if (!inBounds(r, c)) return;
@@ -110,6 +145,18 @@ public class RequestHandler
         _referee.finishTurn();
     }
     
+    
+    /**
+     * Request to replace a captured Piece (or drop) at the specified row and column.
+     * If (r, c) is in bounds and the replacement (drop) is valid, a ReplaceEvent is generated
+     * and the ReplaceListeners are given the event.
+     * 
+     * ///////////////////////////////////////////////////////////////////////
+     * Note: Null events are ignored, so there is no harm in making this request on every touch
+     * of the Board for example.
+     * @param r
+     * @param c 
+     */
     public void requestReplace(int r, int c)
     {
         if (!inBounds(r, c)) return;
@@ -128,6 +175,10 @@ public class RequestHandler
     }
     
     
+    /**
+     * Add a Waifu object to each of the listener lists (selection, move, replace, and capture).
+     * @param w 
+     */
     public void registerWaifu(Waifu w)
     {
         _waifus.add(w);
@@ -138,6 +189,12 @@ public class RequestHandler
     }
     
     
+    /**
+     * Helper method to check if the specified row and column are within the bounds of the Board.
+     * @param r
+     * @param c
+     * @return 
+     */
     private boolean inBounds(int r, int c)
     {
         return r < Board.ROWS || c < Board.COLS || r >= 0 || c >= 0;
