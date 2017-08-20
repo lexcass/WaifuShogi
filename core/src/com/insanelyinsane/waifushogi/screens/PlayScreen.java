@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.RequestHandler;
 import com.insanelyinsane.waifushogi.TestLoader;
 import com.insanelyinsane.waifushogi.WaifuShogi;
+import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Hand;
@@ -35,14 +36,11 @@ import com.insanelyinsane.waifushogi.objects.pieces.Rook;
  *
  * @author alex
  */
-public class PlayScreen extends Screen
+public class PlayScreen extends Screen implements QuitListener
 {
-    // Constants
-    
-    
     // Assets to load
     Texture _woodTex;
-    BitmapFont _font = new BitmapFont();    // This is TEMPORARY!!!
+    BitmapFont _font = new BitmapFont();
     
     // Objects to update
     BoardObject  _board;
@@ -157,7 +155,7 @@ public class PlayScreen extends Screen
     /**
      * Add a piece with texture to cell at row, col on board.
      * Also adds piece as a new game object for the PlayScreen and adds to touch listeners
- to receive touch events.
+     * to receive touch events.
      * @param piece
      * @param tex
      * @param row
@@ -196,5 +194,12 @@ public class PlayScreen extends Screen
         //////////////////////////////////////////
         // Draw highlighted cells to the screen
         _highlighter.draw(batch);
+    }
+    
+    
+    @Override
+    public void handleGameQuit()
+    {
+        System.out.println("Game QUIT");
     }
 }
