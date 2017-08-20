@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.events.ScreenChangeEvent;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
@@ -36,19 +37,6 @@ public abstract class Screen
         _spriteBatch = batch;
         _assets = new AssetManager();
         _stage = game.getStage();
-        
-        
-        // Add the background texture first so that it will be drawn first
-        _background = new Actor() 
-        {
-            @Override
-            public void draw(Batch batch, float a)
-            {
-                if (_backgroundTex != null) batch.draw(_backgroundTex, 0, 100);
-            }
-        };
-        _background.toBack();
-        _stage.addActor(_background);
     }
     
     /**
@@ -70,10 +58,18 @@ public abstract class Screen
         _assets.load(fileName, c);
     }
     
+    /**
+     * Set the background of the screen to the given Texture.
+     * @param tex 
+     */
     public final void setBackground(Texture tex)
     {
-        _backgroundTex = tex;
-        _background.setSize(_backgroundTex.getWidth(), _backgroundTex.getHeight());
+        // Add the background texture first so that it will be drawn first
+        _background = new Image(tex);
+        _background.toBack();
+        _stage.addActor(_background);
+        
+       // _background.setSize(_backgroundTex.getWidth(), _backgroundTex.getHeight());
     }
     
     public final void addActor(Actor a)
