@@ -31,6 +31,9 @@ import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 import com.insanelyinsane.waifushogi.objects.pieces.Knight;
 import com.insanelyinsane.waifushogi.objects.pieces.Lance;
 import com.insanelyinsane.waifushogi.objects.pieces.Rook;
+import com.insanelyinsane.waifushogi.ui.PlayUI;
+import com.insanelyinsane.waifushogi.ui.UI;
+import com.insanelyinsane.waifushogi.ui.UIController;
 
 /**
  *
@@ -59,9 +62,9 @@ public class PlayScreen extends Screen implements QuitListener
     TestLoader _testLoader;
     
     
-    public PlayScreen(WaifuShogi game, SpriteBatch batch)
+    public PlayScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
     {
-        super(game, batch);
+        super(game, batch, ui);
         
         _waifus = new LinkedList<>();
         _touchListeners = new LinkedList<>();
@@ -102,6 +105,8 @@ public class PlayScreen extends Screen implements QuitListener
         
         setBackground(_woodTex);
         
+        // Create UI
+        PlayUI ui = new PlayUI(getStage(), this);
         
         // Initialize logic objects (Hand, Board, Highlighter, RequestHandler, etc.)
         Hand blue = new Hand(Team.BLUE);
@@ -111,7 +116,7 @@ public class PlayScreen extends Screen implements QuitListener
         int boardY = Gdx.graphics.getHeight() / 2 - boardTex.getHeight() / 2;
         
         _highlighter = new Highlighter(boardX, boardY);
-        _requestHandler = new RequestHandler(new Referee(board, red, blue), _highlighter, _waifus);
+        _requestHandler = new RequestHandler(new Referee(board, red, blue), _highlighter, ui);
         
         
         ///////////////////////////////
@@ -149,6 +154,10 @@ public class PlayScreen extends Screen implements QuitListener
             addPiece(new Lance(Team.RED), lanceTex, 3, 4);
             addPiece(new Knight(Team.RED), knightTex, 3, 6);
         }
+        
+        
+        // Add the UI's actors to the stage and draw on top of Board and Pieces
+        getUIController().loadUI(ui);
     }
     
     
@@ -200,6 +209,6 @@ public class PlayScreen extends Screen implements QuitListener
     @Override
     public void handleGameQuit()
     {
-        System.out.println("Game QUIT");
+        changeScreen(ScreenType.MAIN_MENU);
     }
 }

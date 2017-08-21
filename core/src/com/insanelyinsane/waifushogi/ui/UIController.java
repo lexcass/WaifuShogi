@@ -17,31 +17,38 @@ public class UIController
 {
     private final Stage _stage;
     private UI _ui;
+    private boolean _uiShowing;
     
     
-    public UIController()
+    public UIController(Stage stage)
     {
-        _stage = new Stage();
-    }
-    
-    /**
-     * Loads a UI of the given type and sets it as the current UI.
-     * @param type 
-     */
-    public UIController(UI ui)
-    {
-        this();
-        loadUI(ui);
+        _stage = stage;
     }
     
     
     public void loadUI(UI ui)
     {
-        _stage.clear();
+        if (_ui != null) dispose();
         
         _ui = ui;
         _ui.getElements().forEach(e -> _stage.addActor(e));
     }
+    
+    
+    public void showUI(boolean s)
+    {
+        _uiShowing = s;
+        _ui.show(s);
+    }
+    
+    
+    public void dispose()
+    {
+        _ui.dispose();
+    }
+    
+    
+    public boolean isUIShowing() { return _uiShowing; }
     
     
     public Stage getStage() { return _stage; }

@@ -76,6 +76,10 @@ public class TestLoader
         {
             loadJadeTest();
         }
+        else 
+        {
+            loadPawnTest();
+        }
     }
     
     
@@ -85,8 +89,8 @@ public class TestLoader
         addPawn(Team.RED, 2, 2);
         addPawn(Team.BLUE, 2, 1);
         addPawn(Team.BLUE, 1, 2);
-        addPawn(Team.RED, 5, 5).promote();
-        addPawn(Team.BLUE, 6, 6).promote();
+        addPawn(Team.RED, 5, 1);
+        addPawn(Team.BLUE, 3, 2);
     }
     
     private void loadLanceTest()

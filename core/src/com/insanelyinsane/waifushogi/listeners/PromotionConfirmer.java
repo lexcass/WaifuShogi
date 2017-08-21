@@ -5,7 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.listeners;
 
-import com.insanelyinsane.waifushogi.events.PromotionEvent;
+import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 
 /**
  *
@@ -13,5 +13,5 @@ import com.insanelyinsane.waifushogi.events.PromotionEvent;
  */
 public interface PromotionConfirmer 
 {
-    boolean confirmPromotion(PromotionEvent e);
+    void confirmPromotion(PromotionHandler h, Piece p);
 }

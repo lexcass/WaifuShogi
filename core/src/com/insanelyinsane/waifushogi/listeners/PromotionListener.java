@@ -5,7 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.listeners;
 
-import com.insanelyinsane.waifushogi.events.PromotionEvent;
+import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 
 /**
  *
@@ -13,5 +13,5 @@ import com.insanelyinsane.waifushogi.events.PromotionEvent;
  */
 public interface PromotionListener 
 {
-    public void onWaifuPromoted(PromotionEvent e);
+    public void onWaifuPromoted(Piece p);
 }

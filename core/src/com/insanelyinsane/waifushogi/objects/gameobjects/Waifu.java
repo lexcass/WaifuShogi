@@ -11,8 +11,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
@@ -20,6 +18,7 @@ import com.insanelyinsane.waifushogi.events.ReplaceEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.CaptureListener;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
+import com.insanelyinsane.waifushogi.listeners.PromotionListener;
 import com.insanelyinsane.waifushogi.listeners.ReplaceListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
@@ -31,7 +30,7 @@ import com.insanelyinsane.waifushogi.systems.Animator;
  *
  * @author alex
  */
-public class Waifu extends Actor implements MoveListener, CaptureListener, SelectionListener, ReplaceListener
+public class Waifu extends Actor implements MoveListener, CaptureListener, SelectionListener, ReplaceListener, PromotionListener
 {   
     // Constants
     private final float BOARD_X;
@@ -141,11 +140,6 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         {
             setX(BOARD_X + e.toCol() * Board.CELL_WIDTH);
             setY(BOARD_Y + e.toRow() * Board.CELL_HEIGHT);
-            
-            if (e.inPromotionZone())
-            {
-                promote();
-            }
         }
     }
     
@@ -189,6 +183,16 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     }
     
     
+    @Override
+    public void onWaifuPromoted(Piece p)
+    {
+        if (p == getPiece())
+        {
+            promote();
+        }
+    }
+    
+    
     public Piece getPiece() { return _piece; }
     
     
@@ -196,6 +200,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     {
         _animSuffix = "Promoted";
         _piece.promote();
+        setAnimation("Idle");
     }
     
     
@@ -203,6 +208,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     {
         _animSuffix = "";
         _piece.demote();
+        setAnimation("Idle");
     }
     
     /**

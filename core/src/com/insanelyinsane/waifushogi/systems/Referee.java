@@ -10,6 +10,7 @@ import com.insanelyinsane.waifushogi.events.ReplaceEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.objects.Board;
 import com.insanelyinsane.waifushogi.objects.Hand;
+import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.objects.pieces.Team;
 
@@ -23,6 +24,10 @@ import com.insanelyinsane.waifushogi.objects.pieces.Team;
  */
 public class Referee
 {
+    private final int PROMO_COL_RED = 6;
+    private final int PROMO_COL_BLUE = 2;
+    
+    
     // Board and Hands
     private final Board _board;
     private final Hand _redHand;
@@ -192,6 +197,64 @@ public class Referee
         }
         
         return null;
+    }
+    
+    
+    public Piece promotePieceAt(int r, int c)
+    {
+        if (_currentTeam == Team.RED && r < PROMO_COL_RED)
+        {
+            return null;
+        }
+        else if (_currentTeam == Team.BLUE && r > PROMO_COL_BLUE)
+        {
+            return null;
+        }
+        
+        Piece p = _board.getPieceAt(r, c);
+        
+        
+        // Jade and Gold Generals can't be promoted, so ignore them.
+        if (p.getType() == Piece.Type.JADE || p.getType() == Piece.Type.GOLD)
+        {
+            return null;
+        }
+        
+        if (p == null) return p;
+        
+        if (!p.isPromoted())
+        {
+            return p;
+        }
+        
+        return null;
+    }
+    
+    
+    
+    public boolean isPieceStuck(Piece p, int r, int c)
+    {
+        // Pawn, Lance, and Knight are special cases.
+        // If they are in the last row (or second to last row for Knight),
+        // they have no future moves and must promoted.
+        if (p.getType() == Piece.Type.PAWN || p.getType() == Piece.Type.LANCE)
+        {
+            int lastRow = p.getTeam() == Team.RED ? Board.COLS - 1 : 0;
+            return (r == lastRow);
+        }
+        else if (p.getType() == Piece.Type.KNIGHT)
+        {
+            if (p.getTeam() == Team.RED)
+            {
+                return r >= Board.COLS - 2;
+            }
+            else
+            {
+                return r <= 1;
+            }
+        }
+        
+        return false;
     }
     
     

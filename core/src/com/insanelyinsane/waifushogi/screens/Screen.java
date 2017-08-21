@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.events.ScreenChangeEvent;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
+import com.insanelyinsane.waifushogi.ui.UIController;
 /**
  *
  * @author alex
@@ -25,11 +26,11 @@ public abstract class Screen
     private final SpriteBatch _spriteBatch;
     private final AssetManager _assets;
     private final Stage _stage;
+    private final UIController _uiController;
     
     private Actor _background;
-    private Texture _backgroundTex;
     
-    public Screen(WaifuShogi game, SpriteBatch batch)
+    public Screen(WaifuShogi game, SpriteBatch batch, UIController ui)
     {
         // Init ScreenChangeListeners and add game (WaifuShogi class) to the list
         _screenChangeListener = (ScreenChangeListener)game;
@@ -37,6 +38,7 @@ public abstract class Screen
         _spriteBatch = batch;
         _assets = new AssetManager();
         _stage = game.getStage();
+        _uiController = ui;
     }
     
     /**
@@ -86,9 +88,13 @@ public abstract class Screen
         draw(_spriteBatch);
     }
     
+    public Stage getStage() { return _stage; }
+    
     public SpriteBatch getSpriteBatch() { return _spriteBatch; }
     
     public AssetManager getAssets() { return _assets; }
+    
+    public UIController getUIController() { return _uiController; }
     
     public abstract void create();
     

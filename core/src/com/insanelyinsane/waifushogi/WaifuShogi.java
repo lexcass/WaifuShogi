@@ -3,7 +3,6 @@ package com.insanelyinsane.waifushogi;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -14,6 +13,7 @@ import com.insanelyinsane.waifushogi.screens.LoadScreen;
 import com.insanelyinsane.waifushogi.screens.Screen;
 import com.insanelyinsane.waifushogi.screens.ScreenFactory;
 import com.insanelyinsane.waifushogi.screens.ScreenType;
+import com.insanelyinsane.waifushogi.ui.UIController;
 
 public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListener 
 {
@@ -25,6 +25,7 @@ public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListen
         Screen _nextScreen;
         
         Stage _stage;
+        UIController _uiController;
         
         
         public WaifuShogi(String test)
@@ -40,6 +41,7 @@ public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListen
             // Application setup
             _batch = new SpriteBatch();
             _stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+            _uiController = new UIController(_stage);
             Gdx.input.setInputProcessor(_stage);
             
             // Allow debug logging
@@ -67,7 +69,7 @@ public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListen
         public void onScreenChanged(ScreenChangeEvent e)
         {
             // Load next screen's assets asynchronously and show loading screen in the process
-            _nextScreen = ScreenFactory.createScreen(e.getType(), this, _batch);
+            _nextScreen = ScreenFactory.createScreen(e.getType(), this, _batch, _uiController);
             
             // Report non-existing screen to debug log
             if (_nextScreen == null) Gdx.app.debug("Error", "WaifuShogi::_nextScreen was null in method onScreenChanged.");
@@ -77,7 +79,7 @@ public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListen
             _stage.clear();
             if (_activeScreen != null) _activeScreen.getAssets().dispose();
             
-            _activeScreen = new LoadScreen(this, _batch, _nextScreen.getAssets());
+            _activeScreen = new LoadScreen(this, _batch, _uiController, _nextScreen.getAssets());
             _activeScreen.create();
             
             Gdx.app.debug("Change screen", e.getType().toString());
@@ -123,6 +125,7 @@ public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListen
                 _activeScreen.getAssets().dispose();
                 _nextScreen.getAssets().dispose();
                 _stage.dispose();
+                _uiController.dispose();
 	}
 
 }

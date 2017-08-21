@@ -11,6 +11,9 @@ import com.insanelyinsane.waifushogi.events.ReplaceEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.CaptureListener;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
+import com.insanelyinsane.waifushogi.listeners.PromotionConfirmer;
+import com.insanelyinsane.waifushogi.listeners.PromotionHandler;
+import com.insanelyinsane.waifushogi.listeners.PromotionListener;
 import com.insanelyinsane.waifushogi.listeners.ReplaceListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
@@ -27,7 +30,7 @@ import java.util.List;
  * is valid, a generated event is dispatched to the respective listeners.
  * @author A Wild Popo Appeared
  */
-public class RequestHandler
+public class RequestHandler implements PromotionHandler
 {
     /**
      * Represents the type of sender. This is so the RequestHandler can differentiate between
@@ -41,6 +44,8 @@ public class RequestHandler
     private final List<MoveListener> _moveListeners;
     private final List<ReplaceListener> _replaceListeners;
     private final List<CaptureListener> _captureListeners;
+    private final List<PromotionListener> _promotionListeners;
+    private final PromotionConfirmer _promoConfirmer;
     
     
     /**
@@ -54,15 +59,18 @@ public class RequestHandler
      * @param highlighter
      * @param waifus 
      */
-    public RequestHandler(Referee ref, SelectionListener highlighter, List<Waifu> waifus)
+    public RequestHandler(Referee ref, SelectionListener highlighter, PromotionConfirmer c)
     {
+        _waifus = new LinkedList<>();
         _selectionListeners = new LinkedList<>();
         _moveListeners = new LinkedList<>();
         _replaceListeners = new LinkedList<>();
         _captureListeners = new LinkedList<>();
+        _promotionListeners = new LinkedList<>();
+        
+        _promoConfirmer = c;
         
         _referee = ref;
-        _waifus = waifus;
         
         // Register listeners
         // Selection
@@ -133,10 +141,24 @@ public class RequestHandler
         if (captured != null)
         {
             _captureListeners.forEach(l -> l.onWaifuCaptured(new CaptureEvent(captured)));
+            
+            if (captured.getType() == Piece.Type.JADE)
+            {
+                // Player wins
+            }
         }
         
         // Move the selected piece
         _moveListeners.forEach(l -> l.onWaifuMoved(e));
+        
+        
+        // Handle promotion
+        Piece toPromote = _referee.promotePieceAt(r, c);
+        if (toPromote != null)
+        {
+            requestPromotion(toPromote, _referee.isPieceStuck(toPromote, r, c));
+        }
+        
         
         // Deselect all pieces
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _waifus.get(0).getPiece(), false)));
@@ -175,6 +197,26 @@ public class RequestHandler
     }
     
     
+    private void requestPromotion(Piece p, boolean auto)
+    {
+        if (auto)
+        {
+            _promotionListeners.forEach(l -> l.onWaifuPromoted(p));
+        }
+        else
+        {
+            _promoConfirmer.confirmPromotion(this, p);
+        }
+    }
+    
+    
+    @Override
+    public void handlePromotion(Piece p)
+    {
+        _promotionListeners.forEach(l -> l.onWaifuPromoted(p));
+    }
+    
+    
     /**
      * Add a Waifu object to each of the listener lists (selection, move, replace, and capture).
      * @param w 
@@ -186,6 +228,7 @@ public class RequestHandler
         _moveListeners.add(w);
         _replaceListeners.add(w);
         _captureListeners.add(w);
+        _promotionListeners.add(w);
     }
     
     

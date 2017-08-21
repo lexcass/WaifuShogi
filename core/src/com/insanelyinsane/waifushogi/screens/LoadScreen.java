@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.insanelyinsane.waifushogi.WaifuShogi;
+import com.insanelyinsane.waifushogi.ui.UIController;
 
 /**
  *
@@ -29,9 +30,9 @@ public class LoadScreen extends Screen
     
     private float T = 0;
     
-    public LoadScreen(WaifuShogi game, SpriteBatch batch, AssetManager assets)
+    public LoadScreen(WaifuShogi game, SpriteBatch batch, UIController ui, AssetManager assets)
     {
-        super(game, batch);
+        super(game, batch, ui);
         
         _assetsToLoad = assets;
         _loadingDone = false;
