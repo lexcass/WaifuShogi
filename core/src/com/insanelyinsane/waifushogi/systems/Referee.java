@@ -287,12 +287,6 @@ public class Referee
         
         System.out.println("Turn complete");
     }
-    
-    
-    public boolean jadeInCheck()
-    {
-        
-    }
         
         
     public Board getBoard() { return _board; }
