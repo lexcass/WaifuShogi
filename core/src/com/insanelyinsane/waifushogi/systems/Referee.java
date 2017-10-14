@@ -24,6 +24,7 @@ import com.insanelyinsane.waifushogi.objects.pieces.Team;
  */
 public class Referee
 {
+    // Column that starts promotion zone for each team
     private final int PROMO_COL_RED = 6;
     private final int PROMO_COL_BLUE = 2;
     
@@ -32,6 +33,13 @@ public class Referee
     private final Board _board;
     private final Hand _redHand;
     private final Hand _blueHand;
+    
+    public Board getBoard() { return _board; }
+    
+    public Hand getRedHand() { return _redHand; }
+    
+    public Hand getBlueHand() { return _blueHand; }
+    
     
     // Selection
     private Team _currentTeam;
@@ -287,11 +295,5 @@ public class Referee
         
         System.out.println("Turn complete");
     }
-        
-        
-    public Board getBoard() { return _board; }
     
-    public Hand getRedHand() { return _redHand; }
-    
-    public Hand getBlueHand() { return _blueHand; }
 }

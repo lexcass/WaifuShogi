@@ -45,6 +45,17 @@ public class PlayScreen extends Screen implements QuitListener
     Texture _woodTex;
     BitmapFont _font = new BitmapFont();
     
+    // Textures
+    Texture _boardTex;
+    Texture _pawnTex;
+    Texture _rookTex;
+    Texture _knightTex;
+    Texture _bishTex;
+    Texture _lanceTex;
+    Texture _silverTex;
+    Texture _goldTex;
+    Texture _jadeTex;
+    
     // Objects to update
     BoardObject  _board;
     HandObject _redHand;
@@ -93,15 +104,15 @@ public class PlayScreen extends Screen implements QuitListener
         AssetManager assets = getAssets();
         
         _woodTex = assets.get("textures/woodbg.jpg");
-        Texture boardTex = assets.get("textures/ShogiBoard.png");
-        Texture pawnTex = assets.get("textures/Pawn.png");
-        Texture rookTex = assets.get("textures/Rook.png");
-        Texture bishTex = assets.get("textures/Bishop.png");
-        Texture lanceTex = assets.get("textures/Lance.png");
-        Texture knightTex = assets.get("textures/Knight.png");
-        Texture silverTex = assets.get("textures/SilverGeneral.png");
-        Texture goldTex = assets.get("textures/GoldGeneral.png");
-        Texture jadeTex = assets.get("textures/JadeGeneral.png");
+        _boardTex = assets.get("textures/ShogiBoard.png");
+        _pawnTex = assets.get("textures/Pawn.png");
+        _rookTex = assets.get("textures/Rook.png");
+        _bishTex = assets.get("textures/Bishop.png");
+        _lanceTex = assets.get("textures/Lance.png");
+        _knightTex = assets.get("textures/Knight.png");
+        _silverTex = assets.get("textures/SilverGeneral.png");
+        _goldTex = assets.get("textures/GoldGeneral.png");
+        _jadeTex = assets.get("textures/JadeGeneral.png");
         
         setBackground(_woodTex);
         
@@ -112,8 +123,8 @@ public class PlayScreen extends Screen implements QuitListener
         Hand blue = new Hand(Team.BLUE);
         Hand red = new Hand(Team.RED);
         Board board = new Board();
-        int boardX = Gdx.graphics.getWidth() / 2 - boardTex.getWidth() / 2;
-        int boardY = Gdx.graphics.getHeight() / 2 - boardTex.getHeight() / 2;
+        int boardX = Gdx.graphics.getWidth() / 2 - _boardTex.getWidth() / 2;
+        int boardY = Gdx.graphics.getHeight() / 2 - _boardTex.getHeight() / 2;
         
         _highlighter = new Highlighter(boardX, boardY);
         _requestHandler = new RequestHandler(new Referee(board, red, blue), _highlighter, ui);
@@ -121,7 +132,7 @@ public class PlayScreen extends Screen implements QuitListener
         
         ///////////////////////////////
         // Initialize board object
-        _board = new BoardObject(boardTex, boardX, boardY, board, _requestHandler);
+        _board = new BoardObject(_boardTex, boardX, boardY, board, _requestHandler);
         addActor(_board);
         
         
@@ -137,7 +148,16 @@ public class PlayScreen extends Screen implements QuitListener
         addActor(_redHand);
         
         
-        
+        // Add the UI's actors to the stage and draw on top of Board and Pieces
+        getUIController().loadUI(ui);
+    }
+    
+    
+    /**
+     * Add the pieces to the board during creation or reset.
+     */
+    private void addPieces() 
+    {
         // Create pieces and place into cells
         if (WaifuShogi.DEBUG)
         {
@@ -145,19 +165,15 @@ public class PlayScreen extends Screen implements QuitListener
         }
         else
         {
-            addPiece(new Pawn(Team.RED), pawnTex, 0, 1);
-            addPiece(new Pawn(Team.RED), pawnTex, 1, 0);
-            addPiece(new Rook(Team.BLUE), rookTex, 5, 5);
-            addPiece(new Pawn(Team.RED), pawnTex, 4, 5);
-            addPiece(new Pawn(Team.BLUE), pawnTex, 7, 7);
-            addPiece(new Pawn(Team.BLUE), pawnTex, 6, 6);
-            addPiece(new Lance(Team.RED), lanceTex, 3, 4);
-            addPiece(new Knight(Team.RED), knightTex, 3, 6);
+            addPiece(new Pawn(Team.RED), _pawnTex, 0, 1);
+            addPiece(new Pawn(Team.RED), _pawnTex, 1, 0);
+            addPiece(new Rook(Team.BLUE), _rookTex, 5, 5);
+            addPiece(new Pawn(Team.RED), _pawnTex, 4, 5);
+            addPiece(new Pawn(Team.BLUE), _pawnTex, 7, 7);
+            addPiece(new Pawn(Team.BLUE), _pawnTex, 6, 6);
+            addPiece(new Lance(Team.RED), _lanceTex, 3, 4);
+            addPiece(new Knight(Team.RED), _knightTex, 3, 6);
         }
-        
-        
-        // Add the UI's actors to the stage and draw on top of Board and Pieces
-        getUIController().loadUI(ui);
     }
     
     
@@ -186,6 +202,8 @@ public class PlayScreen extends Screen implements QuitListener
         _board.getBoard().clear();
         _waifus.clear();
         System.out.println("Waifus: " + _waifus.size());
+        
+        addPieces();
     }
     
     
