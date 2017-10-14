@@ -285,7 +285,13 @@ public class Referee
             _currentHand = _redHand;
         }
         
-        System.out.println("TUrn complete");
+        System.out.println("Turn complete");
+    }
+    
+    
+    public boolean jadeInCheck()
+    {
+        
     }
         
         

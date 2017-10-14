@@ -13,8 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.insanelyinsane.waifushogi.listeners.PromotionConfirmer;
-import com.insanelyinsane.waifushogi.listeners.PromotionHandler;
+import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmer;
+import com.insanelyinsane.waifushogi.interfaces.PromotionHandler;
 import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 
