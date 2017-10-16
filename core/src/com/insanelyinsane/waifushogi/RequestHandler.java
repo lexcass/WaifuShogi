@@ -5,6 +5,7 @@
  */
 package com.insanelyinsane.waifushogi;
 
+import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.ReplaceEvent;
@@ -145,6 +146,7 @@ public class RequestHandler implements PromotionHandler
             if (captured.getType() == Piece.Type.JADE)
             {
                 // Player wins
+                System.out.println("---------------------------------------------------------------\n" + captured.getTeam().toString() + " is the winner!\n---------------------------------------------------------------");
             }
         }
         

@@ -295,5 +295,4 @@ public class Referee
         
         System.out.println("Turn complete");
     }
-    
 }

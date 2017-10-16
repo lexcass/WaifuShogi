@@ -17,7 +17,7 @@ import com.insanelyinsane.waifushogi.ui.UIController;
 
 public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListener 
 {
-        public static final boolean DEBUG = true;
+        public static final boolean DEBUG = false;
         public static String testToLoad = "";
     
 	SpriteBatch _batch;

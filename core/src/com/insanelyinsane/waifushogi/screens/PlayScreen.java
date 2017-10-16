@@ -28,11 +28,14 @@ import java.util.List;
 import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.HandObject;
 import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
+import com.insanelyinsane.waifushogi.objects.pieces.Bishop;
+import com.insanelyinsane.waifushogi.objects.pieces.GoldGeneral;
+import com.insanelyinsane.waifushogi.objects.pieces.JadeGeneral;
 import com.insanelyinsane.waifushogi.objects.pieces.Knight;
 import com.insanelyinsane.waifushogi.objects.pieces.Lance;
 import com.insanelyinsane.waifushogi.objects.pieces.Rook;
+import com.insanelyinsane.waifushogi.objects.pieces.SilverGeneral;
 import com.insanelyinsane.waifushogi.ui.PlayUI;
-import com.insanelyinsane.waifushogi.ui.UI;
 import com.insanelyinsane.waifushogi.ui.UIController;
 
 /**
@@ -114,6 +117,8 @@ public class PlayScreen extends Screen implements QuitListener
         _goldTex = assets.get("textures/GoldGeneral.png");
         _jadeTex = assets.get("textures/JadeGeneral.png");
         
+        
+        // Set the background of the screen to wood texture
         setBackground(_woodTex);
         
         // Create UI
@@ -126,6 +131,7 @@ public class PlayScreen extends Screen implements QuitListener
         int boardX = Gdx.graphics.getWidth() / 2 - _boardTex.getWidth() / 2;
         int boardY = Gdx.graphics.getHeight() / 2 - _boardTex.getHeight() / 2;
         
+        // Initialize systems (lifeblood of game logic)
         _highlighter = new Highlighter(boardX, boardY);
         _requestHandler = new RequestHandler(new Referee(board, red, blue), _highlighter, ui);
         
@@ -150,6 +156,10 @@ public class PlayScreen extends Screen implements QuitListener
         
         // Add the UI's actors to the stage and draw on top of Board and Pieces
         getUIController().loadUI(ui);
+        
+        
+        // Add Pieces to the board
+        addPieces();
     }
     
     
@@ -165,14 +175,51 @@ public class PlayScreen extends Screen implements QuitListener
         }
         else
         {
-            addPiece(new Pawn(Team.RED), _pawnTex, 0, 1);
-            addPiece(new Pawn(Team.RED), _pawnTex, 1, 0);
-            addPiece(new Rook(Team.BLUE), _rookTex, 5, 5);
-            addPiece(new Pawn(Team.RED), _pawnTex, 4, 5);
-            addPiece(new Pawn(Team.BLUE), _pawnTex, 7, 7);
-            addPiece(new Pawn(Team.BLUE), _pawnTex, 6, 6);
-            addPiece(new Lance(Team.RED), _lanceTex, 3, 4);
-            addPiece(new Knight(Team.RED), _knightTex, 3, 6);
+//            addPiece(new Pawn(Team.RED), _pawnTex, 0, 1);
+//            addPiece(new Pawn(Team.RED), _pawnTex, 1, 0);
+//            addPiece(new Rook(Team.BLUE), _rookTex, 5, 5);
+//            addPiece(new Pawn(Team.RED), _pawnTex, 4, 5);
+//            addPiece(new Pawn(Team.BLUE), _pawnTex, 7, 7);
+//            addPiece(new Pawn(Team.BLUE), _pawnTex, 6, 6);
+//            addPiece(new Lance(Team.RED), _lanceTex, 3, 4);
+//            addPiece(new Knight(Team.RED), _knightTex, 3, 6);
+            
+            
+            // Setup game board
+            for (int i = 0; i < 9; i++)
+            {
+                addPiece(new Pawn(Team.RED), _pawnTex, 2, i);
+                addPiece(new Pawn(Team.BLUE), _pawnTex, 6, i);
+            }
+            
+            addPiece(new Rook(Team.RED), _rookTex, 1, 7);
+            addPiece(new Bishop(Team.RED), _bishTex, 1, 1);
+            
+            addPiece(new Rook(Team.BLUE), _rookTex, 7, 1);
+            addPiece(new Bishop(Team.BLUE), _bishTex, 7, 7);
+            
+            addPiece(new Lance(Team.RED), _lanceTex, 0, 0);
+            addPiece(new Lance(Team.RED), _lanceTex, 0, 8);
+            addPiece(new Lance(Team.BLUE), _lanceTex, 8, 0);
+            addPiece(new Lance(Team.BLUE), _lanceTex, 8, 8);
+            
+            addPiece(new Knight(Team.RED), _knightTex, 0, 1);
+            addPiece(new Knight(Team.RED), _knightTex, 0, 7);
+            addPiece(new Knight(Team.BLUE), _knightTex, 8, 1);
+            addPiece(new Knight(Team.BLUE), _knightTex, 8, 7);
+            
+            addPiece(new SilverGeneral(Team.RED), _silverTex, 0, 2);
+            addPiece(new SilverGeneral(Team.RED), _silverTex, 0, 6);
+            addPiece(new SilverGeneral(Team.BLUE), _silverTex, 8, 2);
+            addPiece(new SilverGeneral(Team.BLUE), _silverTex, 8, 6);
+            
+            addPiece(new GoldGeneral(Team.RED), _goldTex, 0, 3);
+            addPiece(new GoldGeneral(Team.RED), _goldTex, 0, 5);
+            addPiece(new GoldGeneral(Team.BLUE), _goldTex, 8, 3);
+            addPiece(new GoldGeneral(Team.BLUE), _goldTex, 8, 5);
+            
+            addPiece(new JadeGeneral(Team.RED), _jadeTex, 0, 4);
+            addPiece(new JadeGeneral(Team.BLUE), _jadeTex, 8, 4);
         }
     }
     
@@ -197,6 +244,10 @@ public class PlayScreen extends Screen implements QuitListener
     }
     
     
+    /// NOTE: Instead of removing Waifus, just place them back at starting positions?
+    /**
+     * Reset the board to its initial state.
+     */
     public void reset()
     {
         _board.getBoard().clear();
