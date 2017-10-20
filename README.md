@@ -13,10 +13,10 @@ _Note: Currently Waifu Shogi has borrowed sprites from Final Fantasy IV and thes
 
 
 ### What features can be expected in the final product?
-The following features and game modes will be in the final product:
-	- Desktop (Windows, Mac, and Linux) support
-	- A.I. opponent with different levels of difficulty
+These are the currently planned features:
 
-The following features are planned and may be in the final product:
-	- Android support
-	- Network multiplayer including cross-platform play between desktop and Android
+- Desktop support including Windows, Mac and Linux (functioning)
+- Local multiplayer (mostly finished)
+- A.I. opponent with different levels of difficulty (coming next)
+- Android support
+- Network multiplayer including cross-platform play between desktop and Android
