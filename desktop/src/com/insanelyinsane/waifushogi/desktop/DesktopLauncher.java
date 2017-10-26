@@ -18,9 +18,18 @@ public class DesktopLauncher {
                 WaifuShogi game;
                 if (WaifuShogi.DEBUG)
                 {
-                    System.out.println("Load which test (pawn, knight, silver, etc.)? ");
+                    System.out.print("Run a unit test or live test (type 'unit' or 'live')? ");
                     Scanner input = new Scanner(System.in);
-                    game = new WaifuShogi(input.nextLine());
+                    
+                    if (input.nextLine().equalsIgnoreCase("unit"))
+                    {
+                        // This is where the unit tests will be ran
+                    }
+                    else
+                    {
+                        System.out.println("Load which test (pawn, knight, silver, etc.)? ");
+                        game = new WaifuShogi(input.nextLine());
+                    }
                 }
                 else
                 {
