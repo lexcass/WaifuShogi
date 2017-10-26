@@ -13,6 +13,7 @@ public class DesktopLauncher {
                 config.width = 600;
                 config.height = 720;
                 config.title = "Waifu Shogi";
+                config.resizable = false;
                 
                 WaifuShogi game;
                 if (WaifuShogi.DEBUG)

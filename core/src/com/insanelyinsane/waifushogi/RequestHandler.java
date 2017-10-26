@@ -18,7 +18,7 @@ import com.insanelyinsane.waifushogi.listeners.PromotionListener;
 import com.insanelyinsane.waifushogi.listeners.ReplaceListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
+import com.insanelyinsane.waifushogi.ui.gameobjects.Waifu;
 import com.insanelyinsane.waifushogi.objects.pieces.Piece;
 import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;
