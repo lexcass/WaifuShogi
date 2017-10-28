@@ -25,10 +25,14 @@ public class BoardInitHelper
 {
     Board _board;
     
-    public final Board getBoard() { return _board; }
+    public BoardInitHelper(Board b)
+    {
+        _board = b;
+    }
     
-    public void setBoard(Board b) { _board = b; }
+    public void clearBoard() { _board.clear(); }
     
+    public void removePieceAt(int r, int c) { _board.removePieceAt(r, c); }
     
     public Piece addPawn(Team team, int r, int c) 
     {
@@ -37,14 +41,12 @@ public class BoardInitHelper
         return p; 
     }
     
-    
     public Piece addRook(Team team, int r, int c) 
     {
         Piece p = new Rook(team); 
         _board.addPiece(p, r, c);
         return p; 
     }
-    
     
     public Piece addBishop(Team team, int r, int c) 
     {
@@ -53,14 +55,12 @@ public class BoardInitHelper
         return p; 
     }
     
-    
     public Piece addKnight(Team team, int r, int c) 
     {
         Piece p = new Knight(team); 
         _board.addPiece(p, r, c);
         return p; 
     }
-    
     
     public Piece addLance(Team team, int r, int c) 
     {
@@ -69,7 +69,6 @@ public class BoardInitHelper
         return p; 
     }
     
-    
     public Piece addSilver(Team team, int r, int c) 
     {
         Piece p = new SilverGeneral(team); 
@@ -77,14 +76,12 @@ public class BoardInitHelper
         return p; 
     }
     
-    
     public Piece addGold(Team team, int r, int c) 
     {
         Piece p = new GoldGeneral(team); 
         _board.addPiece(p, r, c);
         return p; 
     }
-    
     
     public Piece addJade(Team team, int r, int c) 
     {

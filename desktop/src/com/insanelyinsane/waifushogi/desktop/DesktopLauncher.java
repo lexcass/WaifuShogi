@@ -3,6 +3,8 @@ package com.insanelyinsane.waifushogi.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.insanelyinsane.waifushogi.WaifuShogi;
+import com.insanelyinsane.waifushogi.test.Test;
+import com.insanelyinsane.waifushogi.test.movement.PawnMovementTest;
 import java.util.Scanner;
 
 public class DesktopLauncher {
@@ -15,16 +17,21 @@ public class DesktopLauncher {
                 config.title = "Waifu Shogi";
                 config.resizable = false;
                 
-                WaifuShogi game;
+                WaifuShogi game = null;
                 if (WaifuShogi.DEBUG)
                 {
-                    System.out.print("Run a integration test or live test (type 'int' or 'live')? ");
+                    System.out.println("Run a integration test or live test (type 'int' or 'live')? ");
                     Scanner input = new Scanner(System.in);
                     
                     if (input.nextLine().equalsIgnoreCase("int"))
                     {
-                        // This is where the unit tests will be ran
+                        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
                         
+                        // This is where the integration tests will be run
+                        Test test = new PawnMovementTest();
+                        test.test();
+                        
+                        System.out.println("-------------------\nAll tests passed!\n-------------------");
                     }
                     else
                     {
@@ -37,6 +44,6 @@ public class DesktopLauncher {
                     game = new WaifuShogi("");
                 }
                 
-		new LwjglApplication(game, config);
+		if (game != null) new LwjglApplication(game, config);
 	}
 }

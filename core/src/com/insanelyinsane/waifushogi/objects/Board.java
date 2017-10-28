@@ -52,6 +52,19 @@ public class Board implements MoveListener, ReplaceListener
     
     
     /**
+     * Remove piece at the given row and column.
+     * 
+     * WARNING: This is unsynchronized with the GUI and may cause issues if used improperly.
+     * @param r
+     * @param c 
+     */
+    public void removePieceAt(int r, int c)
+    {
+        _pieces[r][c] = null;
+    }
+    
+    
+    /**
      * Clears the board of all of its pieces
      */
     public void clear()
@@ -73,6 +86,24 @@ public class Board implements MoveListener, ReplaceListener
         
         return _pieces[r][c];
     }
+    
+    
+    /**
+     * Move a piece from one cell to another.
+     * 
+     * WARNING: This will overwrite any piece that is currently in this cell!
+     * @param from
+     * @param to 
+     */
+//    public void movePiece(int fromR, int fromC, int toR, int toC)
+//    {
+//        if (inBounds(fromR, fromC) && inBounds(toR, toC))
+//        {
+//            Piece p = _pieces[fromR][fromC];
+//            _pieces[fromR][fromC] = null;
+//            _pieces[toR][toC] = p;
+//        }
+//    }
     
     
     /**
