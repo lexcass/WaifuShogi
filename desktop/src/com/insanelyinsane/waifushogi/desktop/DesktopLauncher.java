@@ -18,12 +18,13 @@ public class DesktopLauncher {
                 WaifuShogi game;
                 if (WaifuShogi.DEBUG)
                 {
-                    System.out.print("Run a unit test or live test (type 'unit' or 'live')? ");
+                    System.out.print("Run a integration test or live test (type 'int' or 'live')? ");
                     Scanner input = new Scanner(System.in);
                     
-                    if (input.nextLine().equalsIgnoreCase("unit"))
+                    if (input.nextLine().equalsIgnoreCase("int"))
                     {
                         // This is where the unit tests will be ran
+                        
                     }
                     else
                     {
