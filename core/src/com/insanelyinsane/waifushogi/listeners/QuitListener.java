@@ -7,7 +7,7 @@ package com.insanelyinsane.waifushogi.listeners;
 
 /**
  *
- * @author A Wild Popo Appeared
+ * @author Alex Cassady
  */
 public interface QuitListener 
 {

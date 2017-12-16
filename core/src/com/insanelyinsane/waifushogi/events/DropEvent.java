@@ -11,17 +11,22 @@ import com.insanelyinsane.waifushogi.pieces.Piece;
  *
  * @author Alex Cassady
  */
-public class PromotionEvent 
+public class DropEvent 
 {
-    Piece _piece;
+    private Piece _piece;
+    private int _toRow;
+    private int _toCol;
     
-    public PromotionEvent(Piece p)
+    public DropEvent(Piece p, int tr, int tc)
     {
         if (p == null) throw new NullPointerException();
         
         _piece = p;
+        _toRow = tr;
+        _toCol = tc;
     }
     
-    
     public Piece getPiece() { return _piece; }
+    public int toRow() { return _toRow; }
+    public int toCol() { return _toCol; }
 }

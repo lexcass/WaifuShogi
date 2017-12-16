@@ -5,11 +5,11 @@
  */
 package com.insanelyinsane.waifushogi.listeners;
 
-import com.insanelyinsane.waifushogi.objects.pieces.Piece;
+import com.insanelyinsane.waifushogi.pieces.Piece;
 
 /**
  *
- * @author A Wild Popo Appeared
+ * @author Alex Cassady
  */
 public interface PromotionListener 
 {

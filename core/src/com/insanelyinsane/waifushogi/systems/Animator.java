@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 /**
  *
- * @author A Wild Popo Appeared
+ * @author Alex Cassady
  */
 public class Animator 
 {
@@ -24,10 +24,15 @@ public class Animator
     private final static float FRAME_RATE = 1.0f / 2.0f;
     private TextureRegion[] _frames;
     private final HashMap<String, Animation<TextureRegion>> _animations;
+    private int _numRows;
+    private int _numCols;
+    private int MAX_FRAMES;
     
     private Animation<TextureRegion> _active;
     private TextureRegion _keyFrame;
     private float _elapsedTime;
+    
+    private static final String ERROR_PREFIX = "Error from Animator.loadFromFile: ";
     
     
     public Animator(Texture tex, int frameWidth, int frameHeight)
@@ -37,13 +42,16 @@ public class Animator
         
         // Split texture into texture regions
         TextureRegion[][] regions = TextureRegion.split(tex, frameWidth, frameHeight);
-        _frames = new TextureRegion[regions.length * regions[0].length];
+        _numRows = regions.length;
+        _numCols = regions[0].length;
+        MAX_FRAMES = (_numRows * _numCols) - 1;
+        _frames = new TextureRegion[_numRows * _numCols];
         
         // Copy texture regions into frames array
         int index = 0;
-        for (int r = 0; r < regions.length; r++)
+        for (int r = 0; r < _numRows; r++)
         {
-            for (int c = 0; c < regions[r].length; c++)
+            for (int c = 0; c < _numCols; c++)
             {
                 _frames[index++] = regions[r][c];
             }
@@ -62,8 +70,7 @@ public class Animator
         // Log message in case of empty file
         if (lines.length < 1) 
         {
-            Gdx.app.debug("Error", fileName + ".anim is empty.");
-            return;
+            throw new GdxRuntimeException(ERROR_PREFIX + fileName + ".anim is empty or at least two animations are on the same line.");
         }
         
         for (String s : lines)
@@ -71,45 +78,65 @@ public class Animator
             String[] data = s.split(" ");
             
             // Elements in data except for the 0th element (the string name)
-            String[] indices = Arrays.copyOfRange(data, 1, data.length);
+            String name = data[0];
+            String[] frames = Arrays.copyOfRange(data, 1, data.length);
+            
+            // Constants
+            final int MIN_NAME_LENGTH = 2;
+            final int MIN_FRAME_COUNT = 1;
             
             // Error checking
             // If string isn't at least 2 characters long, error.
             // If there is not at least 1 index for the animation, error.
-            if (data[0].length() < 2)
+            if (data[0].length() < MIN_NAME_LENGTH)
             {
-                Gdx.app.debug("Animator::loadFromFile", fileName + ".anim should have a string name for each animation.");
-                return;
+                throw new GdxRuntimeException(ERROR_PREFIX + fileName + ".anim should have a string name for each animation.");
             }
-            if (indices.length < 1)
+            if (frames.length < MIN_FRAME_COUNT)
             {
-                Gdx.app.debug("Animator::loadFromFile", fileName + ".anim should have indices for each animation.");
-                return;
+                throw new GdxRuntimeException(ERROR_PREFIX + fileName + ".anim should have indices for each animation.");
             }
             
             // Copy TextureRegions at indices into array
-            TextureRegion[] frameArr = new TextureRegion[indices.length];
+            TextureRegion[] frameArr = new TextureRegion[frames.length];
             
-            for (int i = 0; i < indices.length; i++)
+            for (int i = 0; i < frames.length; i++)
             {
-                int index = Integer.parseInt(indices[i]);
+                int index = Integer.parseInt(frames[i]);
+                if (index > MAX_FRAMES)
+                {
+                    throw new GdxRuntimeException(ERROR_PREFIX + fileName + 
+                        ".anim contains a frame index that doesn't exist. frame given is #" + index + " out of " + MAX_FRAMES + " frames.");
+                }
                 
-                frameArr[i] = _frames[index];
+                if (_frames[index] != null)
+                {
+                    frameArr[i] = _frames[index];
+                }
+                else
+                {
+                    throw new GdxRuntimeException(ERROR_PREFIX + fileName + ".anim has a null frame at index " + index + ".");
+                }
             }
             
             // Add animation with array of copied frames to animations HashMap
             Animation<TextureRegion> a = new Animation<>(FRAME_RATE, frameArr);
-            _animations.put(data[0], a);
+            _animations.put(name, a);
         }
     }
     
     
     public void update(float delta)
     {
-        if (_active == null) return;
-        
         _elapsedTime += delta;
         _keyFrame = _active.getKeyFrame(_elapsedTime, true);
+        
+        if (_keyFrame == null)
+        {
+            int nullIndex = _active.getKeyFrameIndex(_elapsedTime);
+            
+           throw new NullPointerException("Frame " + nullIndex + " of current animation is null.");
+        }
     }
     
     
@@ -121,26 +148,16 @@ public class Animator
     
     public void setAnimation(String anim)
     {
-        boolean hasProblem = false;
-        
         if (_animations.containsKey(anim))
         {
             if (_animations.get(anim) != null)
             {
                 _active = _animations.get(anim);
+                _keyFrame = _active.getKeyFrame(_elapsedTime);
                 return;
             }
-            
-            hasProblem = true;
-        }
-        else
-        {
-            hasProblem = true;
         }
         
-        if (hasProblem)
-        {
-            throw new GdxRuntimeException("Animator has no animation " + anim + ".");
-        }
+        throw new GdxRuntimeException("Animator has no animation " + anim + ".");
     }
 }

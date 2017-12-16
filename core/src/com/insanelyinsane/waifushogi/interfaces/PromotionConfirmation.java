@@ -11,7 +11,7 @@ import com.insanelyinsane.waifushogi.pieces.Piece;
  *
  * @author Alex Cassady
  */
-public interface PromotionHandler 
+public interface PromotionConfirmation 
 {
-    public void handlePromotion(Piece p);
+    void confirmPromotion(PromotionHandler h, Piece p);
 }

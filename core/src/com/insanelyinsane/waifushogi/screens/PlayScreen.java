@@ -5,6 +5,8 @@
  */
 package com.insanelyinsane.waifushogi.screens;
 
+import java.util.LinkedList;
+import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,29 +14,26 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.RequestHandler;
-import com.insanelyinsane.waifushogi.TestLoader;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
-import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.objects.Hand;
-import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
-import com.insanelyinsane.waifushogi.objects.pieces.Piece;
-import com.insanelyinsane.waifushogi.objects.pieces.Team;
+import com.insanelyinsane.waifushogi.containers.Board;
+import com.insanelyinsane.waifushogi.containers.Hand;
+import com.insanelyinsane.waifushogi.pieces.Pawn;
+import com.insanelyinsane.waifushogi.pieces.Piece;
+import com.insanelyinsane.waifushogi.pieces.Team;
 import com.insanelyinsane.waifushogi.systems.Highlighter;
 import com.insanelyinsane.waifushogi.systems.Referee;
-import java.util.LinkedList;
-import java.util.List;
-import com.insanelyinsane.waifushogi.ui.gameobjects.BoardObject;
-import com.insanelyinsane.waifushogi.ui.gameobjects.HandObject;
-import com.insanelyinsane.waifushogi.ui.gameobjects.Waifu;
-import com.insanelyinsane.waifushogi.objects.pieces.Bishop;
-import com.insanelyinsane.waifushogi.objects.pieces.GoldGeneral;
-import com.insanelyinsane.waifushogi.objects.pieces.JadeGeneral;
-import com.insanelyinsane.waifushogi.objects.pieces.Knight;
-import com.insanelyinsane.waifushogi.objects.pieces.Lance;
-import com.insanelyinsane.waifushogi.objects.pieces.Rook;
-import com.insanelyinsane.waifushogi.objects.pieces.SilverGeneral;
+import com.insanelyinsane.waifushogi.ui.actors.BoardObject;
+import com.insanelyinsane.waifushogi.ui.actors.HandObject;
+import com.insanelyinsane.waifushogi.ui.actors.Waifu;
+import com.insanelyinsane.waifushogi.pieces.Bishop;
+import com.insanelyinsane.waifushogi.pieces.GoldGeneral;
+import com.insanelyinsane.waifushogi.pieces.JadeGeneral;
+import com.insanelyinsane.waifushogi.pieces.Knight;
+import com.insanelyinsane.waifushogi.pieces.Lance;
+import com.insanelyinsane.waifushogi.pieces.Rook;
+import com.insanelyinsane.waifushogi.pieces.SilverGeneral;
 import com.insanelyinsane.waifushogi.ui.PlayUI;
 import com.insanelyinsane.waifushogi.ui.UIController;
 
@@ -72,10 +71,6 @@ public class PlayScreen extends Screen implements QuitListener
     List<TouchListener> _touchListeners;
     
     
-    // Debugging
-    TestLoader _testLoader;
-    
-    
     public PlayScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
     {
         super(game, batch, ui);
@@ -94,9 +89,6 @@ public class PlayScreen extends Screen implements QuitListener
         loadAsset("textures/SilverGeneral.png", Texture.class);
         loadAsset("textures/GoldGeneral.png", Texture.class);
         loadAsset("textures/JadeGeneral.png", Texture.class);
-        
-        
-        _testLoader = new TestLoader(this);
     }
     
     @Override
@@ -168,59 +160,41 @@ public class PlayScreen extends Screen implements QuitListener
      */
     private void addPieces() 
     {
-        // Create pieces and place into cells
-        if (WaifuShogi.DEBUG)
+        // Setup game board
+        for (int i = 0; i < 9; i++)
         {
-            _testLoader.loadTest(WaifuShogi.testToLoad);
+            addPiece(new Pawn(Team.RED), _pawnTex, 2, i);
+            addPiece(new Pawn(Team.BLUE), _pawnTex, 6, i);
         }
-        else
-        {
-//            addPiece(new Pawn(Team.RED), _pawnTex, 0, 1);
-//            addPiece(new Pawn(Team.RED), _pawnTex, 1, 0);
-//            addPiece(new Rook(Team.BLUE), _rookTex, 5, 5);
-//            addPiece(new Pawn(Team.RED), _pawnTex, 4, 5);
-//            addPiece(new Pawn(Team.BLUE), _pawnTex, 7, 7);
-//            addPiece(new Pawn(Team.BLUE), _pawnTex, 6, 6);
-//            addPiece(new Lance(Team.RED), _lanceTex, 3, 4);
-//            addPiece(new Knight(Team.RED), _knightTex, 3, 6);
-            
-            
-            // Setup game board
-            for (int i = 0; i < 9; i++)
-            {
-                addPiece(new Pawn(Team.RED), _pawnTex, 2, i);
-                addPiece(new Pawn(Team.BLUE), _pawnTex, 6, i);
-            }
-            
-            addPiece(new Rook(Team.RED), _rookTex, 1, 7);
-            addPiece(new Bishop(Team.RED), _bishTex, 1, 1);
-            
-            addPiece(new Rook(Team.BLUE), _rookTex, 7, 1);
-            addPiece(new Bishop(Team.BLUE), _bishTex, 7, 7);
-            
-            addPiece(new Lance(Team.RED), _lanceTex, 0, 0);
-            addPiece(new Lance(Team.RED), _lanceTex, 0, 8);
-            addPiece(new Lance(Team.BLUE), _lanceTex, 8, 0);
-            addPiece(new Lance(Team.BLUE), _lanceTex, 8, 8);
-            
-            addPiece(new Knight(Team.RED), _knightTex, 0, 1);
-            addPiece(new Knight(Team.RED), _knightTex, 0, 7);
-            addPiece(new Knight(Team.BLUE), _knightTex, 8, 1);
-            addPiece(new Knight(Team.BLUE), _knightTex, 8, 7);
-            
-            addPiece(new SilverGeneral(Team.RED), _silverTex, 0, 2);
-            addPiece(new SilverGeneral(Team.RED), _silverTex, 0, 6);
-            addPiece(new SilverGeneral(Team.BLUE), _silverTex, 8, 2);
-            addPiece(new SilverGeneral(Team.BLUE), _silverTex, 8, 6);
-            
-            addPiece(new GoldGeneral(Team.RED), _goldTex, 0, 3);
-            addPiece(new GoldGeneral(Team.RED), _goldTex, 0, 5);
-            addPiece(new GoldGeneral(Team.BLUE), _goldTex, 8, 3);
-            addPiece(new GoldGeneral(Team.BLUE), _goldTex, 8, 5);
-            
-            addPiece(new JadeGeneral(Team.RED), _jadeTex, 0, 4);
-            addPiece(new JadeGeneral(Team.BLUE), _jadeTex, 8, 4);
-        }
+
+        addPiece(new Rook(Team.RED), _rookTex, 1, 7);
+        addPiece(new Bishop(Team.RED), _bishTex, 1, 1);
+
+        addPiece(new Rook(Team.BLUE), _rookTex, 7, 1);
+        addPiece(new Bishop(Team.BLUE), _bishTex, 7, 7);
+
+        addPiece(new Lance(Team.RED), _lanceTex, 0, 0);
+        addPiece(new Lance(Team.RED), _lanceTex, 0, 8);
+        addPiece(new Lance(Team.BLUE), _lanceTex, 8, 0);
+        addPiece(new Lance(Team.BLUE), _lanceTex, 8, 8);
+
+        addPiece(new Knight(Team.RED), _knightTex, 0, 1);
+        addPiece(new Knight(Team.RED), _knightTex, 0, 7);
+        addPiece(new Knight(Team.BLUE), _knightTex, 8, 1);
+        addPiece(new Knight(Team.BLUE), _knightTex, 8, 7);
+
+        addPiece(new SilverGeneral(Team.RED), _silverTex, 0, 2);
+        addPiece(new SilverGeneral(Team.RED), _silverTex, 0, 6);
+        addPiece(new SilverGeneral(Team.BLUE), _silverTex, 8, 2);
+        addPiece(new SilverGeneral(Team.BLUE), _silverTex, 8, 6);
+
+        addPiece(new GoldGeneral(Team.RED), _goldTex, 0, 3);
+        addPiece(new GoldGeneral(Team.RED), _goldTex, 0, 5);
+        addPiece(new GoldGeneral(Team.BLUE), _goldTex, 8, 3);
+        addPiece(new GoldGeneral(Team.BLUE), _goldTex, 8, 5);
+
+        addPiece(new JadeGeneral(Team.RED), _jadeTex, 0, 4);
+        addPiece(new JadeGeneral(Team.BLUE), _jadeTex, 8, 4);
     }
     
     

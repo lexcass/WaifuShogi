@@ -8,28 +8,28 @@ package com.insanelyinsane.waifushogi;
 import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
-import com.insanelyinsane.waifushogi.events.ReplaceEvent;
+import com.insanelyinsane.waifushogi.events.DropEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.CaptureListener;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
-import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmer;
 import com.insanelyinsane.waifushogi.interfaces.PromotionHandler;
 import com.insanelyinsane.waifushogi.listeners.PromotionListener;
-import com.insanelyinsane.waifushogi.listeners.ReplaceListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
-import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.ui.gameobjects.Waifu;
-import com.insanelyinsane.waifushogi.objects.pieces.Piece;
+import com.insanelyinsane.waifushogi.containers.Board;
+import com.insanelyinsane.waifushogi.ui.actors.Waifu;
+import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;
 import java.util.List;
+import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
+import com.insanelyinsane.waifushogi.listeners.DropListener;
 
 /**
  * The RequestHandler acts as a proxy between the Board and Hand objects and the
  * Referee object (the rule enforcer). The Board and Hands will make requests to the 
  * RequestHandler (selection, move, etc.), and if the Referee determines the request
  * is valid, a generated event is dispatched to the respective listeners.
- * @author A Wild Popo Appeared
+ * @author Alex Cassady
  */
 public class RequestHandler implements PromotionHandler
 {
@@ -43,10 +43,10 @@ public class RequestHandler implements PromotionHandler
     private final List<Waifu> _waifus;
     private final List<SelectionListener> _selectionListeners;
     private final List<MoveListener> _moveListeners;
-    private final List<ReplaceListener> _replaceListeners;
+    private final List<DropListener> _replaceListeners;
     private final List<CaptureListener> _captureListeners;
     private final List<PromotionListener> _promotionListeners;
-    private final PromotionConfirmer _promoConfirmer;
+    private final PromotionConfirmation _promoConfirmer;
     
     
     /**
@@ -60,7 +60,7 @@ public class RequestHandler implements PromotionHandler
      * @param highlighter
      * @param waifus 
      */
-    public RequestHandler(Referee ref, SelectionListener highlighter, PromotionConfirmer c)
+    public RequestHandler(Referee ref, SelectionListener highlighter, PromotionConfirmation c)
     {
         _waifus = new LinkedList<>();
         _selectionListeners = new LinkedList<>();
@@ -172,24 +172,24 @@ public class RequestHandler implements PromotionHandler
     
     /**
      * Request to replace a captured Piece (or drop) at the specified row and column.
-     * If (r, c) is in bounds and the replacement (drop) is valid, a ReplaceEvent is generated
-     * and the ReplaceListeners are given the event.
-     * 
-     * ///////////////////////////////////////////////////////////////////////
-     * Note: Null events are ignored, so there is no harm in making this request on every touch
-     * of the Board for example.
+     * If (r, c) is in bounds and the Drop (drop) is valid, a DropEvent is generated
+ and the ReplaceListeners are given the event.
+ 
+ ///////////////////////////////////////////////////////////////////////
+ Note: Null events are ignored, so there is no harm in making this request on every touch
+ of the Board for example.
      * @param r
      * @param c 
      */
-    public void requestReplace(int r, int c)
+    public void requestDrop(int r, int c)
     {
         if (!inBounds(r, c)) return;
         
-        ReplaceEvent e = _referee.replacePieceTo(r, c);
+        DropEvent e = _referee.dropPieceAt(r, c);
         if (e == null) return;
         
         // Drop the selected piece
-        _replaceListeners.forEach(l -> l.onWaifuReplaced(e));
+        _replaceListeners.forEach(l -> l.onWaifuDropped(e));
         
         // Deselect all pieces
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _waifus.get(0).getPiece(), false)));

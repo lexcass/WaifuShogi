@@ -17,8 +17,7 @@ import com.insanelyinsane.waifushogi.ui.UIController;
 
 public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListener 
 {
-        public static final boolean DEBUG = true;
-        public static String testToLoad = "";
+        public static boolean DEBUG;
     
 	SpriteBatch _batch;
         Screen _activeScreen;
@@ -28,10 +27,10 @@ public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListen
         UIController _uiController;
         
         
-        public WaifuShogi(String test)
+        public WaifuShogi(boolean test)
         {
             super();
-            testToLoad = test;
+            DEBUG = test;
         }
         
 	
@@ -48,7 +47,14 @@ public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListen
             Gdx.app.setLogLevel(Application.LOG_DEBUG);
             
             // Screen initialization ( the lazy way -_- )
-            onScreenChanged(new ScreenChangeEvent(ScreenType.PLAY));
+            if (DEBUG) 
+            {
+                onScreenChanged(new ScreenChangeEvent(ScreenType.TEST));
+            }
+            else
+            {
+                onScreenChanged(new ScreenChangeEvent(ScreenType.PLAY));
+            }
 	}
         
         /**

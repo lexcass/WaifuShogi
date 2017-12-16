@@ -3,8 +3,6 @@ package com.insanelyinsane.waifushogi.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.insanelyinsane.waifushogi.WaifuShogi;
-import com.insanelyinsane.waifushogi.test.Test;
-import com.insanelyinsane.waifushogi.test.movement.PawnMovementTest;
 import java.util.Scanner;
 
 public class DesktopLauncher {
@@ -17,33 +15,28 @@ public class DesktopLauncher {
                 config.title = "Waifu Shogi";
                 config.resizable = false;
                 
-                WaifuShogi game = null;
-                if (WaifuShogi.DEBUG)
+                /*System.out.println("Waifu Shogi Launcher: Input \"t\" to test the game, or press \"Enter\" to play.");
+                
+                Scanner input = new Scanner(System.in);
+                String choice = input.nextLine();
+                
+                if (choice.equals("t"))
                 {
-                    System.out.println("Run a integration test or live test (type 'int' or 'live')? ");
-                    Scanner input = new Scanner(System.in);
+                    System.out.println("Do you want to perform a logic test (input \"t\") or a live test (press \"Enter\")?");
                     
-                    if (input.nextLine().equalsIgnoreCase("int"))
+                    String nextChoice = input.nextLine();
+                    if (nextChoice.equals("t"))
                     {
-                        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
-                        
-                        // This is where the integration tests will be run
-                        Test test = new PawnMovementTest();
-                        test.test();
-                        
-                        System.out.println("-------------------\nAll tests passed!\n-------------------");
+                        System.out.println("Logic testing...");
                     }
                     else
-                    {
-                        System.out.println("Load which test (pawn, knight, silver, etc.)? ");
-                        game = new WaifuShogi(input.nextLine());
-                    }
+                    {*/
+                        new LwjglApplication(new WaifuShogi(true), config);
+                    /*}
                 }
                 else
                 {
-                    game = new WaifuShogi("");
-                }
-                
-		if (game != null) new LwjglApplication(game, config);
+                    new LwjglApplication(new WaifuShogi(false), config);
+                }*/
 	}
 }

@@ -6,13 +6,13 @@
 package com.insanelyinsane.waifushogi.systems;
 
 import com.insanelyinsane.waifushogi.events.MoveEvent;
-import com.insanelyinsane.waifushogi.events.ReplaceEvent;
+import com.insanelyinsane.waifushogi.events.DropEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
-import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.objects.Hand;
-import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
-import com.insanelyinsane.waifushogi.objects.pieces.Piece;
-import com.insanelyinsane.waifushogi.objects.pieces.Team;
+import com.insanelyinsane.waifushogi.containers.Board;
+import com.insanelyinsane.waifushogi.containers.Hand;
+import com.insanelyinsane.waifushogi.pieces.Pawn;
+import com.insanelyinsane.waifushogi.pieces.Piece;
+import com.insanelyinsane.waifushogi.pieces.Team;
 
 /**
  * The rule enforcer that keeps track of the state of the game. Operates on the
@@ -48,7 +48,7 @@ public class Referee
     private int _selectedRow;
     private int _selectedCol;
     private boolean[][] _validMoves;
-    private boolean[][] _validReplacements;
+    private boolean[][] _validDrops;
     private boolean _shouldReplace;
     
     
@@ -119,10 +119,10 @@ public class Referee
         if (target.getTeam() == _currentTeam)
         {
             _selectedPiece = target;
-            _validReplacements = target.getValidReplacements(_board.getPieces());
+            _validDrops = target.getValidDrops(_board.getPieces());
             _shouldReplace = true;
             
-            return new SelectionEvent(_validReplacements, _selectedPiece, true);
+            return new SelectionEvent(_validDrops, _selectedPiece, true);
         }
         
         return null;
@@ -162,25 +162,25 @@ public class Referee
     
     /**
      * Moves the currently selected Piece from the Hand to the specified row and column on the Board.
-     * If the replacement (drop) is valid as determined by Referee::selectPieceInHand(), this method
-     * will generate and return a ReplaceEvent to be handled by the calling object.
-     * 
-     * ///////////////////////////////////////////////////////////////////////
-     * Important: Returns null if the selection is invalid. The calling object
-     * should be able to handle this case.
+     * If the Drop (drop) is valid as determined by Referee::selectPieceInHand(), this method
+ will generate and return a DropEvent to be handled by the calling object.
+ 
+ ///////////////////////////////////////////////////////////////////////
+ Important: Returns null if the selection is invalid. The calling object
+ should be able to handle this case.
      * @param r
      * @param c
      * @return 
      */
-    public ReplaceEvent replacePieceTo(int r, int c)
+    public DropEvent dropPieceAt(int r, int c)
     {
-        ReplaceEvent e = null;
+        DropEvent e = null;
         
         if (_selectedPiece != null && _shouldReplace)
         {
-            if (_validReplacements[r][c])
+            if (_validDrops[r][c])
             {
-                e = new ReplaceEvent(_selectedPiece, r, c);
+                e = new DropEvent(_selectedPiece, r, c);
             }
         }
         
@@ -277,7 +277,7 @@ public class Referee
         _selectedRow = -1;
         _selectedCol = -1;
         _validMoves = null;
-        _validReplacements = null;
+        _validDrops = null;
         _shouldReplace = false;
 
 
@@ -292,7 +292,5 @@ public class Referee
             _currentTeam = Team.RED;
             _currentHand = _redHand;
         }
-        
-        System.out.println("Turn complete");
     }
 }

@@ -13,16 +13,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmer;
 import com.insanelyinsane.waifushogi.interfaces.PromotionHandler;
 import com.insanelyinsane.waifushogi.listeners.QuitListener;
-import com.insanelyinsane.waifushogi.objects.pieces.Piece;
+import com.insanelyinsane.waifushogi.pieces.Piece;
+import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
 
 /**
  *
- * @author A Wild Popo Appeared
+ * @author Alex Cassady
  */
-public class PlayUI extends UI implements PromotionConfirmer
+public class PlayUI extends UI implements PromotionConfirmation
 {
     private final QuitListener _quitListener;
     

@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.interfaces;
+package com.insanelyinsane.waifushogi.listeners;
 
-import com.insanelyinsane.waifushogi.pieces.Piece;
+import com.insanelyinsane.waifushogi.events.DropEvent;
 
 /**
  *
  * @author Alex Cassady
  */
-public interface PromotionHandler 
+public interface DropListener 
 {
-    public void handlePromotion(Piece p);
+    public void onWaifuDropped(DropEvent e);
 }

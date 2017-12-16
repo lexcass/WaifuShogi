@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  *
- * @author A Wild Popo Appeared
+ * @author Alex Cassady
  */
 public abstract class UI 
 {

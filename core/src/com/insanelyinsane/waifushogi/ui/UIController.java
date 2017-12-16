@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
  * Controls which UI is currently active and loads new UIs.
  * UIController has its own stage which has an input processor separate
  * from the game's stage.
- * @author A Wild Popo Appeared
+ * @author Alex Cassady
  */
 public class UIController 
 {
