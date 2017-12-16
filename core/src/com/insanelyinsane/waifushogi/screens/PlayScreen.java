@@ -5,43 +5,58 @@
  */
 package com.insanelyinsane.waifushogi.screens;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.insanelyinsane.waifushogi.events.TouchEvent;
-import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
-import com.insanelyinsane.waifushogi.listeners.TouchListener;
-import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.objects.Hand;
-import com.insanelyinsane.waifushogi.objects.pieces.Pawn;
-import com.insanelyinsane.waifushogi.objects.pieces.Piece;
-import com.insanelyinsane.waifushogi.objects.pieces.Team;
-import com.insanelyinsane.waifushogi.systems.Highlighter;
-import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;
 import java.util.List;
-import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
-import com.insanelyinsane.waifushogi.objects.gameobjects.HandObject;
-import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
-import com.insanelyinsane.waifushogi.objects.pieces.Bishop;
-import com.insanelyinsane.waifushogi.objects.pieces.Rook;
-import java.util.Stack;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.RequestHandler;
+import com.insanelyinsane.waifushogi.WaifuShogi;
+import com.insanelyinsane.waifushogi.listeners.QuitListener;
+import com.insanelyinsane.waifushogi.listeners.TouchListener;
+import com.insanelyinsane.waifushogi.containers.Board;
+import com.insanelyinsane.waifushogi.containers.Hand;
+import com.insanelyinsane.waifushogi.pieces.Pawn;
+import com.insanelyinsane.waifushogi.pieces.Piece;
+import com.insanelyinsane.waifushogi.pieces.Team;
+import com.insanelyinsane.waifushogi.systems.Highlighter;
+import com.insanelyinsane.waifushogi.systems.Referee;
+import com.insanelyinsane.waifushogi.ui.actors.BoardObject;
+import com.insanelyinsane.waifushogi.ui.actors.HandObject;
+import com.insanelyinsane.waifushogi.ui.actors.Waifu;
+import com.insanelyinsane.waifushogi.pieces.Bishop;
+import com.insanelyinsane.waifushogi.pieces.GoldGeneral;
+import com.insanelyinsane.waifushogi.pieces.JadeGeneral;
+import com.insanelyinsane.waifushogi.pieces.Knight;
+import com.insanelyinsane.waifushogi.pieces.Lance;
+import com.insanelyinsane.waifushogi.pieces.Rook;
+import com.insanelyinsane.waifushogi.pieces.SilverGeneral;
+import com.insanelyinsane.waifushogi.ui.PlayUI;
+import com.insanelyinsane.waifushogi.ui.UIController;
 
 /**
  *
  * @author alex
  */
-public class PlayScreen extends Screen
+public class PlayScreen extends Screen implements QuitListener
 {
-    // Constants
-    
-    
     // Assets to load
     Texture _woodTex;
-    BitmapFont _font = new BitmapFont();    // This is TEMPORARY!!!
+    BitmapFont _font = new BitmapFont();
+    
+    // Textures
+    Texture _boardTex;
+    Texture _pawnTex;
+    Texture _rookTex;
+    Texture _knightTex;
+    Texture _bishTex;
+    Texture _lanceTex;
+    Texture _silverTex;
+    Texture _goldTex;
+    Texture _jadeTex;
     
     // Objects to update
     BoardObject  _board;
@@ -50,15 +65,15 @@ public class PlayScreen extends Screen
     List<Waifu> _waifus;
     
     // Systems
-    Referee _referee;
     Highlighter _highlighter;
+    RequestHandler _requestHandler;
     
     List<TouchListener> _touchListeners;
     
     
-    public PlayScreen(ScreenChangeListener game, SpriteBatch batch)
+    public PlayScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
     {
-        super(game, batch);
+        super(game, batch, ui);
         
         _waifus = new LinkedList<>();
         _touchListeners = new LinkedList<>();
@@ -69,6 +84,11 @@ public class PlayScreen extends Screen
         loadAsset("textures/Pawn.png", Texture.class);
         loadAsset("textures/Rook.png", Texture.class);
         loadAsset("textures/Bishop.png", Texture.class);
+        loadAsset("textures/Lance.png", Texture.class);
+        loadAsset("textures/Knight.png", Texture.class);
+        loadAsset("textures/SilverGeneral.png", Texture.class);
+        loadAsset("textures/GoldGeneral.png", Texture.class);
+        loadAsset("textures/JadeGeneral.png", Texture.class);
     }
     
     @Override
@@ -79,43 +99,102 @@ public class PlayScreen extends Screen
         AssetManager assets = getAssets();
         
         _woodTex = assets.get("textures/woodbg.jpg");
-        Texture boardTex = assets.get("textures/ShogiBoard.png");
-        Texture pawnTex = assets.get("textures/Pawn.png");
-        Texture rookTex = assets.get("textures/Rook.png");
-        Texture bishTex = assets.get("textures/Bishop.png");
+        _boardTex = assets.get("textures/ShogiBoard.png");
+        _pawnTex = assets.get("textures/Pawn.png");
+        _rookTex = assets.get("textures/Rook.png");
+        _bishTex = assets.get("textures/Bishop.png");
+        _lanceTex = assets.get("textures/Lance.png");
+        _knightTex = assets.get("textures/Knight.png");
+        _silverTex = assets.get("textures/SilverGeneral.png");
+        _goldTex = assets.get("textures/GoldGeneral.png");
+        _jadeTex = assets.get("textures/JadeGeneral.png");
+        
+        
+        // Set the background of the screen to wood texture
+        setBackground(_woodTex);
+        
+        // Create UI
+        PlayUI ui = new PlayUI(getStage(), this);
+        
+        // Initialize logic objects (Hand, Board, Highlighter, RequestHandler, etc.)
+        Hand blue = new Hand(Team.BLUE);
+        Hand red = new Hand(Team.RED);
+        Board board = new Board();
+        int boardX = Gdx.graphics.getWidth() / 2 - _boardTex.getWidth() / 2;
+        int boardY = Gdx.graphics.getHeight() / 2 - _boardTex.getHeight() / 2;
+        
+        // Initialize systems (lifeblood of game logic)
+        _highlighter = new Highlighter(boardX, boardY);
+        _requestHandler = new RequestHandler(new Referee(board, red, blue), _highlighter, ui);
         
         
         ///////////////////////////////
-        // Initialize board
-        int boardX = Gdx.graphics.getWidth() / 2 - boardTex.getWidth() / 2;
-        int boardY = Gdx.graphics.getHeight() / 2 - boardTex.getHeight() / 2;
-        _board = new BoardObject(boardTex, boardX, boardY, new Board());
+        // Initialize board object
+        _board = new BoardObject(_boardTex, boardX, boardY, board, _requestHandler);
+        addActor(_board);
         
         
         //////////////////////////////////
-        // Initialize player hands
+        // Initialize player hand objects
         
-        //Gdx.graphics.getHeight() - 
-        _blueHand = new HandObject(0, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.BLUE));
+        _blueHand = new HandObject(0, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, blue, _font, _requestHandler);
+        addActor(_blueHand);
         
         // The red hand builds from bottom to top (x, y is bottom-left), so negative width and height will give proper bounds for touch coords.
-        _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, new Hand(Team.RED));
         
-        // Create pieces and place into cells
-        addPiece(new Pawn(Team.RED), pawnTex, 2, 3);
-        addPiece(new Rook(Team.RED), rookTex, 4, 7);
-        addPiece(new Pawn(Team.RED), pawnTex, 3, 3);
-        addPiece(new Rook(Team.BLUE), rookTex, 4, 3);
-        addPiece(new Pawn(Team.BLUE), pawnTex, 5, 7);
-        addPiece(new Bishop(Team.BLUE), bishTex, 8, 4);
+        _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, red, _font, _requestHandler);
+        addActor(_redHand);
         
         
-        /////////////////////////////////////////
-        // Initialize systems
-        _highlighter = new Highlighter(_board);
-        _referee = new Referee(_board, _highlighter, _waifus, _redHand, _blueHand);
+        // Add the UI's actors to the stage and draw on top of Board and Pieces
+        getUIController().loadUI(ui);
         
-        _touchListeners.add(_referee);
+        
+        // Add Pieces to the board
+        addPieces();
+    }
+    
+    
+    /**
+     * Add the pieces to the board during creation or reset.
+     */
+    private void addPieces() 
+    {
+        // Setup game board
+        for (int i = 0; i < 9; i++)
+        {
+            addPiece(new Pawn(Team.RED), _pawnTex, 2, i);
+            addPiece(new Pawn(Team.BLUE), _pawnTex, 6, i);
+        }
+
+        addPiece(new Rook(Team.RED), _rookTex, 1, 7);
+        addPiece(new Bishop(Team.RED), _bishTex, 1, 1);
+
+        addPiece(new Rook(Team.BLUE), _rookTex, 7, 1);
+        addPiece(new Bishop(Team.BLUE), _bishTex, 7, 7);
+
+        addPiece(new Lance(Team.RED), _lanceTex, 0, 0);
+        addPiece(new Lance(Team.RED), _lanceTex, 0, 8);
+        addPiece(new Lance(Team.BLUE), _lanceTex, 8, 0);
+        addPiece(new Lance(Team.BLUE), _lanceTex, 8, 8);
+
+        addPiece(new Knight(Team.RED), _knightTex, 0, 1);
+        addPiece(new Knight(Team.RED), _knightTex, 0, 7);
+        addPiece(new Knight(Team.BLUE), _knightTex, 8, 1);
+        addPiece(new Knight(Team.BLUE), _knightTex, 8, 7);
+
+        addPiece(new SilverGeneral(Team.RED), _silverTex, 0, 2);
+        addPiece(new SilverGeneral(Team.RED), _silverTex, 0, 6);
+        addPiece(new SilverGeneral(Team.BLUE), _silverTex, 8, 2);
+        addPiece(new SilverGeneral(Team.BLUE), _silverTex, 8, 6);
+
+        addPiece(new GoldGeneral(Team.RED), _goldTex, 0, 3);
+        addPiece(new GoldGeneral(Team.RED), _goldTex, 0, 5);
+        addPiece(new GoldGeneral(Team.BLUE), _goldTex, 8, 3);
+        addPiece(new GoldGeneral(Team.BLUE), _goldTex, 8, 5);
+
+        addPiece(new JadeGeneral(Team.RED), _jadeTex, 0, 4);
+        addPiece(new JadeGeneral(Team.BLUE), _jadeTex, 8, 4);
     }
     
     
@@ -134,122 +213,45 @@ public class PlayScreen extends Screen
         
         Waifu obj = new Waifu(tex, _board.getX() + col * Board.CELL_WIDTH, _board.getY() + row * Board.CELL_HEIGHT, piece, _board, _redHand, _blueHand);
         _waifus.add(obj);
+        _requestHandler.registerWaifu(obj);
+        addActor(obj);
+    }
+    
+    
+    /// NOTE: Instead of removing Waifus, just place them back at starting positions?
+    /**
+     * Reset the board to its initial state.
+     */
+    public void reset()
+    {
+        _board.getBoard().clear();
+        _waifus.clear();
+        System.out.println("Waifus: " + _waifus.size());
+        
+        addPieces();
     }
     
     
     @Override
-    public void render(float delta)
+    public void update(float delta)
     {
-        SpriteBatch batch = getSpriteBatch();
-        
         //////////////////////////////////////
         // Update objects here
-        _waifus.forEach(w -> w.update(delta));
-
-        
-        ////////////////////////////////////////
-        // Draw textures and text to the screen
-        batch.begin();
-        batch.draw(_woodTex, 0, 0);
-        _board.draw(batch);
-        
-        
+    }
+    
+    
+    @Override
+    public void draw(Batch batch)
+    {
         //////////////////////////////////////////
         // Draw highlighted cells to the screen
         _highlighter.draw(batch);
-        
-        // Draw waifu textures to the screen
-        for (Waifu waifu : _waifus)
-        {
-            Piece p = waifu.getPiece();
-            
-            // Only draw waifus that have pieces
-            if (p != null)
-            {
-                waifu.draw(batch);
-            }
-        }
-        batch.setColor(Color.WHITE);
-        
-        /////////////////////////////////////////////////
-        // Draw quantity at corner of captured pieces
-        final int xOffset = 4;
-        
-        for (Stack<Piece> s  : _blueHand.getHand().getPieces().values())
-        {
-            if (!s.empty())
-            {
-                Piece p = s.peek();
-                _font.draw(batch, s.size() + "", _blueHand.getX() + xOffset, Gdx.graphics.getHeight() - _blueHand.getY() - p.getType().getIndex() * Board.CELL_HEIGHT);
-            }
-        }
-        
-        for (Stack<Piece> s  : _redHand.getHand().getPieces().values())
-        {
-            if (!s.empty())
-            {
-                Piece p = s.peek();
-                _font.draw(batch, s.size() + "", _redHand.getX() + xOffset, _redHand.getY() + (p.getType().getIndex() + 1) * Board.CELL_HEIGHT );
-            }
-        }
-        
-        
-        batch.end();
-    }
-    
-    
-    /**
-     * Inform all touch listeners of the location the screen was touched (clicked) at in
-     * render coordinates (bottom-to-top, left-to-right).
-     * @param screenX
-     * @param screenY
-     * @param pointer
-     * @param button
-     * @return 
-     */
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button)
-    {
-        for (TouchListener l : _touchListeners)
-        {
-            // IMPORTANT: Touch coordinates go top-to-bottom left-to-right. This converts
-            // these coordinates to bottom-to-top left-to-right which the rendering system
-            // works with.
-            
-            l.onTouch(new TouchEvent(true, screenX, Gdx.graphics.getHeight() - screenY));
-        }
-        
-        return true;
     }
     
     
     @Override
-    public void resume()
+    public void handleGameQuit()
     {
-        
-    }
-    
-    @Override
-    public void pause()
-    {
-        _font.dispose();
-    }
-    
-    @Override
-    public void resize(int x, int y)
-    {
-        
-    }
-    
-    @Override
-    public void show()
-    {
-        
-    }
-    
-    @Override
-    public void hide()
-    {
-        
+        changeScreen(ScreenType.MAIN_MENU);
     }
 }

@@ -6,16 +6,13 @@
 package com.insanelyinsane.waifushogi.systems;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
-import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
-import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
+import com.insanelyinsane.waifushogi.containers.Board;
 
 /**
  *
@@ -24,15 +21,18 @@ import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
 public class Highlighter implements SelectionListener
 {
     private final ShapeRenderer _renderer;
-    private final BoardObject _board;
+    
+    private final float _boardX;
+    private final float _boardY;
     private boolean[][] _validMoves;
     
     
-    public Highlighter(BoardObject board)
+    public Highlighter(float boardX, float boardY)
     {
         _renderer = new ShapeRenderer();
         
-        _board = board;
+        _boardX = boardX;
+        _boardY = boardY;
         _validMoves = new boolean[Board.ROWS][Board.COLS];
     }
     
@@ -67,11 +67,8 @@ public class Highlighter implements SelectionListener
     }
     
     
-    public void draw(SpriteBatch batch)
+    public void draw(Batch batch)
     {
-        // End the current batch for ShapeRenderer
-        batch.end();
-        
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         
@@ -87,8 +84,8 @@ public class Highlighter implements SelectionListener
                 {
                     if (_validMoves[r][c])
                     {
-                        _renderer.rect(_board.getX() + c * Board.CELL_WIDTH,
-                                      _board.getY() + r * Board.CELL_HEIGHT,
+                        _renderer.rect(_boardX + c * Board.CELL_WIDTH,
+                                      _boardY + r * Board.CELL_HEIGHT,
                                       Board.CELL_WIDTH,
                                       Board.CELL_HEIGHT);
                     }
@@ -98,8 +95,5 @@ public class Highlighter implements SelectionListener
         
         _renderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
-        
-        // Begin batch again after Shape rendering
-        batch.begin();
     }
 }

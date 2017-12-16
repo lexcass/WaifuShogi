@@ -5,7 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.events;
 
-import com.insanelyinsane.waifushogi.objects.pieces.Piece;
+import com.insanelyinsane.waifushogi.pieces.Piece;
 
 /**
  *

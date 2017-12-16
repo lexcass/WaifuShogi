@@ -5,266 +5,280 @@
  */
 package com.insanelyinsane.waifushogi.systems;
 
-import com.badlogic.gdx.Gdx;
-import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
-import com.insanelyinsane.waifushogi.events.ReplaceEvent;
+import com.insanelyinsane.waifushogi.events.DropEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
-import com.insanelyinsane.waifushogi.events.TouchEvent;
-import com.insanelyinsane.waifushogi.listeners.CaptureListener;
-import com.insanelyinsane.waifushogi.listeners.MoveListener;
-import com.insanelyinsane.waifushogi.listeners.ReplaceListener;
-import com.insanelyinsane.waifushogi.listeners.SelectionListener;
-import com.insanelyinsane.waifushogi.listeners.TouchListener;
-import com.insanelyinsane.waifushogi.objects.Board;
-import com.insanelyinsane.waifushogi.objects.gameobjects.BoardObject;
-import com.insanelyinsane.waifushogi.objects.gameobjects.HandObject;
-import com.insanelyinsane.waifushogi.objects.gameobjects.Waifu;
-import com.insanelyinsane.waifushogi.objects.pieces.Piece;
-import com.insanelyinsane.waifushogi.objects.pieces.Team;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import com.insanelyinsane.waifushogi.containers.Board;
+import com.insanelyinsane.waifushogi.containers.Hand;
+import com.insanelyinsane.waifushogi.pieces.Pawn;
+import com.insanelyinsane.waifushogi.pieces.Piece;
+import com.insanelyinsane.waifushogi.pieces.Team;
 
 /**
- *
+ * The rule enforcer that keeps track of the state of the game. Operates on the
+ * level of raw objects (Board and Hand) as opposed to GameObjects (BoardObject and HandObject).
+ * The Referee generates events that will be sent to other components while keeping
+ * track of the current state of the game (selected Piece, valid moves, etc.) It determines
+ * what is valid and what is not.
  * @author alex
  */
-public class Referee implements TouchListener
+public class Referee
 {
-    private enum Containers { BOARD, HAND };
+    // Column that starts promotion zone for each team
+    private final int PROMO_COL_RED = 6;
+    private final int PROMO_COL_BLUE = 2;
+    
     
     // Board and Hands
-    private final BoardObject _board;
-    private final HandObject _redHand;
-    private final HandObject _blueHand;
+    private final Board _board;
+    private final Hand _redHand;
+    private final Hand _blueHand;
+    
+    public Board getBoard() { return _board; }
+    
+    public Hand getRedHand() { return _redHand; }
+    
+    public Hand getBlueHand() { return _blueHand; }
+    
     
     // Selection
     private Team _currentTeam;
-    private HandObject _currentHand;
+    private Hand _currentHand;
     private Piece _selectedPiece;
     private int _selectedRow;
     private int _selectedCol;
     private boolean[][] _validMoves;
-    private boolean[][] _validReplacements;
+    private boolean[][] _validDrops;
     private boolean _shouldReplace;
     
-    // Listeners
-    private final List<SelectionListener> _selectionListeners;
-    private final List<MoveListener> _moveListeners;
-    private final List<ReplaceListener> _replaceListeners;
-    private final List<CaptureListener> _captureListeners;
     
-    
-    public Referee(BoardObject board, Highlighter h, List<Waifu> waifus, HandObject redHand, HandObject blueHand)
+    /**
+     * Store a reference to the Board and Hands (Red and Blue). Initialize
+     * the game state setting the current team to RED.
+     * @param board
+     * @param redHand
+     * @param blueHand 
+     */
+    public Referee(Board board, Hand redHand, Hand blueHand)
     {
         _board = board;
         _redHand = redHand;
         _blueHand = blueHand;
         
-        _selectionListeners = new LinkedList<>();
-        _moveListeners = new LinkedList<>();
-        _replaceListeners = new LinkedList<>();
-        _captureListeners = new LinkedList<>();
-        
-        // Add move event listeners
-        _moveListeners.add(_board.getBoard());
-        waifus.forEach(w -> _moveListeners.add(w));
-        
-        // Add replace event listeners
-        _replaceListeners.add(_board.getBoard());
-        _replaceListeners.add(_blueHand.getHand());
-        _replaceListeners.add(_redHand.getHand());
-        waifus.forEach(w -> _replaceListeners.add(w));
-        
-        // Add selection event listeners
-        _selectionListeners.add(h);
-        waifus.forEach(w -> _selectionListeners.add(w));
-        
-        // Add capture event listeners
-        _captureListeners.add(_redHand.getHand());
-        _captureListeners.add(_blueHand.getHand());
-        waifus.forEach(w -> _captureListeners.add(w));
-        
         // Red goes first
         _currentTeam = Team.RED;
         _currentHand = _redHand;
-        _shouldReplace = false;
     }
     
     
-    @Override
-    public void onTouch(TouchEvent e)
+    /**
+     * Select a Piece on the board given the piece and its row and column.
+     * If the Piece is on the current team's team, change the game's state
+     * to reflect the new selection. Returns a generated SelectionEvent to reflect
+     * the new selection that should be handled by the calling object.
+     * 
+     * ///////////////////////////////////////////////////////////////////////
+     * Important: Returns null if the selection is invalid. The calling object
+     * should be able to handle this case.
+     * @param target
+     * @param r
+     * @param c
+     * @return 
+     */
+    public SelectionEvent selectPieceOnBoard(Piece target, int r, int c)
     {
-        //////////////////////////////////////////
-        // If the board is touched
-        //////////////////////////////////////////
-        if (_board.containsPoint(e.getX(), e.getY()))
+        if (target.getTeam() == _currentTeam)
         {
-            // The target is the piece in the row/col touched
-            int r = (int)(e.getY() - _board.getY()) / Board.CELL_HEIGHT;
-            int c = (int)(e.getX() - _board.getX()) / Board.CELL_WIDTH;
-            Piece target = _board.getBoard().getPieceAt(r, c);
+            _selectedPiece = target;
+            _selectedRow = r;
+            _selectedCol = c;
+            _validMoves = target.getValidMoves(_board.getPieces(), r, c);
+            _shouldReplace = false;
+
+            return new SelectionEvent(_validMoves, _selectedPiece, true);
+        }
+        
+        return null;
+    }
+    
+    
+    /**
+     * Selects a Piece in the current team's Hand given the Piece.
+     * If the Piece is on the current team's team, change the game's state
+     * to reflect the new selection. Generate and return a new SelectionEvent
+     * to be handled by the calling object.
+     * 
+     * ///////////////////////////////////////////////////////////////////////
+     * Important: Returns null if the selection is invalid. The calling object
+     * should be able to handle this case.
+     * @param target
+     * @return 
+     */
+    public SelectionEvent selectPieceInHand(Piece target)
+    {
+        if (target.getTeam() == _currentTeam)
+        {
+            _selectedPiece = target;
+            _validDrops = target.getValidDrops(_board.getPieces());
+            _shouldReplace = true;
             
-            // If there is currently no piece selected
-            if (_selectedPiece == null)
+            return new SelectionEvent(_validDrops, _selectedPiece, true);
+        }
+        
+        return null;
+    }
+    
+    
+    /**
+     * Moves the currently selected Piece to the specified row and column if
+     * the Piece is on the Board and the move is valid as determined by 
+     * Referee::selectPieceOnBoard(). Generates and returns a MoveEvent to be
+     * handled by the calling object.
+     * 
+     * ///////////////////////////////////////////////////////////////////////
+     * Important: Returns null if the move is invalid. The calling object
+     * should be able to handle this case.
+     * @param r
+     * @param c
+     * @return 
+     */
+    public MoveEvent movePieceTo(int r, int c)
+    {
+        boolean promo = false;
+        
+        MoveEvent e = null;
+        
+        if (_selectedPiece != null && !_shouldReplace)
+        {
+            if (_validMoves[r][c])
             {
-                // Select the piece if its on the team of the player whose turn it is
-                selectBoardPiece(target, r, c);
+                e = new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c, promo);
             }
-            
-            // If a piece is selected
+        }
+        
+        return e;
+    }
+    
+    
+    /**
+     * Moves the currently selected Piece from the Hand to the specified row and column on the Board.
+     * If the Drop (drop) is valid as determined by Referee::selectPieceInHand(), this method
+ will generate and return a DropEvent to be handled by the calling object.
+ 
+ ///////////////////////////////////////////////////////////////////////
+ Important: Returns null if the selection is invalid. The calling object
+ should be able to handle this case.
+     * @param r
+     * @param c
+     * @return 
+     */
+    public DropEvent dropPieceAt(int r, int c)
+    {
+        DropEvent e = null;
+        
+        if (_selectedPiece != null && _shouldReplace)
+        {
+            if (_validDrops[r][c])
+            {
+                e = new DropEvent(_selectedPiece, r, c);
+            }
+        }
+        
+        return e;
+    }
+    
+    
+    /**
+     * Returns the Piece at the specified row and columns if it should be
+     * captured and null otherwise. The calling object should be able to handle
+     * null cases.
+     * @param r
+     * @param c
+     * @return 
+     */
+    public Piece capturePieceAt(int r, int c)
+    {
+        Piece target = _board.getPieceAt(r, c);
+        if (target != null)
+        {
+            if (target.getTeam() != _currentTeam) return target;
+        }
+        
+        return null;
+    }
+    
+    
+    public Piece promotePieceAt(int r, int c)
+    {
+        if (_currentTeam == Team.RED && r < PROMO_COL_RED)
+        {
+            return null;
+        }
+        else if (_currentTeam == Team.BLUE && r > PROMO_COL_BLUE)
+        {
+            return null;
+        }
+        
+        Piece p = _board.getPieceAt(r, c);
+        
+        
+        // Jade and Gold Generals can't be promoted, so ignore them.
+        if (p.getType() == Piece.Type.JADE || p.getType() == Piece.Type.GOLD)
+        {
+            return null;
+        }
+        
+        if (p == null) return p;
+        
+        if (!p.isPromoted())
+        {
+            return p;
+        }
+        
+        return null;
+    }
+    
+    
+    
+    public boolean isPieceStuck(Piece p, int r, int c)
+    {
+        // Pawn, Lance, and Knight are special cases.
+        // If they are in the last row (or second to last row for Knight),
+        // they have no future moves and must promoted.
+        if (p.getType() == Piece.Type.PAWN || p.getType() == Piece.Type.LANCE)
+        {
+            int lastRow = p.getTeam() == Team.RED ? Board.COLS - 1 : 0;
+            return (r == lastRow);
+        }
+        else if (p.getType() == Piece.Type.KNIGHT)
+        {
+            if (p.getTeam() == Team.RED)
+            {
+                return r >= Board.COLS - 2;
+            }
             else
             {
-                // And the piece is on the board
-                if (!_shouldReplace)
-                {
-                    // Check if the move is valid
-                    if (_validMoves[r][c])
-                    {
-                        // And tell the capture listeners if a piece was captured
-                        if (target != null)
-                        {
-                            if (target.getTeam() != _currentTeam)
-                            {
-                                _captureListeners.forEach(l -> l.onWaifuCaptured(new CaptureEvent(target)));
-                            }
-                        }
-                        
-                        // Move the piece to the target row/col
-                        movePieceTo(r, c);
-                    }
-                    
-                    // If the move is invalid, select the piece at the touched cell
-                    // if the piece is on the current player's team.
-                    else
-                    {
-                        selectBoardPiece(target, r, c);
-                    }
-                }
-                
-                // If the piece is in a player's hand
-                else
-                {
-                    // And the replacement is valid for this piece
-                    if (_validReplacements[r][c])
-                    {
-                        // Move the piece from the player's hand to this row/col
-                        replacePieceTo(r, c);
-                    }
-                    else
-                    {
-                        selectBoardPiece(target, r, c);
-                    }
-                }
-            }
-            
-        }
-        
-        
-        //////////////////////////////////////////////////////////////
-        // If red hand is touched   (hand on right with red pieces)
-        //////////////////////////////////////////////////////////////
-        if (_redHand.containsPoint(e.getX(), e.getY()))
-        {
-            // Get the piece at the top of the captured piece stack given the type
-            int r = (int)(e.getY() - _redHand.getY()) / Board.CELL_HEIGHT;
-            if (r < 0 || r > Piece.Type.SIZE) return;
-            
-            selectHandPiece(Piece.Type.values()[r]);
-        }
-        
-        
-        
-        //////////////////////////////////////////////////////////////
-        // If blue hand is touched  (hand on left with blue pieces)
-        //////////////////////////////////////////////////////////////
-        if (_blueHand.containsPoint(e.getX(), e.getY()))
-        {
-            int r = (Piece.Type.SIZE - 1) - (int)(e.getY() - _blueHand.getY()) / Board.CELL_HEIGHT;
-            if (r < 0 || r > Piece.Type.SIZE) return;
-            
-            selectHandPiece(Piece.Type.values()[r]);
-        }
-        
-    }
-    
-    
-    public void selectBoardPiece(Piece piece, int r, int c)
-    {
-        if (piece == null)
-        {
-            Gdx.app.debug("Warning", "board piece selected at (" + r + ", " + c + ") was null");
-            return;
-        }
-        else
-        {
-            if (piece.getTeam() != _currentTeam)
-            {
-                Gdx.app.debug("Warning", "selected board piece not on current team " + _currentTeam.toString());
-                return;
+                return r <= 1;
             }
         }
         
-        // Set selections
-        _selectedPiece = piece;
-        _selectedRow = r;
-        _selectedCol = c;
-        
-        // Retrieve valid moves
-        _validMoves = piece.getValidMoves(_board.getBoard().getPieces(), r, c);
-
-        // Dispatch SelectionEvent
-        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(_validMoves, _selectedPiece, true)));
-        
-        _shouldReplace = false;
+        return false;
     }
     
     
-    public void selectHandPiece(Piece.Type type)
-    {
-        // Peek at the stack to select piece from hand
-        // If stack is empty, return to cancel touch operation
-        Stack<Piece> stack = _currentHand.getHand().getPiecesOfType(type);
-        if (stack.empty()) { return; }
-
-        Piece piece = stack.peek();
-        
-        _selectedPiece = piece;
-        
-        _validReplacements = piece.getValidReplacements(_board.getBoard().getPieces());
-        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(_validReplacements, _selectedPiece, true)));
-        
-        _shouldReplace = true;
-    }
-    
-    
-    public void movePieceTo(int r, int c)
-    {
-        // Move the selected piece to the new cell
-        _moveListeners.forEach(l -> l.onWaifuMoved(new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c)));
-
-        Gdx.app.debug("Move", _selectedPiece.getType().toString() + " moved from (" + _selectedRow + ", " + _selectedCol + ") to (" + r + ", " + c + ")");
-        
-        finishTurn();
-    }
-    
-    
-    public void replacePieceTo(int r, int c)
-    {
-        _replaceListeners.forEach(l -> l.onWaifuReplaced(new ReplaceEvent(_selectedPiece, r, c)));
-        
-        Gdx.app.debug("Replace", _selectedPiece.getType().toString() + " replaced from " + _currentTeam.toString() + "'s hand to (" + r + ", " + c + ")");
-        
-        finishTurn();
-    }
-    
-    
+    /**
+     * End the current player's turn by resetting the game state's selection
+     * and validity flags. Change the current team to the next team (RED or BLUE).
+     */
     public void finishTurn()
     {
         // Reset the selection
-        _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _selectedPiece, false)));
         _selectedPiece = null;
+        _selectedRow = -1;
+        _selectedCol = -1;
+        _validMoves = null;
+        _validDrops = null;
+        _shouldReplace = false;
 
 
         // Switch to other player
@@ -278,7 +292,5 @@ public class Referee implements TouchListener
             _currentTeam = Team.RED;
             _currentHand = _redHand;
         }
-        
-        _shouldReplace = false;
     }
 }

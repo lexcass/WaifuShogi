@@ -7,9 +7,12 @@ package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.insanelyinsane.waifushogi.WaifuShogi;
+import com.insanelyinsane.waifushogi.ui.UIController;
 
 /**
  *
@@ -27,9 +30,9 @@ public class LoadScreen extends Screen
     
     private float T = 0;
     
-    public LoadScreen(ScreenChangeListener game, SpriteBatch batch, AssetManager assets)
+    public LoadScreen(WaifuShogi game, SpriteBatch batch, UIController ui, AssetManager assets)
     {
-        super(game, batch);
+        super(game, batch, ui);
         
         _assetsToLoad = assets;
         _loadingDone = false;
@@ -39,13 +42,22 @@ public class LoadScreen extends Screen
     public void create()
     {
         _font = new BitmapFont();
+        
+        addActor(new Actor()
+        {
+            @Override
+            public void draw(Batch batch, float a)
+            {
+                _font.draw(batch, "Loading...", LOAD_X, LOAD_Y);
+            }
+        });
     }
     
     public boolean loadingCompleted() { return _loadingDone; }
     
     
     @Override
-    public void render(float delta) 
+    public void update(float delta) 
     {
         // Update assets until finished
         if (_assetsToLoad.update())
@@ -56,34 +68,9 @@ public class LoadScreen extends Screen
         }
         
         T += delta;
-        
-        SpriteBatch batch = getSpriteBatch();
-        
-        // Draw "Loading..." text onto screen
-        batch.begin();
-        _font.draw(batch, "Loading...", LOAD_X, LOAD_Y);
-        batch.end();
     }
     
     
     @Override
-    public boolean  touchDown(int screenX, int screenY, int pointer, int button)
-    {
-        return true;
-    }
-    
-    @Override
-    public void resume() {}
-    
-    @Override
-    public void pause() {}
-    
-    @Override
-    public void resize(int x, int y) {}
-    
-    @Override
-    public void show() {}
-    
-    @Override
-    public void hide() {}
+    public void draw(Batch batch) {}
 }
