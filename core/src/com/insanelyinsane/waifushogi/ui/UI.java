@@ -49,7 +49,7 @@ public abstract class UI
     }
     
     
-    public void show(boolean show)
+    public void toggleDisplay(boolean show)
     {
         _elements.forEach(e -> e.setVisible(show));
     }

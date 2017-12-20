@@ -5,7 +5,6 @@
  */
 package com.insanelyinsane.waifushogi;
 
-import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.DropEvent;
@@ -16,7 +15,7 @@ import com.insanelyinsane.waifushogi.interfaces.PromotionHandler;
 import com.insanelyinsane.waifushogi.listeners.PromotionListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.containers.Board;
-import com.insanelyinsane.waifushogi.ui.actors.Waifu;
+import com.insanelyinsane.waifushogi.actors.Waifu;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;

@@ -14,13 +14,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.events.ScreenChangeEvent;
+import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.ui.UIController;
 /**
  *
  * @author alex
  */
-public abstract class Screen
+public abstract class Screen implements QuitListener
 {
     private final ScreenChangeListener _screenChangeListener;
     private final SpriteBatch _spriteBatch;
@@ -97,7 +98,11 @@ public abstract class Screen
     public UIController getUIController() { return _uiController; }
     
     public abstract void create();
-    
     public abstract void update(float delta);
     public abstract void draw(Batch batch);
+    
+    // Handle the release of game assets and system exit when game
+    // is quit through the GUI
+    @Override
+    public abstract void handleGameQuit();
 }

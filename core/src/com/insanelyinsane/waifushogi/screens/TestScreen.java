@@ -28,9 +28,9 @@ import com.insanelyinsane.waifushogi.systems.Highlighter;
 import com.insanelyinsane.waifushogi.systems.Referee;
 import com.insanelyinsane.waifushogi.ui.PlayUI;
 import com.insanelyinsane.waifushogi.ui.UIController;
-import com.insanelyinsane.waifushogi.ui.actors.BoardObject;
-import com.insanelyinsane.waifushogi.ui.actors.HandObject;
-import com.insanelyinsane.waifushogi.ui.actors.Waifu;
+import com.insanelyinsane.waifushogi.actors.BoardObject;
+import com.insanelyinsane.waifushogi.actors.HandObject;
+import com.insanelyinsane.waifushogi.actors.Waifu;
 import java.util.LinkedList;
 import java.util.List;
 

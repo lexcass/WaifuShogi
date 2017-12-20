@@ -49,7 +49,7 @@ public class Referee
     private int _selectedCol;
     private boolean[][] _validMoves;
     private boolean[][] _validDrops;
-    private boolean _shouldReplace;
+    private boolean _shouldDrop;
     
     
     /**
@@ -93,7 +93,7 @@ public class Referee
             _selectedRow = r;
             _selectedCol = c;
             _validMoves = target.getValidMoves(_board.getPieces(), r, c);
-            _shouldReplace = false;
+            _shouldDrop = false;
 
             return new SelectionEvent(_validMoves, _selectedPiece, true);
         }
@@ -120,7 +120,7 @@ public class Referee
         {
             _selectedPiece = target;
             _validDrops = target.getValidDrops(_board.getPieces());
-            _shouldReplace = true;
+            _shouldDrop = true;
             
             return new SelectionEvent(_validDrops, _selectedPiece, true);
         }
@@ -148,7 +148,7 @@ public class Referee
         
         MoveEvent e = null;
         
-        if (_selectedPiece != null && !_shouldReplace)
+        if (_selectedPiece != null && !_shouldDrop)
         {
             if (_validMoves[r][c])
             {
@@ -163,11 +163,11 @@ public class Referee
     /**
      * Moves the currently selected Piece from the Hand to the specified row and column on the Board.
      * If the Drop (drop) is valid as determined by Referee::selectPieceInHand(), this method
- will generate and return a DropEvent to be handled by the calling object.
+     * will generate and return a DropEvent to be handled by the calling object.
  
- ///////////////////////////////////////////////////////////////////////
- Important: Returns null if the selection is invalid. The calling object
- should be able to handle this case.
+        ///////////////////////////////////////////////////////////////////////
+        Important: Returns null if the selection is invalid. The calling object
+        should be able to handle this case.
      * @param r
      * @param c
      * @return 
@@ -176,7 +176,7 @@ public class Referee
     {
         DropEvent e = null;
         
-        if (_selectedPiece != null && _shouldReplace)
+        if (_selectedPiece != null && _shouldDrop)
         {
             if (_validDrops[r][c])
             {
@@ -278,7 +278,7 @@ public class Referee
         _selectedCol = -1;
         _validMoves = null;
         _validDrops = null;
-        _shouldReplace = false;
+        _shouldDrop = false;
 
 
         // Switch to other player

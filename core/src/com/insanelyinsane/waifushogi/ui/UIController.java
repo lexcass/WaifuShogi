@@ -38,7 +38,7 @@ public class UIController
     public void showUI(boolean s)
     {
         _uiShowing = s;
-        _ui.show(s);
+        _ui.toggleDisplay(s);
     }
     
     

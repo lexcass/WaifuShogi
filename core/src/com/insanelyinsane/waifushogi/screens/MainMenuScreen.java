@@ -42,13 +42,10 @@ public class MainMenuScreen extends Screen
         return true;
     }
     
-    public void resume() {}
     
-    public void pause() {}
-    
-    public void resize(int x, int y) {}
-    
-    public void show() {}
-    
-    public void hide() {}
+    @Override
+    public void handleGameQuit()
+    {
+        
+    }
 }

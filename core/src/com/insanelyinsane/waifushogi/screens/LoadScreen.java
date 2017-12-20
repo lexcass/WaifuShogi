@@ -73,4 +73,10 @@ public class LoadScreen extends Screen
     
     @Override
     public void draw(Batch batch) {}
+    
+    @Override
+    public void handleGameQuit()
+    {
+        
+    }
 }

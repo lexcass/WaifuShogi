@@ -15,7 +15,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.RequestHandler;
 import com.insanelyinsane.waifushogi.WaifuShogi;
-import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.containers.Hand;
@@ -24,9 +23,9 @@ import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.pieces.Team;
 import com.insanelyinsane.waifushogi.systems.Highlighter;
 import com.insanelyinsane.waifushogi.systems.Referee;
-import com.insanelyinsane.waifushogi.ui.actors.BoardObject;
-import com.insanelyinsane.waifushogi.ui.actors.HandObject;
-import com.insanelyinsane.waifushogi.ui.actors.Waifu;
+import com.insanelyinsane.waifushogi.actors.BoardObject;
+import com.insanelyinsane.waifushogi.actors.HandObject;
+import com.insanelyinsane.waifushogi.actors.Waifu;
 import com.insanelyinsane.waifushogi.pieces.Bishop;
 import com.insanelyinsane.waifushogi.pieces.GoldGeneral;
 import com.insanelyinsane.waifushogi.pieces.JadeGeneral;
@@ -39,9 +38,9 @@ import com.insanelyinsane.waifushogi.ui.UIController;
 
 /**
  *
- * @author alex
+ * @author Alex Cassady
  */
-public class PlayScreen extends Screen implements QuitListener
+public class PlayScreen extends Screen
 {
     // Assets to load
     Texture _woodTex;
