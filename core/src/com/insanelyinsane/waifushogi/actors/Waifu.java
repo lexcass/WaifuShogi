@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.DropEvent;
@@ -23,12 +24,12 @@ import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.pieces.Team;
-import com.insanelyinsane.waifushogi.systems.Animator;
+import com.insanelyinsane.waifushogi.actors.animation.Animator;
 import com.insanelyinsane.waifushogi.listeners.DropListener;
 
 /**
  *
- * @author alex
+ * @author Alex Cassady
  */
 public class Waifu extends Actor implements MoveListener, CaptureListener, SelectionListener, DropListener, PromotionListener
 {   
@@ -91,7 +92,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         
         
         _animator = new Animator(tex, 36, 36);
-        _animator.loadFromFile(piece.getType().toString().toLowerCase());
+        _animator.loadAnimationsFromFile(piece.getType().toString().toLowerCase());
         setAnimation("Idle");
     }
     
@@ -103,6 +104,12 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     @Override
     public void act(float delta)
     {
+        // Remove Waifu from stage if it has no piece to represent.
+        if (_piece == null)
+        {
+            this.addAction(Actions.removeActor(this));
+        }
+        
         _animator.update(delta);
         
         _sprite.setX(getX());
@@ -120,7 +127,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     @Override
     public void onWaifuSelected(SelectionEvent e)
     {
-        if (e.getPiece().equals(getPiece()) && !_selected)
+        if (e.getPiece() == _piece && !_selected)
         {
             _selected = e.isSelected();
             setAnimation("Selected");
@@ -136,7 +143,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     @Override
     public void onWaifuMoved(MoveEvent e)
     {
-        if (e.getPiece().equals(getPiece()))
+        if (e.getPiece() == _piece)
         {
             setX(BOARD_X + e.toCol() * Board.CELL_WIDTH);
             setY(BOARD_Y + e.toRow() * Board.CELL_HEIGHT);
@@ -149,7 +156,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     {
         Piece p = e.getPiece();
         
-        if (p.equals(getPiece()))
+        if (p == _piece)
         {
             float offset = p.getType().getIndex() * Board.CELL_HEIGHT;
             float x = p.getTeam() == Team.BLUE ? RED_HAND_X : BLUE_HAND_X;
@@ -161,7 +168,6 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
             p.setTeam(p.getTeam() == Team.RED ? Team.BLUE : Team.RED);
             _animPrefix = (p.getTeam() == Team.RED ? "up" : "down");
             
-            // Demote piece
             demote();
         }
     }
@@ -173,7 +179,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     {
         Piece p = e.getPiece();
         
-        if (p.equals(getPiece()))
+        if (p == _piece)
         {
             setX(BOARD_X + e.toCol() * Board.CELL_WIDTH);
             setY(BOARD_Y + e.toRow() * Board.CELL_HEIGHT);

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.systems;
+package com.insanelyinsane.waifushogi;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -38,13 +38,15 @@ public class Highlighter implements SelectionListener
     
     /**
      * A 2d array of cells that will be highlighted. The indices correspond
-     * to the col and row on the board. 
-     * 
-     * Note: A null entry means there is no cell to be highlighted.
-     * @param cells 
+     * to the col and row on the board and if the value is true, the cell
+     * will be highlighted.
+     * @param valid 
      */
     public void highlight(boolean[][] valid) { _validMoves = valid; }
     
+    /**
+     * Unhighlight the cells
+     */
     public void unhighlight() { _validMoves = null; }
     
     

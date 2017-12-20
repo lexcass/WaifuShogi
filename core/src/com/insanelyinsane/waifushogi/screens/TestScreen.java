@@ -22,15 +22,18 @@ import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.pieces.Pawn;
 import com.insanelyinsane.waifushogi.pieces.Piece;
-import com.insanelyinsane.waifushogi.pieces.Rook;
 import com.insanelyinsane.waifushogi.pieces.Team;
-import com.insanelyinsane.waifushogi.systems.Highlighter;
-import com.insanelyinsane.waifushogi.systems.Referee;
+import com.insanelyinsane.waifushogi.Highlighter;
+import com.insanelyinsane.waifushogi.Referee;
 import com.insanelyinsane.waifushogi.ui.PlayUI;
 import com.insanelyinsane.waifushogi.ui.UIController;
 import com.insanelyinsane.waifushogi.actors.BoardObject;
 import com.insanelyinsane.waifushogi.actors.HandObject;
 import com.insanelyinsane.waifushogi.actors.Waifu;
+import com.insanelyinsane.waifushogi.pieces.GoldGeneral;
+import com.insanelyinsane.waifushogi.pieces.Knight;
+import com.insanelyinsane.waifushogi.pieces.Lance;
+import com.insanelyinsane.waifushogi.pieces.SilverGeneral;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -65,6 +68,11 @@ public class TestScreen extends Screen implements QuitListener
     boolean _clickReleased = true;
     boolean _promotePiece = false;
     Team    _chosenTeam = Team.RED;
+    int     _row;
+    int     _col;
+    String  _tex;
+    Piece   _piece;
+    
     
     
     public TestScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
@@ -85,6 +93,10 @@ public class TestScreen extends Screen implements QuitListener
         loadAsset("textures/SilverGeneral.png", Texture.class);
         loadAsset("textures/GoldGeneral.png", Texture.class);
         loadAsset("textures/JadeGeneral.png", Texture.class);
+        
+        
+        _piece = new Pawn(_chosenTeam);
+        _tex = Textures.PAWN;
     }
     
     @Override
@@ -161,14 +173,9 @@ public class TestScreen extends Screen implements QuitListener
     }
     
     
-    /// NOTE: Instead of removing Waifus, just place them back at starting positions?
-    /**
-     * Reset the board to its initial state.
-     */
-    public void reset()
+    public void removePiece(int row, int col)
     {
-        _board.getBoard().clear();
-        _waifus.clear();
+        _board.getBoard().removePieceAt(_row, _col);
     }
     
     
@@ -178,73 +185,80 @@ public class TestScreen extends Screen implements QuitListener
         //////////////////////////////////////
         // Update objects here
         
-        int x = 0, y = 0, row = 0, col = 0;
+        int x = 0, y = 0;
         AssetManager assets = getAssets();
+        
+        x = Gdx.input.getX();
+        y = Gdx.input.getY();
+
+        _row = Board.ROWS - ((y - BOARD_Y) / Board.CELL_HEIGHT) - 1;
+        _row = (_row >= 9) ? -1 : _row;
+
+        _col = (x - BOARD_X) / Board.CELL_WIDTH;
+        _col = (_col >= 9) ? -1 : _col;
+
+        if (_row < 0 || _col < 0) return;
         
         // If the board is right-clicked, the currently selected piece will be added to the board.
         if (Gdx.input.isButtonPressed(Buttons.RIGHT) && _clickReleased)
         {
             _clickReleased = false;
             
-            x = Gdx.input.getX();
-            y = Gdx.input.getY();
-            
-            row = Board.ROWS - ((y - BOARD_Y) / Board.CELL_HEIGHT) - 1;
-            row = (row >= 9) ? -1 : row;
-            
-            col = (x - BOARD_X) / Board.CELL_WIDTH;
-            col = (col >= 9) ? -1 : col;
-            
-            if (row < 0 || col < 0) return;
-            
-            Gdx.app.debug("Selected cell", "(" + row + ", " + col + ")");
+            Gdx.app.debug("Selected cell", "(" + _row + ", " + _col + ")");
+            addPiece(_piece, assets.get(_tex), _row, _col);
         }
         else if (!Gdx.input.isButtonPressed(Buttons.RIGHT))
         {
             _clickReleased = true;
         }
         
+        // If the mouse's BACK button is pressed, remove the piece the cursor is on.
+        else if (Gdx.input.isButtonPressed(Buttons.BACK))
+        {
+            removePiece(_row, _col);
+        }
+        
         if (Gdx.input.isKeyJustPressed(Keys.P))
         {
-            Piece pawn = new Pawn(_chosenTeam);
-            if (_promotePiece) pawn.promote();
-            addPiece(pawn, assets.get(Textures.PAWN), row, col);
+            _piece = new Pawn(_chosenTeam);
+            _tex = Textures.PAWN;
         }
         else if (Gdx.input.isKeyJustPressed(Keys.R))
         {
-            Piece rook = new Rook(_chosenTeam);
-            if (_promotePiece) rook.promote();
-            addPiece(rook, assets.get(Textures.ROOK), row, col);
+            _piece = new Pawn(_chosenTeam);
+            _tex = Textures.PAWN;
         }
         else if (Gdx.input.isKeyJustPressed(Keys.B))
         {
-            
+            _piece = new Pawn(_chosenTeam);
+            _tex = Textures.PAWN;
         }
         else if (Gdx.input.isKeyJustPressed(Keys.J))
         {
-            
+            _piece = new Pawn(_chosenTeam);
+            _tex = Textures.PAWN;
         }
         else if (Gdx.input.isKeyJustPressed(Keys.S))
         {
-            
+            _piece = new SilverGeneral(_chosenTeam);
+            _tex = Textures.SILVER_GENERAL;
         }
         else if (Gdx.input.isKeyJustPressed(Keys.G))
         {
-            
+            _piece = new GoldGeneral(_chosenTeam);
+            _tex = Textures.GOLD_GENERAL;
         }
         else if (Gdx.input.isKeyJustPressed(Keys.K))
         {
-            
+            _piece = new Knight(_chosenTeam);
+            _tex = Textures.KNIGHT;
         }
         else if (Gdx.input.isKeyJustPressed(Keys.L))
         {
-            
+            _piece = new Lance(_chosenTeam);
+            _tex = Textures.LANCE;
         }
-        else if (Gdx.input.isKeyJustPressed(Keys.ENTER))
-        {
-            _promotePiece = !_promotePiece;
-        }
-        else if (Gdx.input.isKeyJustPressed(Keys.SHIFT_RIGHT))
+        else if (Gdx.input.isKeyJustPressed(Keys.SHIFT_LEFT))
         {
             _chosenTeam = (_chosenTeam.equals(Team.RED)) ? Team.BLUE : Team.RED;
         }
@@ -257,6 +271,10 @@ public class TestScreen extends Screen implements QuitListener
         //////////////////////////////////////////
         // Draw highlighted cells to the screen
         _highlighter.draw(batch);
+        
+        batch.begin();
+        _font.draw(batch, "Team <LEFT-SHIFT>: " + _chosenTeam.toString() + "....Piece: " + _piece.getType().toString(), 16, BOARD_Y - 16);
+        batch.end();
     }
     
     

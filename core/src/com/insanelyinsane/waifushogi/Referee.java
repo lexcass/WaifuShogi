@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.systems;
+package com.insanelyinsane.waifushogi;
 
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.DropEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.containers.Hand;
-import com.insanelyinsane.waifushogi.pieces.Pawn;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.pieces.Team;
 
@@ -25,8 +25,8 @@ import com.insanelyinsane.waifushogi.pieces.Team;
 public class Referee
 {
     // Column that starts promotion zone for each team
-    private final int PROMO_COL_RED = 6;
-    private final int PROMO_COL_BLUE = 2;
+    private final int PROMO_COLUMN_RED = 6;
+    private final int PROMO_COLUMN_BLUE = 2;
     
     
     // Board and Hands
@@ -92,7 +92,7 @@ public class Referee
             _selectedPiece = target;
             _selectedRow = r;
             _selectedCol = c;
-            _validMoves = target.getValidMoves(_board.getPieces(), r, c);
+            _validMoves = _selectedPiece.getValidMoves(_board.getPieces(), r, c);
             _shouldDrop = false;
 
             return new SelectionEvent(_validMoves, _selectedPiece, true);
@@ -210,25 +210,28 @@ public class Referee
     
     public Piece promotePieceAt(int r, int c)
     {
-        if (_currentTeam == Team.RED && r < PROMO_COL_RED)
+        if (_currentTeam == Team.RED && r < PROMO_COLUMN_RED)
         {
             return null;
         }
-        else if (_currentTeam == Team.BLUE && r > PROMO_COL_BLUE)
+        else if (_currentTeam == Team.BLUE && r > PROMO_COLUMN_BLUE)
         {
             return null;
         }
         
         Piece p = _board.getPieceAt(r, c);
         
+        // Ignore empty cells
+        if (p == null)
+        {
+            return p;
+        }
         
         // Jade and Gold Generals can't be promoted, so ignore them.
         if (p.getType() == Piece.Type.JADE || p.getType() == Piece.Type.GOLD)
         {
             return null;
         }
-        
-        if (p == null) return p;
         
         if (!p.isPromoted())
         {
@@ -287,7 +290,7 @@ public class Referee
             _currentTeam = Team.BLUE;
             _currentHand = _blueHand;
         }
-        else
+        else if (_currentTeam == Team.BLUE)
         {
             _currentTeam = Team.RED;
             _currentHand = _redHand;

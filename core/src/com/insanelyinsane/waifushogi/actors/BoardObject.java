@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.insanelyinsane.waifushogi.RequestHandler;
+import com.insanelyinsane.waifushogi.Sender;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 
@@ -67,7 +68,7 @@ public final class BoardObject extends Actor
                 
                 if (target != null)
                 {
-                    _handler.requestSelection(RequestHandler.Sender.BOARD, target, r, c);
+                    _handler.requestSelection(Sender.BOARD, target, r, c);
                 }
                 
                 return true;

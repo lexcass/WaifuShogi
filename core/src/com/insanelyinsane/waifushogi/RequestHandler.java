@@ -17,7 +17,6 @@ import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.actors.Waifu;
 import com.insanelyinsane.waifushogi.pieces.Piece;
-import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;
 import java.util.List;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
@@ -32,17 +31,11 @@ import com.insanelyinsane.waifushogi.listeners.DropListener;
  */
 public class RequestHandler implements PromotionHandler
 {
-    /**
-     * Represents the type of sender. This is so the RequestHandler can differentiate between
-     * a Board and a Hand object.
-     */
-    public enum Sender { BOARD, HAND };
-    
     private final Referee _referee;
     private final List<Waifu> _waifus;
     private final List<SelectionListener> _selectionListeners;
     private final List<MoveListener> _moveListeners;
-    private final List<DropListener> _replaceListeners;
+    private final List<DropListener> _dropListeners;
     private final List<CaptureListener> _captureListeners;
     private final List<PromotionListener> _promotionListeners;
     private final PromotionConfirmation _promoConfirmer;
@@ -57,14 +50,14 @@ public class RequestHandler implements PromotionHandler
      * via RequestHandler::registerWaifu().
      * @param ref
      * @param highlighter
-     * @param waifus 
+     * @param c         The object that handles confirmation of promotion from the player (UI).
      */
     public RequestHandler(Referee ref, SelectionListener highlighter, PromotionConfirmation c)
     {
         _waifus = new LinkedList<>();
         _selectionListeners = new LinkedList<>();
         _moveListeners = new LinkedList<>();
-        _replaceListeners = new LinkedList<>();
+        _dropListeners = new LinkedList<>();
         _captureListeners = new LinkedList<>();
         _promotionListeners = new LinkedList<>();
         
@@ -80,9 +73,9 @@ public class RequestHandler implements PromotionHandler
         _moveListeners.add(_referee.getBoard());
         
         // Replace
-        _replaceListeners.add(_referee.getBoard());
-        _replaceListeners.add(_referee.getRedHand());
-        _replaceListeners.add(_referee.getBlueHand());
+        _dropListeners.add(_referee.getBoard());
+        _dropListeners.add(_referee.getRedHand());
+        _dropListeners.add(_referee.getBlueHand());
         
         // Capture
         _captureListeners.add(_referee.getRedHand());
@@ -188,7 +181,7 @@ public class RequestHandler implements PromotionHandler
         if (e == null) return;
         
         // Drop the selected piece
-        _replaceListeners.forEach(l -> l.onWaifuDropped(e));
+        _dropListeners.forEach(l -> l.onWaifuDropped(e));
         
         // Deselect all pieces
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _waifus.get(0).getPiece(), false)));
@@ -227,7 +220,7 @@ public class RequestHandler implements PromotionHandler
         _waifus.add(w);
         _selectionListeners.add(w);
         _moveListeners.add(w);
-        _replaceListeners.add(w);
+        _dropListeners.add(w);
         _captureListeners.add(w);
         _promotionListeners.add(w);
     }

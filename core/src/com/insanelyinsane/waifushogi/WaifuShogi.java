@@ -44,7 +44,8 @@ public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListen
             Gdx.input.setInputProcessor(_stage);
             
             // Allow debug logging
-            Gdx.app.setLogLevel(Application.LOG_DEBUG);
+            if (DEBUG) Gdx.app.setLogLevel(Application.LOG_DEBUG);
+            else       Gdx.app.setLogLevel(Application.LOG_NONE);
             
             // Screen initialization ( the lazy way -_- )
             if (DEBUG) 
