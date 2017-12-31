@@ -170,7 +170,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
             setX(x);
             setY(y);
             p.setCaptured(true);
-            p.setTeam(_piece.getTeam());//p.getTeam() == Team.RED ? Team.BLUE : Team.RED);
+            p.setTeam(p.getTeam() == Team.RED ? Team.BLUE : Team.RED);
             _animPrefix = (p.getTeam() == Team.RED ? "up" : "down");
             
             demote();

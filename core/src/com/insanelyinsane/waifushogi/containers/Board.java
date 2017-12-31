@@ -6,6 +6,7 @@
 package com.insanelyinsane.waifushogi.containers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.DropEvent;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
@@ -126,16 +127,15 @@ public class Board implements MoveListener, DropListener
     @Override
     public void onWaifuMoved(MoveEvent e)
     {   
-        Piece target = _pieces[e.fromRow()][e.fromCol()];
-        
-        if (target != null)
+        if (_pieces[e.fromRow()][e.fromCol()] != e.getPiece())
         {
-            if (target.getTeam() != e.getPiece().getTeam())
-            {
-                _pieces[e.fromRow()][e.fromCol()] = null;
-                _pieces[e.toRow()][e.toCol()] = e.getPiece();
-            }
+            throw new GdxRuntimeException("Fatal error! Piece on board doesn't match piece being moved. Desynchronization error!");
         }
+        
+        _pieces[e.fromRow()][e.fromCol()] = null;
+        _pieces[e.toRow()][e.toCol()] = e.getPiece();
+        
+        //print();
     }
     
     
@@ -143,5 +143,27 @@ public class Board implements MoveListener, DropListener
     public void onWaifuDropped(DropEvent e)
     {
         _pieces[e.toRow()][e.toCol()] = e.getPiece();
+    }
+    
+    
+    // FOR DEBUGGING
+    private void print()
+    {
+        for (int r = 8; r >= 0; r--) 
+        {
+            for (int c = 0; c < _pieces[r].length; c++)
+            {
+                if (_pieces[r][c] == null)
+                {
+                    System.out.print(" X ");
+                }
+                else
+                {
+                    System.out.print(" O ");
+                }
+            }
+            
+            System.out.println("");
+        }
     }
 }
