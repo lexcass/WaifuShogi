@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi;
+package com.insanelyinsane.waifushogi.requesthandlers;
 
+import com.insanelyinsane.waifushogi.Referee;
+import com.insanelyinsane.waifushogi.Sender;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.DropEvent;
@@ -24,9 +26,9 @@ import com.insanelyinsane.waifushogi.listeners.DropListener;
 
 /**
  * The RequestHandler acts as a proxy between the Board and Hand objects and the
- * Referee object (the rule enforcer). The Board and Hands will make requests to the 
- * RequestHandler (selection, move, etc.), and if the Referee determines the request
- * is valid, a generated event is dispatched to the respective listeners.
+ Referee object (the rule enforcer). The Board and Hands will make requests to the 
+ RequestHandler (selection, move, etc.), and if the Referee determines the request
+ is valid, a generated event is dispatched to the respective listeners.
  * @author Alex Cassady
  */
 public class RequestHandler implements PromotionHandler

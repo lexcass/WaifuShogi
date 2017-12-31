@@ -31,7 +31,7 @@ public class DesktopLauncher {
                     }
                     else
                     {*/
-                        new LwjglApplication(new WaifuShogi(true), config);
+                        new LwjglApplication(new WaifuShogi(false), config);
                     /*}
                 }
                 else

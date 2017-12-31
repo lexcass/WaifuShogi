@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.insanelyinsane.waifushogi.RequestHandler;
+import com.insanelyinsane.waifushogi.requesthandlers.RequestHandler;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.containers.Board;
@@ -208,12 +208,17 @@ public class PlayScreen extends Screen
      */
     public void addPiece(Piece piece, Texture tex, int row, int col)
     {
-        _board.getBoard().addPiece(piece, row, col);
-        
-        Waifu obj = new Waifu(tex, _board.getX() + col * Board.CELL_WIDTH, _board.getY() + row * Board.CELL_HEIGHT, piece, _board, _redHand, _blueHand);
-        _waifus.add(obj);
-        _requestHandler.registerWaifu(obj);
-        addActor(obj);
+        if (_board.getBoard().addPiece(piece, row, col))
+        {
+            Waifu obj = new Waifu(tex, _board.getX() + col * Board.CELL_WIDTH, _board.getY() + row * Board.CELL_HEIGHT, piece, _board, _redHand, _blueHand);
+            _waifus.add(obj);
+            _requestHandler.registerWaifu(obj);
+            addActor(obj);
+        }
+        else
+        {
+            Gdx.app.debug("Warning", piece.getType().toString() + " was not added at (" + row + ", " + col + ").");
+        }
     }
     
     

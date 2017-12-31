@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.insanelyinsane.waifushogi.RequestHandler;
+import com.insanelyinsane.waifushogi.requesthandlers.RequestHandler;
 import com.insanelyinsane.waifushogi.Sender;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.pieces.Piece;
@@ -31,7 +31,7 @@ public final class BoardObject extends Actor
     
     /**
      * Sets the bounds of the object for touch input, initializes its sprite, and adds an InputListener
-     * that communicates with other components via the RequestHandler.
+ that communicates with other components via the RequestHandler.
      * @param tex
      * @param x
      * @param y

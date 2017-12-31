@@ -49,7 +49,7 @@ public class Referee
     private int _selectedCol;
     private boolean[][] _validMoves;
     private boolean[][] _validDrops;
-    private boolean _shouldDrop;
+    //private boolean _shouldDrop;
     
     
     /**
@@ -87,13 +87,13 @@ public class Referee
      */
     public SelectionEvent selectPieceOnBoard(Piece target, int r, int c)
     {
-        if (target.getTeam() == _currentTeam)
+        if (target.getTeam() == _currentTeam && !target.isCaptured())
         {
             _selectedPiece = target;
             _selectedRow = r;
             _selectedCol = c;
             _validMoves = _selectedPiece.getValidMoves(_board.getPieces(), r, c);
-            _shouldDrop = false;
+            //_shouldDrop = false;
 
             return new SelectionEvent(_validMoves, _selectedPiece, true);
         }
@@ -116,11 +116,11 @@ public class Referee
      */
     public SelectionEvent selectPieceInHand(Piece target)
     {
-        if (target.getTeam() == _currentTeam)
+        if (target.getTeam() == _currentTeam && target.isCaptured())
         {
             _selectedPiece = target;
             _validDrops = target.getValidDrops(_board.getPieces());
-            _shouldDrop = true;
+            //_shouldDrop = true;
             
             return new SelectionEvent(_validDrops, _selectedPiece, true);
         }
@@ -148,9 +148,9 @@ public class Referee
         
         MoveEvent e = null;
         
-        if (_selectedPiece != null && !_shouldDrop)
+        if (_selectedPiece != null)
         {
-            if (_validMoves[r][c])
+            if (!_selectedPiece.isCaptured() && _validMoves[r][c])
             {
                 e = new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c, promo);
             }
@@ -176,9 +176,9 @@ public class Referee
     {
         DropEvent e = null;
         
-        if (_selectedPiece != null && _shouldDrop)
+        if (_selectedPiece != null)
         {
-            if (_validDrops[r][c])
+            if (_selectedPiece.isCaptured() && _validDrops[r][c])
             {
                 e = new DropEvent(_selectedPiece, r, c);
             }
@@ -233,6 +233,8 @@ public class Referee
             return null;
         }
         
+        if (p.isCaptured()) return null;
+        
         if (!p.isPromoted())
         {
             return p;
@@ -281,7 +283,6 @@ public class Referee
         _selectedCol = -1;
         _validMoves = null;
         _validDrops = null;
-        _shouldDrop = false;
 
 
         // Switch to other player

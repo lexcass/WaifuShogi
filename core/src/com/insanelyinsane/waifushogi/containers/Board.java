@@ -37,15 +37,18 @@ public class Board implements MoveListener, DropListener
      * @param r
      * @param c 
      */
-    public void addPiece(Piece p, int r, int c)
+    public boolean addPiece(Piece p, int r, int c)
     {
         if (_pieces[r][c] == null)
         {
             _pieces[r][c] = p;
+            Gdx.app.debug("Debug", p.getType().toString() + " added at (" + r + ", " + c + ").");
+            return true;
         }
         else
         {
             Gdx.app.debug("Warning", "Piece wasn't added. Cell not empty.");
+            return false;
         }
     }
     
@@ -123,8 +126,16 @@ public class Board implements MoveListener, DropListener
     @Override
     public void onWaifuMoved(MoveEvent e)
     {   
-        _pieces[e.fromRow()][e.fromCol()] = null;
-        _pieces[e.toRow()][e.toCol()] = e.getPiece();
+        Piece target = _pieces[e.fromRow()][e.fromCol()];
+        
+        if (target != null)
+        {
+            if (target.getTeam() != e.getPiece().getTeam())
+            {
+                _pieces[e.fromRow()][e.fromCol()] = null;
+                _pieces[e.toRow()][e.toCol()] = e.getPiece();
+            }
+        }
     }
     
     

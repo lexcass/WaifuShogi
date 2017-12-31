@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.DropEvent;
@@ -107,7 +108,11 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         // Remove Waifu from stage if it has no piece to represent.
         if (_piece == null)
         {
-            this.addAction(Actions.removeActor(this));
+            // Probably not best....
+            //this.addAction(Actions.removeActor(this));
+            
+            // If the piece becomes null, crash the game. No piece should be null.
+            throw new GdxRuntimeException("Waifu can't represent a null piece. Something went horribly wrong!");
         }
         
         _animator.update(delta);
@@ -165,7 +170,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
             setX(x);
             setY(y);
             p.setCaptured(true);
-            p.setTeam(p.getTeam() == Team.RED ? Team.BLUE : Team.RED);
+            p.setTeam(_piece.getTeam());//p.getTeam() == Team.RED ? Team.BLUE : Team.RED);
             _animPrefix = (p.getTeam() == Team.RED ? "up" : "down");
             
             demote();
@@ -185,6 +190,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
             setY(BOARD_Y + e.toRow() * Board.CELL_HEIGHT);
             
             setAnimation("Idle");
+            p.setCaptured(false);
         }
     }
     
