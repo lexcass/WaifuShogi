@@ -23,6 +23,13 @@ public class DragonHorsePattern extends MovePattern
     }
     
     @Override
+    public void setTeam(Team newTeam)
+    {
+        super.setTeam(newTeam);
+        _bishop.setTeam(newTeam);
+    }
+    
+    @Override
     public boolean[][] getValidMoves(final Piece[][] cells, int row, int col)
     {
         boolean[][] valid = _bishop.getValidMoves(cells, row, col);
