@@ -21,8 +21,8 @@ public class Board implements MoveListener, DropListener
 {
     public static final int ROWS = 9;
     public static final int COLS = 9;
-    public static final int CELL_WIDTH = 53;
-    public static final int CELL_HEIGHT = 71;
+    public static final int CELL_WIDTH = 42;
+    public static final int CELL_HEIGHT = 42;
     
     private final Piece[][] _pieces;
     

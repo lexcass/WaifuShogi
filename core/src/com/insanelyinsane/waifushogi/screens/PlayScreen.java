@@ -136,12 +136,19 @@ public class PlayScreen extends Screen
         //////////////////////////////////
         // Initialize player hand objects
         
-        _blueHand = new HandObject(0, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, blue, _font, _requestHandler);
+        // Old coords for vertical hands
+        //0, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, blue, _font, _requestHandler);
+        //Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, red, _font, _requestHandler);
+        
+        int offsetFromBoard = Board.CELL_HEIGHT * 2;
+        
+        _blueHand = new HandObject(boardX, boardY + _boardTex.getHeight() + offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, blue, _font, _requestHandler);
         addActor(_blueHand);
         
+        // DISREGARD COMMENT BELOW FOR NOW
         // The red hand builds from bottom to top (x, y is bottom-left), so negative width and height will give proper bounds for touch coords.
         
-        _redHand = new HandObject(Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, red, _font, _requestHandler);
+        _redHand = new HandObject(boardX, boardY - offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, red, _font, _requestHandler);
         addActor(_redHand);
         
         
@@ -210,7 +217,10 @@ public class PlayScreen extends Screen
     {
         if (_board.getBoard().addPiece(piece, row, col))
         {
-            Waifu obj = new Waifu(tex, _board.getX() + col * Board.CELL_WIDTH, _board.getY() + row * Board.CELL_HEIGHT, piece, _board, _redHand, _blueHand);
+            int xPos = (int)_board.getX() + col * Board.CELL_WIDTH;
+            int yPos = (int)_board.getY() + row * Board.CELL_HEIGHT;
+            
+            Waifu obj = new Waifu(tex, xPos, yPos, piece, _board, _redHand, _blueHand);
             _waifus.add(obj);
             _requestHandler.registerWaifu(obj);
             addActor(obj);

@@ -42,6 +42,9 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     private final float BLUE_HAND_X;
     private final float BLUE_HAND_Y;
     
+    private final int WIDTH = 36;
+    private final int HEIGHT = 36;
+    
     final Color RED_TINT = new Color(1.0f, 0.8f, 0.8f, 1.0f);
     final Color BLUE_TINT = new Color(0.8f, 0.8f, 1.0f, 1.0f);
     
@@ -69,8 +72,8 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     {
         super();
         
-        setX(x);
-        setY(y);
+        setX(x + (Board.CELL_WIDTH / 2) - (WIDTH / 2));
+        setY(y + (Board.CELL_HEIGHT / 2) - (HEIGHT / 2));
         setSize(tex.getWidth(), tex.getHeight());
         setTouchable(Touchable.disabled);
         
@@ -92,7 +95,7 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         _animSuffix = "";
         
         
-        _animator = new Animator(tex, 36, 36);
+        _animator = new Animator(tex, WIDTH, HEIGHT);
         _animator.loadAnimationsFromFile(piece.getType().toString().toLowerCase());
         setAnimation("Idle");
     }
@@ -150,8 +153,8 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
     {
         if (e.getPiece() == _piece)
         {
-            setX(BOARD_X + e.toCol() * Board.CELL_WIDTH);
-            setY(BOARD_Y + e.toRow() * Board.CELL_HEIGHT);
+            setX((BOARD_X + e.toCol() * Board.CELL_WIDTH) + (Board.CELL_WIDTH / 2) - (WIDTH / 2));
+            setY((BOARD_Y + e.toRow() * Board.CELL_HEIGHT) + (Board.CELL_HEIGHT / 2) - (HEIGHT / 2));
         }
     }
     
@@ -163,9 +166,9 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         
         if (p == _piece)
         {
-            float offset = p.getType().getIndex() * Board.CELL_HEIGHT;
-            float x = p.getTeam() == Team.BLUE ? RED_HAND_X : BLUE_HAND_X;
-            float y = p.getTeam() == Team.BLUE ? RED_HAND_Y + offset : Gdx.graphics.getHeight() - BLUE_HAND_Y - offset - Board.CELL_HEIGHT;
+            float offsetX = p.getType().getIndex() * Board.CELL_WIDTH;
+            float x = p.getTeam() == Team.BLUE ? RED_HAND_X + offsetX : BLUE_HAND_X + offsetX;
+            float y = p.getTeam() == Team.BLUE ? RED_HAND_Y : BLUE_HAND_Y;
             
             setX(x);
             setY(y);

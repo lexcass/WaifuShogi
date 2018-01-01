@@ -88,15 +88,17 @@ public final class HandObject extends Actor
             if (!s.empty())
             {
                 Piece p = s.peek();
+                _font.draw(batch, s.size() + "", getX() + (p.getType().getIndex()) * Board.CELL_WIDTH, getY());
                 
-                if (team == Team.RED)
-                {
-                    _font.draw(batch, s.size() + "", getX() + xOffset, getY() + (p.getType().getIndex() + 1) * Board.CELL_HEIGHT );
-                }
-                else
-                {
-                    _font.draw(batch, s.size() + "", getX() + xOffset, Gdx.graphics.getHeight() - getY() - p.getType().getIndex() * Board.CELL_HEIGHT);
-                }
+                // OLD
+//                if (team == Team.RED)
+//                {
+//                    _font.draw(batch, s.size() + "", getX() + (p.getType().getIndex() + 1) * Board.CELL_WIDTH + xOffset, getY());
+//                }
+//                else
+//                {
+//                    _font.draw(batch, s.size() + "", getX() + xOffset, Gdx.graphics.getHeight() - getY() - p.getType().getIndex() * Board.CELL_HEIGHT);
+//                }
             }
         }
     }
