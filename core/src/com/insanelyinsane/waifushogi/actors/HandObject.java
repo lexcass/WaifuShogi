@@ -46,21 +46,12 @@ public final class HandObject extends Actor
             @Override
             public boolean touchDown(InputEvent e, float screenX, float screenY, int pointer, int button)
             {
-                int r;
+                int c = (int)(screenX / Board.CELL_WIDTH);
                 
-                if (_hand.getTeam() == Team.RED)
-                {
-                    r = (int)(screenY / Board.CELL_HEIGHT);
-                }
-                else
-                {
-                    r = (Piece.Type.SIZE - 1) - (int)(screenY / Board.CELL_HEIGHT);
-                }
-                
-                if (r >= Piece.Type.SIZE) return false;
+                if (c >= Piece.Type.SIZE) return false;
                 
                 
-                Stack<Piece> st = _hand.getPiecesOfType(Piece.Type.values()[r]);
+                Stack<Piece> st = _hand.getPiecesOfType(Piece.Type.values()[c]);
                 if (st.empty()) { return false; }
                 
                 Piece target = st.peek();

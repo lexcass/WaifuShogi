@@ -189,8 +189,8 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         
         if (p == _piece)
         {
-            setX(BOARD_X + e.toCol() * Board.CELL_WIDTH);
-            setY(BOARD_Y + e.toRow() * Board.CELL_HEIGHT);
+            setX((BOARD_X + e.toCol() * Board.CELL_WIDTH) + (Board.CELL_WIDTH / 2) - (WIDTH / 2));
+            setY((BOARD_Y + e.toRow() * Board.CELL_HEIGHT) + (Board.CELL_HEIGHT / 2) - (HEIGHT / 2));
             
             setAnimation("Idle");
             p.setCaptured(false);

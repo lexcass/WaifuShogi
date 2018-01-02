@@ -177,11 +177,11 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
     /**
      * Request to replace a captured Piece (or drop) at the specified row and column.
      * If (r, c) is in bounds and the Drop (drop) is valid, a DropEvent is generated
- and the ReplaceListeners are given the event.
+        and the ReplaceListeners are given the event.
  
- ///////////////////////////////////////////////////////////////////////
- Note: Null events are ignored, so there is no harm in making this request on every touch
- of the Board for example.
+        ///////////////////////////////////////////////////////////////////////
+        Note: Null events are ignored, so there is no harm in making this request on every touch
+        of the Board for example.
      * @param r
      * @param c 
      */
