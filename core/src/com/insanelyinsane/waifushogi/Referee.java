@@ -208,18 +208,17 @@ public class Referee
     }
     
     
+    /**
+     * Promote the piece that was just moved if legal. r and c represent the row and
+     * column that the piece moved to and returns the piece the promoted piece or null
+     * if unpromoted.
+     * @param r
+     * @param c
+     * @return Piece
+     */
     public Piece promotePieceAt(int r, int c)
-    {
-        if (_currentTeam == Team.RED && r < PROMO_COLUMN_RED)
-        {
-            return null;
-        }
-        else if (_currentTeam == Team.BLUE && r > PROMO_COLUMN_BLUE)
-        {
-            return null;
-        }
-        
-        Piece p = _board.getPieceAt(r, c);
+    {        
+        Piece p = _selectedPiece; //_board.getPieceAt(r, c);
         
         // Ignore empty cells
         if (p == null)
@@ -233,12 +232,30 @@ public class Referee
             return null;
         }
         
+        // Don't promote captured pieces
         if (p.isCaptured()) return null;
         
-        if (!p.isPromoted())
+        // If piece started in promotion zone and moves, promote.
+        if ((_currentTeam == Team.RED && _selectedRow >= PROMO_COLUMN_RED) ||
+            (_currentTeam == Team.BLUE && _selectedRow <= PROMO_COLUMN_BLUE))
         {
-            return p;
+            if (!p.isPromoted())
+            {
+                return p;
+            }
         }
+        
+        
+        // If moved to promotion zone, promote.
+        if ((_currentTeam == Team.RED && r >= PROMO_COLUMN_RED) ||
+            (_currentTeam == Team.BLUE && r <= PROMO_COLUMN_BLUE))
+        {
+            if (!p.isPromoted())
+            {
+                return p;
+            }
+        }
+        
         
         return null;
     }
