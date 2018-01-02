@@ -22,7 +22,11 @@ import com.insanelyinsane.waifushogi.pieces.Piece;
 import java.util.LinkedList;
 import java.util.List;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
+import com.insanelyinsane.waifushogi.interfaces.WinConfirmation;
 import com.insanelyinsane.waifushogi.listeners.DropListener;
+import com.insanelyinsane.waifushogi.pieces.Team;
+import com.insanelyinsane.waifushogi.screens.Screen;
+import com.insanelyinsane.waifushogi.screens.ScreenType;
 
 /**
  * The RequestHandler acts as a proxy between the Board and Hand objects and the
@@ -31,8 +35,9 @@ import com.insanelyinsane.waifushogi.listeners.DropListener;
  is valid, a generated event is dispatched to the respective listeners.
  * @author Alex Cassady
  */
-public class RequestHandler implements PromotionHandler
+public class RequestHandler implements PromotionHandler, WinGameHandler
 {
+    private final Screen  _screen;
     private final Referee _referee;
     private final List<Waifu> _waifus;
     private final List<SelectionListener> _selectionListeners;
@@ -41,6 +46,7 @@ public class RequestHandler implements PromotionHandler
     private final List<CaptureListener> _captureListeners;
     private final List<PromotionListener> _promotionListeners;
     private final PromotionConfirmation _promoConfirmer;
+    private final WinConfirmation  _winConfirmer;
     
     
     /**
@@ -54,7 +60,7 @@ public class RequestHandler implements PromotionHandler
      * @param highlighter
      * @param c         The object that handles confirmation of promotion from the player (UI).
      */
-    public RequestHandler(Referee ref, SelectionListener highlighter, PromotionConfirmation c)
+    public RequestHandler(Screen screen, Referee ref, SelectionListener highlighter, PromotionConfirmation c, WinConfirmation w)
     {
         _waifus = new LinkedList<>();
         _selectionListeners = new LinkedList<>();
@@ -64,7 +70,8 @@ public class RequestHandler implements PromotionHandler
         _promotionListeners = new LinkedList<>();
         
         _promoConfirmer = c;
-        
+        _winConfirmer = w;
+        _screen = screen;
         _referee = ref;
         
         // Register listeners
@@ -141,6 +148,9 @@ public class RequestHandler implements PromotionHandler
             {
                 // Player wins
                 System.out.println("---------------------------------------------------------------\n" + captured.getTeam().toString() + " is the winner!\n---------------------------------------------------------------");
+                
+                // Use same team since team changes upon capture; Jade is now on winner's team.
+                _winConfirmer.confirmWin(this, captured.getTeam());
             }
         }
         
@@ -210,6 +220,22 @@ public class RequestHandler implements PromotionHandler
     public void handlePromotion(Piece p)
     {
         _promotionListeners.forEach(l -> l.onWaifuPromoted(p));
+    }
+    
+    
+    @Override
+    public void handleGameWon(Boolean playAgain)
+    {
+        if (playAgain)
+        {
+            // Reload Play screen
+            _screen.changeScreen(ScreenType.PLAY);
+        }
+        else
+        {
+            // Got to Main Menu screen
+            _screen.changeScreen(ScreenType.MAIN_MENU);
+        }
     }
     
     

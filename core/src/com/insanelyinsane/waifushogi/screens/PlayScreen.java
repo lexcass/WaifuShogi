@@ -70,6 +70,9 @@ public class PlayScreen extends Screen
     List<TouchListener> _touchListeners;
     
     
+    int _SUM = 0;
+    
+    
     public PlayScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
     {
         super(game, batch, ui);
@@ -124,7 +127,7 @@ public class PlayScreen extends Screen
         
         // Initialize systems (lifeblood of game logic)
         _highlighter = new Highlighter(boardX, boardY);
-        _requestHandler = new RequestHandler(new Referee(board, red, blue), _highlighter, ui);
+        _requestHandler = new RequestHandler(this, new Referee(board, red, blue), _highlighter, ui, ui);
         
         
         ///////////////////////////////
@@ -224,6 +227,20 @@ public class PlayScreen extends Screen
             _waifus.add(obj);
             _requestHandler.registerWaifu(obj);
             addActor(obj);
+            
+            
+            // Count valid mvoes at beginning of game
+            boolean[][] moves = piece.getValidMoves(_board.getBoard().getPieces(), row, col);
+            
+            for (boolean[] a : moves)
+            {
+                for (boolean b : a)
+                {
+                    if (b == true) _SUM++ ;
+                }
+            }
+            
+            System.out.println("SUM: " + _SUM);
         }
         else
         {

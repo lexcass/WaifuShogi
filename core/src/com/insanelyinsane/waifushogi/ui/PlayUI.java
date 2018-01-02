@@ -17,12 +17,15 @@ import com.insanelyinsane.waifushogi.interfaces.PromotionHandler;
 import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
+import com.insanelyinsane.waifushogi.interfaces.WinConfirmation;
+import com.insanelyinsane.waifushogi.pieces.Team;
+import com.insanelyinsane.waifushogi.requesthandlers.WinGameHandler;
 
 /**
  *
  * @author Alex Cassady
  */
-public class PlayUI extends UI implements PromotionConfirmation
+public class PlayUI extends UI implements PromotionConfirmation, WinConfirmation
 {
     private final QuitListener _quitListener;
     
@@ -95,5 +98,22 @@ public class PlayUI extends UI implements PromotionConfirmation
                 }
             }
         }.button("Yes", true).button("No", false).show(getStage());
+    }
+    
+    
+    @Override
+    public void confirmWin(WinGameHandler handler, Team team)
+    {
+        new Dialog(team.toString() + " won!", getSkin())
+        {
+            @Override
+            public void result(Object o)
+            {
+                if (o instanceof Boolean)
+                {
+                    handler.handleGameWon((Boolean)o);
+                }
+            }
+        }.button("Play Again", true).button("Quit", false).show(getStage());
     }
 }
