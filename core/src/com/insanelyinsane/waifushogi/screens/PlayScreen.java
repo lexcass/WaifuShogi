@@ -15,7 +15,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.requesthandlers.RequestHandler;
 import com.insanelyinsane.waifushogi.WaifuShogi;
-import com.insanelyinsane.waifushogi.listeners.TouchListener;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.containers.Hand;
 import com.insanelyinsane.waifushogi.pieces.Pawn;
@@ -33,7 +32,7 @@ import com.insanelyinsane.waifushogi.pieces.Knight;
 import com.insanelyinsane.waifushogi.pieces.Lance;
 import com.insanelyinsane.waifushogi.pieces.Rook;
 import com.insanelyinsane.waifushogi.pieces.SilverGeneral;
-import com.insanelyinsane.waifushogi.ui.PlayUI;
+import com.insanelyinsane.waifushogi.ui.MatchUI;
 import com.insanelyinsane.waifushogi.ui.UIController;
 
 /**
@@ -67,8 +66,6 @@ public class PlayScreen extends Screen
     Highlighter _highlighter;
     RequestHandler _requestHandler;
     
-    List<TouchListener> _touchListeners;
-    
     
     int _SUM = 0;
     
@@ -78,7 +75,6 @@ public class PlayScreen extends Screen
         super(game, batch, ui);
         
         _waifus = new LinkedList<>();
-        _touchListeners = new LinkedList<>();
         
         // Load assets
         loadAsset("textures/woodbg.jpg", Texture.class);
@@ -116,7 +112,7 @@ public class PlayScreen extends Screen
         setBackground(_woodTex);
         
         // Create UI
-        PlayUI ui = new PlayUI(getStage(), this);
+        MatchUI ui = new MatchUI(getStage(), this);
         
         // Initialize logic objects (Hand, Board, Highlighter, RequestHandler, etc.)
         Hand blue = new Hand(Team.BLUE);

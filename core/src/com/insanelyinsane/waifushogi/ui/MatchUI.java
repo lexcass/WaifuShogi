@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.insanelyinsane.waifushogi.interfaces.PromotionHandler;
+import com.insanelyinsane.waifushogi.requesthandlers.PromotionHandler;
 import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
@@ -25,7 +25,7 @@ import com.insanelyinsane.waifushogi.requesthandlers.WinGameHandler;
  *
  * @author Alex Cassady
  */
-public class PlayUI extends UI implements PromotionConfirmation, WinConfirmation
+public class MatchUI extends UI implements PromotionConfirmation, WinConfirmation
 {
     private final QuitListener _quitListener;
     
@@ -33,7 +33,7 @@ public class PlayUI extends UI implements PromotionConfirmation, WinConfirmation
     private Button _menuButton;
     
     
-    public PlayUI(Stage stage, QuitListener q)
+    public MatchUI(Stage stage, QuitListener q)
     {
         super(stage);
         _quitListener = q;

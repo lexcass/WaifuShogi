@@ -13,7 +13,6 @@ import com.insanelyinsane.waifushogi.events.DropEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.CaptureListener;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
-import com.insanelyinsane.waifushogi.interfaces.PromotionHandler;
 import com.insanelyinsane.waifushogi.listeners.PromotionListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.containers.Board;

@@ -6,22 +6,12 @@
 package com.insanelyinsane.waifushogi.requesthandlers;
 
 import com.insanelyinsane.waifushogi.pieces.Piece;
-import java.util.List;
 
 /**
  *
  * @author Alex Cassady
  */
-public abstract class BaseHandler<T>
+public interface PromotionHandler 
 {
-    List<T> _listeners;
-    
-    public BaseHandler(List<T> listeners)
-    {
-        _listeners = listeners;
-    }
-    
-    public List<T> getListeners() { return _listeners; }
-    
-    public abstract void handleRequest();
+    public void handlePromotion(Piece p);
 }

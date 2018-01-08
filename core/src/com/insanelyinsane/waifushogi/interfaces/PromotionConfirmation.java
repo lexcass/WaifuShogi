@@ -5,6 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.interfaces;
 
+import com.insanelyinsane.waifushogi.requesthandlers.PromotionHandler;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 
 /**
