@@ -68,26 +68,62 @@ public class Board implements MoveListener, DropListener
     
     
     /**
-     * Clears the board of all of its pieces
+     * Returns a 2D array that represents all of the pieces on the Board.
+     * @return Piece[][]
      */
-    public void clear()
-    {
-        for (Piece[] arr : _pieces)
-        {
-            for (Piece p : arr)
-            {
-                p = null;
-            }
-        }
-    }
-    
     public Piece[][] getPieces() { return _pieces; }
     
+    
+    /**
+     * Get a Piece at (r, c) assuming r and c are in bounds.
+     * @param r
+     * @param c
+     * @return 
+     */
     public Piece getPieceAt(int r, int c)
     {
         if (!inBounds(r, c)) Gdx.app.debug("Error", "No cell at (" + r + ", " + c + "), out of bounds.");
         
         return _pieces[r][c];
+    }
+    
+    
+    /**
+     * Make a copy of this board that can be used for AI evaluation.
+     * @return 
+     */
+    public Board makeCopy()
+    {
+        Board newBoard = new Board();
+        
+        for (int r = 0; r < ROWS; r++)
+        {
+            for (int c = 0; c < COLS; c++)
+            {
+                newBoard.addPiece(_pieces[r][c], r, c);
+            }
+        }
+        
+        return newBoard;
+    }
+    
+    
+    /**
+     * Replace this board with another board. All pieces are removed and this
+     * board becomes a duplicate of the other board. Intended for AI use.
+     * @param other 
+     */
+    public void setBoard(Board other)
+    {
+        Piece[][] otherPieces = other.getPieces();
+        
+        for (int r = 0; r < ROWS; r++)
+        {
+            for (int c = 0; c < COLS; c++)
+            {
+                _pieces[r][c] = otherPieces[r][c];
+            }
+        }
     }
     
     
@@ -139,6 +175,10 @@ public class Board implements MoveListener, DropListener
     }
     
     
+    /**
+     * Drop a piece onto the Board using a generated DropEvent.
+     * @param e 
+     */
     @Override
     public void onWaifuDropped(DropEvent e)
     {

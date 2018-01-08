@@ -249,20 +249,6 @@ public class PlayScreen extends Screen
     }
     
     
-    /// NOTE: Instead of removing Waifus, just place them back at starting positions?
-    /**
-     * Reset the board to its initial state.
-     */
-    public void reset()
-    {
-        _board.getBoard().clear();
-        _waifus.clear();
-        System.out.println("Waifus: " + _waifus.size());
-        
-        addPieces();
-    }
-    
-    
     @Override
     public void update(float delta)
     {
