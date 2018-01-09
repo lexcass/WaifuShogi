@@ -5,12 +5,9 @@
  */
 package com.insanelyinsane.waifushogi.screens;
 
-import java.util.LinkedList;
-import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.requesthandlers.RequestHandler;
@@ -26,6 +23,8 @@ import com.insanelyinsane.waifushogi.actors.BoardObject;
 import com.insanelyinsane.waifushogi.actors.HandObject;
 import com.insanelyinsane.waifushogi.actors.Waifu;
 import com.insanelyinsane.waifushogi.assets.Textures;
+import com.insanelyinsane.waifushogi.gamecomponents.GameComponentType;
+import com.insanelyinsane.waifushogi.gamecomponents.HighlighterComponent;
 import com.insanelyinsane.waifushogi.pieces.Bishop;
 import com.insanelyinsane.waifushogi.pieces.GoldGeneral;
 import com.insanelyinsane.waifushogi.pieces.JadeGeneral;
@@ -62,8 +61,7 @@ public abstract class MatchScreen extends Screen
     HandObject _redHand;
     HandObject _blueHand;
     
-    // Systems
-    HighlighterComponent _highlighter;
+    
     RequestHandler _requestHandler;
     
     
@@ -106,13 +104,25 @@ public abstract class MatchScreen extends Screen
         // Set the background of the Match Screen
         setBackground(_woodTex);
         
-        // Initialize Hands and Board and add their Actors to the Stage
+        // Load the MatchUI
+        MatchUI ui = new MatchUI(getStage(), this);
+        
+        // Initialize Hands and Board (logic components)
         Hand blue = new Hand(Team.BLUE);
         Hand red = new Hand(Team.RED);
         Board board = new Board();
         int boardX = Gdx.graphics.getWidth() / 2 - _boardTex.getWidth() / 2;
         int boardY = Gdx.graphics.getHeight() / 2 - _boardTex.getHeight() / 2;
         
+        
+        // Add GameComponents to extend Screen functionality
+        addComponent(new HighlighterComponent(boardX, boardY));
+        
+         // Wire the RequestHandler to this MatchScreen
+        _requestHandler = new RequestHandler(this, new Referee(board, red, blue), getComponent(GameComponentType.HIGHLIGHTER), ui, ui);
+        
+        
+        // Initialize HandObjects and BoardObject (visual components)
         _board = new BoardObject(_boardTex, boardX, boardY, board, _requestHandler);
         addActor(_board);
         
@@ -124,19 +134,11 @@ public abstract class MatchScreen extends Screen
         _redHand = new HandObject(boardX, boardY - offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, red, _font, _requestHandler);
         addActor(_redHand);
         
-        
-        
-        // Add GameComponents to extend Screen functionality
-        addComponent(new HighlighterComponent(boardX, boardY));
-        
-        // Load the MatchUI and wire the RequestHandler to this MatchScreen
-        MatchUI ui = new MatchUI(getStage(), this);
+        // Load the UI
         getUIController().loadUI(ui);
-        _requestHandler = new RequestHandler(this, new Referee(board, red, blue), _highlighter, ui, ui);
         
         // Add Pieces to the board
         setupGameBoard();
-        
         
         // Call abstract method that will extend creation logic for MatchScreens
         setupMatch();

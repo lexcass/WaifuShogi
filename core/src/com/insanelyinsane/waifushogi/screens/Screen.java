@@ -7,11 +7,11 @@ package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.events.ScreenChangeEvent;
 import com.insanelyinsane.waifushogi.gamecomponents.GameComponent;
@@ -110,6 +110,27 @@ public abstract class Screen implements QuitListener
     public final void removeComponent(GameComponentType type)
     {
         _components.removeIf(comp -> comp.getType() == type);
+    }
+    
+    
+    /**
+     * Get a GameComponent attached to this Screen. If one of the specified type
+     * doesn't exist, a runtime error will occur.
+     * @param <T>
+     * @param type
+     * @return 
+     */
+    public <T extends GameComponent> T getComponent(GameComponentType type)
+    {
+        for (GameComponent comp : _components)
+        {
+            if (comp.getType() == type)
+            {
+                return (T)comp;
+            }
+        }
+        
+        throw new GdxRuntimeException("No component was found of type " + type.toString());
     }
     
     
