@@ -134,14 +134,14 @@ public abstract class MatchScreen extends Screen
         _redHand = new HandObject(boardX, boardY - offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, red, _font, _requestHandler);
         addActor(_redHand);
         
-        // Load the UI
-        getUIController().loadUI(ui);
-        
         // Add Pieces to the board
         setupGameBoard();
         
         // Call abstract method that will extend creation logic for MatchScreens
         setupMatch();
+        
+        // Load the UI
+        getUIController().loadUI(ui);
     }
     
     
