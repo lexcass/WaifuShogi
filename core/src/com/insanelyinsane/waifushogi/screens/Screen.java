@@ -38,7 +38,12 @@ public abstract class Screen implements QuitListener
     private Actor _background;
     
     
-    
+    /**
+     * Create a Screen that acts as the base visual component for a certain state of the game.
+     * @param game
+     * @param batch
+     * @param ui 
+     */
     public Screen(WaifuShogi game, SpriteBatch batch, UIController ui)
     {
         // Init ScreenChangeListeners and add game (WaifuShogi class) to the list
@@ -62,7 +67,10 @@ public abstract class Screen implements QuitListener
     }
     
     /**
-     * Load an asset using the Screen's asset manager.
+     * Load an asset using this Screen's AssetManager.
+     * 
+     * Important: Only call this class in the constructor! This method will load the assets
+     * into the AssetManager before this Screen's create method is called.
      * @param fileName
      * @param c 
      */
@@ -104,7 +112,7 @@ public abstract class Screen implements QuitListener
     }
     
     /**
-     * Remove a GameComponent of the specific type.
+     * Remove a GameComponent of the specified type.
      * @param type 
      */
     public final void removeComponent(GameComponentType type)
@@ -115,10 +123,12 @@ public abstract class Screen implements QuitListener
     
     /**
      * Get a GameComponent attached to this Screen. If one of the specified type
-     * doesn't exist, a runtime error will occur.
+     * doesn't exist, a runtime error will occur. Returns the GameComponent found
+     * with the specified type casted to that class (GameComponentType.HIGHLIGHTER will
+     * return a HighlighterComponent for example).
      * @param <T>
      * @param type
-     * @return 
+     * @return GameComponent
      */
     public <T extends GameComponent> T getComponent(GameComponentType type)
     {
@@ -135,7 +145,8 @@ public abstract class Screen implements QuitListener
     
     
     /**
-     * 
+     * In order: Update Stage and its Actors, update GameComponents attached to Screen, draw Stage and its Actors,
+     * draw GameComponents attached to Screen.
      * @param delta 
      */
     public final void render(float delta)
@@ -150,10 +161,36 @@ public abstract class Screen implements QuitListener
     }
     
     
-    // Accessor Methods
+    /**
+     * Get the Stage object that contains the Actors for this Screen.
+     * @return Stage
+     */
     public Stage getStage() { return _stage; }
+    
+    /**
+     * Get the SpriteBatch (extends Batch) this Screen draws to.
+     * @return SpriteBatch
+     */
     public SpriteBatch getSpriteBatch() { return _spriteBatch; }
+    
+    /**
+     * Get the AssetManager that will contain the Textures (or other assets)
+     * after they are loaded.
+     * 
+     * Note: This must be used in the create() method. The assets will not be loaded
+     * if you call this method in the constructor.
+     * @return AssetManager
+     */
     public AssetManager getAssets() { return _assets; }
+    
+    
+    /**
+     * Returns the UIController so that the UI can be loaded when convenient for the
+     * Screen.
+     * 
+     * Usage: getUIController.loadUI(yourUI);
+     * @return UIController
+     */
     public UIController getUIController() { return _uiController; }
     
     
