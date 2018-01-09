@@ -228,7 +228,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         if (playAgain)
         {
             // Reload Play screen
-            _screen.changeScreen(ScreenType.PLAY);
+            _screen.changeScreen(ScreenType.LOCAL_MULTIPLAYER);
         }
         else
         {

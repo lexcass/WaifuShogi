@@ -6,9 +6,9 @@
 package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.WaifuShogi;
+import com.insanelyinsane.waifushogi.gamecomponents.TestComponent;
 import com.insanelyinsane.waifushogi.ui.UIController;
 
 /**
@@ -23,22 +23,15 @@ public class MainMenuScreen extends Screen
     }
     
     
+    @Override
     public void create()
     {
-        
+        addComponent(new TestComponent());
     }
     
-    @Override
-    public void update(float delta)
+    public boolean touchDown(int screenX, int screenY, int pointer, int button)
     {
-        Gdx.app.debug("From main menu", "I work!");
-    }
-    
-    @Override
-    public void draw(Batch batch) { };
-    
-    public boolean  touchDown(int screenX, int screenY, int pointer, int button)
-    {
+        Gdx.app.debug("Touch?", "Yes, please!");
         return true;
     }
     

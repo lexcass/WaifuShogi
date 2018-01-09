@@ -14,9 +14,13 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.events.ScreenChangeEvent;
+import com.insanelyinsane.waifushogi.gamecomponents.GameComponent;
+import com.insanelyinsane.waifushogi.gamecomponents.GameComponentType;
 import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.ui.UIController;
+import java.util.LinkedList;
+import java.util.List;
 /**
  *
  * @author alex
@@ -29,7 +33,11 @@ public abstract class Screen implements QuitListener
     private final Stage _stage;
     private final UIController _uiController;
     
+    private final List<GameComponent> _components;
+    
     private Actor _background;
+    
+    
     
     public Screen(WaifuShogi game, SpriteBatch batch, UIController ui)
     {
@@ -40,6 +48,8 @@ public abstract class Screen implements QuitListener
         _assets = new AssetManager();
         _stage = game.getStage();
         _uiController = ui;
+        
+        _components = new LinkedList<>();
     }
     
     /**
@@ -52,7 +62,7 @@ public abstract class Screen implements QuitListener
     }
     
     /**
-     * Load an asset using the screen's asset manager
+     * Load an asset using the Screen's asset manager.
      * @param fileName
      * @param c 
      */
@@ -71,38 +81,73 @@ public abstract class Screen implements QuitListener
         _background = new Image(tex);
         _background.toBack();
         _stage.addActor(_background);
-        
-       // _background.setSize(_backgroundTex.getWidth(), _backgroundTex.getHeight());
     }
     
+    /**
+     * Add an Actor (Waifu, Board, Hand, etc.) to the Stage for this Screen.
+     * The Screen will update and draw these Actors automatically.
+     * @param a 
+     */
     public final void addActor(Actor a)
     {
         _stage.addActor(a);
     }
     
-    public final void render(float delta)
+    
+    /**
+     * Add a GameComponent that adds functionality to the Screen.
+     * @param comp 
+     */
+    public final void addComponent(GameComponent comp)
     {
-        _stage.act(delta);
-        update(delta);
-        
-        _stage.draw();
-        draw(_spriteBatch);
+        _components.add(comp);
     }
     
+    /**
+     * Remove a GameComponent of the specific type.
+     * @param type 
+     */
+    public final void removeComponent(GameComponentType type)
+    {
+        _components.removeIf(comp -> comp.getType() == type);
+    }
+    
+    
+    /**
+     * 
+     * @param delta 
+     */
+    public final void render(float delta)
+    {
+        // Update Stage and GameComponents
+        _stage.act(delta);
+        _components.forEach(comp -> comp.update(delta));
+        
+        // Draw Stage and GameComponents
+        _stage.draw();
+        _components.forEach(comp -> comp.draw(_spriteBatch));
+    }
+    
+    
+    // Accessor Methods
     public Stage getStage() { return _stage; }
-    
     public SpriteBatch getSpriteBatch() { return _spriteBatch; }
-    
     public AssetManager getAssets() { return _assets; }
-    
     public UIController getUIController() { return _uiController; }
     
-    public abstract void create();
-    public abstract void update(float delta);
-    public abstract void draw(Batch batch);
     
-    // Handle the release of game assets and system exit when game
-    // is quit through the GUI
+    /**
+     * Override this method in child class to code the creation logic 
+     * for the screen.
+     */
+    public abstract void create();
+    
+    
+    
+    /**
+     * Handle the release of game assets and system exit when game
+     * is quit through the GUI.
+     */
     @Override
     public abstract void handleGameQuit();
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi;
+package com.insanelyinsane.waifushogi.gamecomponents;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -18,7 +18,7 @@ import com.insanelyinsane.waifushogi.containers.Board;
  *
  * @author alex
  */
-public class Highlighter implements SelectionListener
+public class HighlighterComponent extends GameComponent implements SelectionListener
 {
     private final ShapeRenderer _renderer;
     
@@ -27,8 +27,10 @@ public class Highlighter implements SelectionListener
     private boolean[][] _validMoves;
     
     
-    public Highlighter(float boardX, float boardY)
+    public HighlighterComponent(float boardX, float boardY)
     {
+        super(GameComponentType.HIGHLIGHTER);
+        
         _renderer = new ShapeRenderer();
         
         _boardX = boardX;
@@ -69,6 +71,13 @@ public class Highlighter implements SelectionListener
     }
     
     
+    // Override GameComponent interface methods and ignore update since this 
+    // is a drawable component only.
+    
+    @Override
+    public void update(float deltaTime){}
+    
+    @Override
     public void draw(Batch batch)
     {
         Gdx.gl.glEnable(GL20.GL_BLEND);

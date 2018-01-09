@@ -12,5 +12,5 @@ package com.insanelyinsane.waifushogi.screens;
 public enum ScreenType 
 {
     MAIN_MENU,
-    PLAY
+    LOCAL_MULTIPLAYER
 }

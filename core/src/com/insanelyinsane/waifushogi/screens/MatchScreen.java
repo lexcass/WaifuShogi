@@ -20,11 +20,12 @@ import com.insanelyinsane.waifushogi.containers.Hand;
 import com.insanelyinsane.waifushogi.pieces.Pawn;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.pieces.Team;
-import com.insanelyinsane.waifushogi.Highlighter;
+import com.insanelyinsane.waifushogi.gamecomponents.HighlighterComponent;
 import com.insanelyinsane.waifushogi.Referee;
 import com.insanelyinsane.waifushogi.actors.BoardObject;
 import com.insanelyinsane.waifushogi.actors.HandObject;
 import com.insanelyinsane.waifushogi.actors.Waifu;
+import com.insanelyinsane.waifushogi.assets.Textures;
 import com.insanelyinsane.waifushogi.pieces.Bishop;
 import com.insanelyinsane.waifushogi.pieces.GoldGeneral;
 import com.insanelyinsane.waifushogi.pieces.JadeGeneral;
@@ -39,7 +40,7 @@ import com.insanelyinsane.waifushogi.ui.UIController;
  *
  * @author Alex Cassady
  */
-public class PlayScreen extends Screen
+public abstract class MatchScreen extends Screen
 {
     // Assets to load
     Texture _woodTex;
@@ -60,33 +61,27 @@ public class PlayScreen extends Screen
     BoardObject  _board;
     HandObject _redHand;
     HandObject _blueHand;
-    List<Waifu> _waifus;
     
     // Systems
-    Highlighter _highlighter;
+    HighlighterComponent _highlighter;
     RequestHandler _requestHandler;
     
     
-    int _SUM = 0;
-    
-    
-    public PlayScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
+    public MatchScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
     {
         super(game, batch, ui);
         
-        _waifus = new LinkedList<>();
-        
         // Load assets
-        loadAsset("textures/woodbg.jpg", Texture.class);
-        loadAsset("textures/ShogiBoard.png", Texture.class);
-        loadAsset("textures/Pawn.png", Texture.class);
-        loadAsset("textures/Rook.png", Texture.class);
-        loadAsset("textures/Bishop.png", Texture.class);
-        loadAsset("textures/Lance.png", Texture.class);
-        loadAsset("textures/Knight.png", Texture.class);
-        loadAsset("textures/SilverGeneral.png", Texture.class);
-        loadAsset("textures/GoldGeneral.png", Texture.class);
-        loadAsset("textures/JadeGeneral.png", Texture.class);
+        loadAsset(Textures.WOOD_BACKGROUND, Texture.class);
+        loadAsset(Textures.BOARD, Texture.class);
+        loadAsset(Textures.PAWN, Texture.class);
+        loadAsset(Textures.ROOK, Texture.class);
+        loadAsset(Textures.BISHOP, Texture.class);
+        loadAsset(Textures.LANCE, Texture.class);
+        loadAsset(Textures.KNIGHT, Texture.class);
+        loadAsset(Textures.SILVER_GENERAL, Texture.class);
+        loadAsset(Textures.GOLD_GENERAL, Texture.class);
+        loadAsset(Textures.JADE_GENERAL, Texture.class);
     }
     
     @Override
@@ -96,74 +91,65 @@ public class PlayScreen extends Screen
         // Create assets
         AssetManager assets = getAssets();
         
-        _woodTex = assets.get("textures/woodbg.jpg");
-        _boardTex = assets.get("textures/ShogiBoard.png");
-        _pawnTex = assets.get("textures/Pawn.png");
-        _rookTex = assets.get("textures/Rook.png");
-        _bishTex = assets.get("textures/Bishop.png");
-        _lanceTex = assets.get("textures/Lance.png");
-        _knightTex = assets.get("textures/Knight.png");
-        _silverTex = assets.get("textures/SilverGeneral.png");
-        _goldTex = assets.get("textures/GoldGeneral.png");
-        _jadeTex = assets.get("textures/JadeGeneral.png");
+        _woodTex = assets.get(Textures.WOOD_BACKGROUND);
+        _boardTex = assets.get(Textures.BOARD);
+        _pawnTex = assets.get(Textures.PAWN);
+        _rookTex = assets.get(Textures.ROOK);
+        _bishTex = assets.get(Textures.BISHOP);
+        _lanceTex = assets.get(Textures.LANCE);
+        _knightTex = assets.get(Textures.KNIGHT);
+        _silverTex = assets.get(Textures.SILVER_GENERAL);
+        _goldTex = assets.get(Textures.GOLD_GENERAL);
+        _jadeTex = assets.get(Textures.JADE_GENERAL);
         
         
-        // Set the background of the screen to wood texture
+        // Set the background of the Match Screen
         setBackground(_woodTex);
         
-        // Create UI
-        MatchUI ui = new MatchUI(getStage(), this);
-        
-        // Initialize logic objects (Hand, Board, Highlighter, RequestHandler, etc.)
+        // Initialize Hands and Board and add their Actors to the Stage
         Hand blue = new Hand(Team.BLUE);
         Hand red = new Hand(Team.RED);
         Board board = new Board();
         int boardX = Gdx.graphics.getWidth() / 2 - _boardTex.getWidth() / 2;
         int boardY = Gdx.graphics.getHeight() / 2 - _boardTex.getHeight() / 2;
         
-        // Initialize systems (lifeblood of game logic)
-        _highlighter = new Highlighter(boardX, boardY);
-        _requestHandler = new RequestHandler(this, new Referee(board, red, blue), _highlighter, ui, ui);
-        
-        
-        ///////////////////////////////
-        // Initialize board object
         _board = new BoardObject(_boardTex, boardX, boardY, board, _requestHandler);
         addActor(_board);
-        
-        
-        //////////////////////////////////
-        // Initialize player hand objects
-        
-        // Old coords for vertical hands
-        //0, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, blue, _font, _requestHandler);
-        //Gdx.graphics.getWidth() - Board.CELL_WIDTH, Board.CELL_HEIGHT, Board.CELL_WIDTH, Board.CELL_HEIGHT * Piece.Type.SIZE, red, _font, _requestHandler);
         
         int offsetFromBoard = Board.CELL_HEIGHT * 2;
         
         _blueHand = new HandObject(boardX, boardY + _boardTex.getHeight() + offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, blue, _font, _requestHandler);
         addActor(_blueHand);
         
-        // DISREGARD COMMENT BELOW FOR NOW
-        // The red hand builds from bottom to top (x, y is bottom-left), so negative width and height will give proper bounds for touch coords.
-        
         _redHand = new HandObject(boardX, boardY - offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, red, _font, _requestHandler);
         addActor(_redHand);
         
         
-        // Add the UI's actors to the stage and draw on top of Board and Pieces
-        getUIController().loadUI(ui);
         
+        // Add GameComponents to extend Screen functionality
+        addComponent(new HighlighterComponent(boardX, boardY));
+        
+        // Load the MatchUI and wire the RequestHandler to this MatchScreen
+        MatchUI ui = new MatchUI(getStage(), this);
+        getUIController().loadUI(ui);
+        _requestHandler = new RequestHandler(this, new Referee(board, red, blue), _highlighter, ui, ui);
         
         // Add Pieces to the board
-        addPieces();
+        setupGameBoard();
+        
+        
+        // Call abstract method that will extend creation logic for MatchScreens
+        setupMatch();
     }
+    
+    
+    protected abstract void setupMatch();
     
     
     /**
      * Add the pieces to the board during creation or reset.
      */
-    private void addPieces() 
+    private void setupGameBoard() 
     {
         // Setup game board
         for (int i = 0; i < 9; i++)
@@ -205,8 +191,8 @@ public class PlayScreen extends Screen
     
     /**
      * Add a piece with texture to cell at row, col on board.
-     * Also adds piece as a new game object for the PlayScreen and adds to touch listeners
-     * to receive touch events.
+     * Also adds piece as a new game object for the MatchScreen and adds to touch listeners
+ to receive touch events.
      * @param piece
      * @param tex
      * @param row
@@ -220,23 +206,8 @@ public class PlayScreen extends Screen
             int yPos = (int)_board.getY() + row * Board.CELL_HEIGHT;
             
             Waifu obj = new Waifu(tex, xPos, yPos, piece, _board, _redHand, _blueHand);
-            _waifus.add(obj);
             _requestHandler.registerWaifu(obj);
             addActor(obj);
-            
-            
-            // Count valid mvoes at beginning of game
-            boolean[][] moves = piece.getValidMoves(_board.getBoard().getPieces(), row, col);
-            
-            for (boolean[] a : moves)
-            {
-                for (boolean b : a)
-                {
-                    if (b == true) _SUM++ ;
-                }
-            }
-            
-            System.out.println("SUM: " + _SUM);
         }
         else
         {
@@ -245,21 +216,22 @@ public class PlayScreen extends Screen
     }
     
     
-    @Override
-    public void update(float delta)
-    {
-        //////////////////////////////////////
-        // Update objects here
-    }
-    
-    
-    @Override
-    public void draw(Batch batch)
-    {
-        //////////////////////////////////////////
-        // Draw highlighted cells to the screen
-        _highlighter.draw(batch);
-    }
+//    @Override
+//    public void update(float delta)
+//    {
+//        //////////////////////////////////////
+//        // Update objects here
+//    }
+//    
+//    
+//    @Override
+//    public void draw(Batch batch)
+//    {
+//        //////////////////////////////////////////
+//        // Draw highlighted cells to the screen
+//        _highlighter.draw(batch);
+//        
+//    }
     
     
     @Override
