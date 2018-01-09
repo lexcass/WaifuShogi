@@ -10,7 +10,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
                 
                 // Desktop Window settings
-                config.width = 600;
+                config.width = 405;
                 config.height = 720;
                 config.title = "Waifu Shogi";
                 config.resizable = false;
@@ -31,7 +31,7 @@ public class DesktopLauncher {
                     }
                     else
                     {*/
-                        new LwjglApplication(new WaifuShogi(true), config);
+                        new LwjglApplication(new WaifuShogi(false), config);
                     /*}
                 }
                 else

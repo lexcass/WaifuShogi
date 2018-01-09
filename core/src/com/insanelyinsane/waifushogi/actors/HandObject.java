@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.ui.actors;
+package com.insanelyinsane.waifushogi.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -11,7 +11,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.insanelyinsane.waifushogi.RequestHandler;
+import com.insanelyinsane.waifushogi.requesthandlers.RequestHandler;
+import com.insanelyinsane.waifushogi.Sender;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.containers.Hand;
 import com.insanelyinsane.waifushogi.pieces.Piece;
@@ -45,25 +46,16 @@ public final class HandObject extends Actor
             @Override
             public boolean touchDown(InputEvent e, float screenX, float screenY, int pointer, int button)
             {
-                int r;
+                int c = (int)(screenX / Board.CELL_WIDTH);
                 
-                if (_hand.getTeam() == Team.RED)
-                {
-                    r = (int)(screenY / Board.CELL_HEIGHT);
-                }
-                else
-                {
-                    r = (Piece.Type.SIZE - 1) - (int)(screenY / Board.CELL_HEIGHT);
-                }
-                
-                if (r >= Piece.Type.SIZE) return false;
+                if (c >= Piece.Type.SIZE) return false;
                 
                 
-                Stack<Piece> st = _hand.getPiecesOfType(Piece.Type.values()[r]);
+                Stack<Piece> st = _hand.getPiecesOfType(Piece.Type.values()[c]);
                 if (st.empty()) { return false; }
                 
                 Piece target = st.peek();
-                _handler.requestSelection(RequestHandler.Sender.HAND, target, -1, -1);
+                _handler.requestSelection(Sender.HAND, target, -1, -1);
                 
                 return true;
             }
@@ -87,15 +79,17 @@ public final class HandObject extends Actor
             if (!s.empty())
             {
                 Piece p = s.peek();
+                _font.draw(batch, s.size() + "", getX() + (p.getType().getIndex()) * Board.CELL_WIDTH, getY());
                 
-                if (team == Team.RED)
-                {
-                    _font.draw(batch, s.size() + "", getX() + xOffset, getY() + (p.getType().getIndex() + 1) * Board.CELL_HEIGHT );
-                }
-                else
-                {
-                    _font.draw(batch, s.size() + "", getX() + xOffset, Gdx.graphics.getHeight() - getY() - p.getType().getIndex() * Board.CELL_HEIGHT);
-                }
+                // OLD
+//                if (team == Team.RED)
+//                {
+//                    _font.draw(batch, s.size() + "", getX() + (p.getType().getIndex() + 1) * Board.CELL_WIDTH + xOffset, getY());
+//                }
+//                else
+//                {
+//                    _font.draw(batch, s.size() + "", getX() + xOffset, Gdx.graphics.getHeight() - getY() - p.getType().getIndex() * Board.CELL_HEIGHT);
+//                }
             }
         }
     }

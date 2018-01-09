@@ -21,10 +21,10 @@ public class ScreenFactory
         {
             case MAIN_MENU:
                 return new MainMenuScreen(l, batch, ui);
-            case PLAY:
-                return new PlayScreen(l, batch, ui);
-            case TEST:
-                return new TestScreen(l, batch, ui);
+            case LOCAL_MULTIPLAYER:
+                return new LocalMultiplayerScreen(l, batch, ui);
+//            case VERSUS_AI:
+//                return new VersusAIScreen(l, batch, ui);
         }
         
         return null;

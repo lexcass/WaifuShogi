@@ -3,50 +3,49 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi;
+package com.insanelyinsane.waifushogi.requesthandlers;
 
-import com.badlogic.gdx.Gdx;
+import com.insanelyinsane.waifushogi.Referee;
+import com.insanelyinsane.waifushogi.Sender;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.DropEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.listeners.CaptureListener;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
-import com.insanelyinsane.waifushogi.interfaces.PromotionHandler;
 import com.insanelyinsane.waifushogi.listeners.PromotionListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.containers.Board;
-import com.insanelyinsane.waifushogi.ui.actors.Waifu;
+import com.insanelyinsane.waifushogi.actors.Waifu;
 import com.insanelyinsane.waifushogi.pieces.Piece;
-import com.insanelyinsane.waifushogi.systems.Referee;
 import java.util.LinkedList;
 import java.util.List;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
+import com.insanelyinsane.waifushogi.interfaces.WinConfirmation;
 import com.insanelyinsane.waifushogi.listeners.DropListener;
+import com.insanelyinsane.waifushogi.pieces.Team;
+import com.insanelyinsane.waifushogi.screens.Screen;
+import com.insanelyinsane.waifushogi.screens.ScreenType;
 
 /**
  * The RequestHandler acts as a proxy between the Board and Hand objects and the
- * Referee object (the rule enforcer). The Board and Hands will make requests to the 
- * RequestHandler (selection, move, etc.), and if the Referee determines the request
- * is valid, a generated event is dispatched to the respective listeners.
+ Referee object (the rule enforcer). The Board and Hands will make requests to the 
+ RequestHandler (selection, move, etc.), and if the Referee determines the request
+ is valid, a generated event is dispatched to the respective listeners.
  * @author Alex Cassady
  */
-public class RequestHandler implements PromotionHandler
+public class RequestHandler implements PromotionHandler, WinGameHandler
 {
-    /**
-     * Represents the type of sender. This is so the RequestHandler can differentiate between
-     * a Board and a Hand object.
-     */
-    public enum Sender { BOARD, HAND };
-    
+    private final Screen  _screen;
     private final Referee _referee;
     private final List<Waifu> _waifus;
     private final List<SelectionListener> _selectionListeners;
     private final List<MoveListener> _moveListeners;
-    private final List<DropListener> _replaceListeners;
+    private final List<DropListener> _dropListeners;
     private final List<CaptureListener> _captureListeners;
     private final List<PromotionListener> _promotionListeners;
     private final PromotionConfirmation _promoConfirmer;
+    private final WinConfirmation  _winConfirmer;
     
     
     /**
@@ -58,19 +57,20 @@ public class RequestHandler implements PromotionHandler
      * via RequestHandler::registerWaifu().
      * @param ref
      * @param highlighter
-     * @param waifus 
+     * @param c         The object that handles confirmation of promotion from the player (UI).
      */
-    public RequestHandler(Referee ref, SelectionListener highlighter, PromotionConfirmation c)
+    public RequestHandler(Screen screen, Referee ref, SelectionListener highlighter, PromotionConfirmation c, WinConfirmation w)
     {
         _waifus = new LinkedList<>();
         _selectionListeners = new LinkedList<>();
         _moveListeners = new LinkedList<>();
-        _replaceListeners = new LinkedList<>();
+        _dropListeners = new LinkedList<>();
         _captureListeners = new LinkedList<>();
         _promotionListeners = new LinkedList<>();
         
         _promoConfirmer = c;
-        
+        _winConfirmer = w;
+        _screen = screen;
         _referee = ref;
         
         // Register listeners
@@ -81,9 +81,9 @@ public class RequestHandler implements PromotionHandler
         _moveListeners.add(_referee.getBoard());
         
         // Replace
-        _replaceListeners.add(_referee.getBoard());
-        _replaceListeners.add(_referee.getRedHand());
-        _replaceListeners.add(_referee.getBlueHand());
+        _dropListeners.add(_referee.getBoard());
+        _dropListeners.add(_referee.getRedHand());
+        _dropListeners.add(_referee.getBlueHand());
         
         // Capture
         _captureListeners.add(_referee.getRedHand());
@@ -147,6 +147,9 @@ public class RequestHandler implements PromotionHandler
             {
                 // Player wins
                 System.out.println("---------------------------------------------------------------\n" + captured.getTeam().toString() + " is the winner!\n---------------------------------------------------------------");
+                
+                // Use same team since team changes upon capture; Jade is now on winner's team.
+                _winConfirmer.confirmWin(this, captured.getTeam());
             }
         }
         
@@ -173,11 +176,11 @@ public class RequestHandler implements PromotionHandler
     /**
      * Request to replace a captured Piece (or drop) at the specified row and column.
      * If (r, c) is in bounds and the Drop (drop) is valid, a DropEvent is generated
- and the ReplaceListeners are given the event.
+        and the ReplaceListeners are given the event.
  
- ///////////////////////////////////////////////////////////////////////
- Note: Null events are ignored, so there is no harm in making this request on every touch
- of the Board for example.
+        ///////////////////////////////////////////////////////////////////////
+        Note: Null events are ignored, so there is no harm in making this request on every touch
+        of the Board for example.
      * @param r
      * @param c 
      */
@@ -189,7 +192,7 @@ public class RequestHandler implements PromotionHandler
         if (e == null) return;
         
         // Drop the selected piece
-        _replaceListeners.forEach(l -> l.onWaifuDropped(e));
+        _dropListeners.forEach(l -> l.onWaifuDropped(e));
         
         // Deselect all pieces
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _waifus.get(0).getPiece(), false)));
@@ -219,6 +222,22 @@ public class RequestHandler implements PromotionHandler
     }
     
     
+    @Override
+    public void handleGameWon(Boolean playAgain)
+    {
+        if (playAgain)
+        {
+            // Reload Play screen
+            _screen.changeScreen(ScreenType.LOCAL_MULTIPLAYER);
+        }
+        else
+        {
+            // Got to Main Menu screen
+            _screen.changeScreen(ScreenType.MAIN_MENU);
+        }
+    }
+    
+    
     /**
      * Add a Waifu object to each of the listener lists (selection, move, replace, and capture).
      * @param w 
@@ -228,7 +247,7 @@ public class RequestHandler implements PromotionHandler
         _waifus.add(w);
         _selectionListeners.add(w);
         _moveListeners.add(w);
-        _replaceListeners.add(w);
+        _dropListeners.add(w);
         _captureListeners.add(w);
         _promotionListeners.add(w);
     }

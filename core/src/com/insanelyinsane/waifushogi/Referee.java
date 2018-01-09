@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.systems;
+package com.insanelyinsane.waifushogi;
 
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.DropEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.containers.Hand;
-import com.insanelyinsane.waifushogi.pieces.Pawn;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.pieces.Team;
 
@@ -25,8 +25,8 @@ import com.insanelyinsane.waifushogi.pieces.Team;
 public class Referee
 {
     // Column that starts promotion zone for each team
-    private final int PROMO_COL_RED = 6;
-    private final int PROMO_COL_BLUE = 2;
+    private final int PROMO_COLUMN_RED = 6;
+    private final int PROMO_COLUMN_BLUE = 2;
     
     
     // Board and Hands
@@ -49,7 +49,7 @@ public class Referee
     private int _selectedCol;
     private boolean[][] _validMoves;
     private boolean[][] _validDrops;
-    private boolean _shouldReplace;
+    //private boolean _shouldDrop;
     
     
     /**
@@ -87,13 +87,13 @@ public class Referee
      */
     public SelectionEvent selectPieceOnBoard(Piece target, int r, int c)
     {
-        if (target.getTeam() == _currentTeam)
+        if (target.getTeam() == _currentTeam && !target.isCaptured())
         {
             _selectedPiece = target;
             _selectedRow = r;
             _selectedCol = c;
-            _validMoves = target.getValidMoves(_board.getPieces(), r, c);
-            _shouldReplace = false;
+            _validMoves = _selectedPiece.getValidMoves(_board.getPieces(), r, c);
+            //_shouldDrop = false;
 
             return new SelectionEvent(_validMoves, _selectedPiece, true);
         }
@@ -116,11 +116,11 @@ public class Referee
      */
     public SelectionEvent selectPieceInHand(Piece target)
     {
-        if (target.getTeam() == _currentTeam)
+        if (target.getTeam() == _currentTeam && target.isCaptured())
         {
             _selectedPiece = target;
             _validDrops = target.getValidDrops(_board.getPieces());
-            _shouldReplace = true;
+            //_shouldDrop = true;
             
             return new SelectionEvent(_validDrops, _selectedPiece, true);
         }
@@ -148,9 +148,9 @@ public class Referee
         
         MoveEvent e = null;
         
-        if (_selectedPiece != null && !_shouldReplace)
+        if (_selectedPiece != null)
         {
-            if (_validMoves[r][c])
+            if (!_selectedPiece.isCaptured() && _validMoves[r][c])
             {
                 e = new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c, promo);
             }
@@ -163,11 +163,11 @@ public class Referee
     /**
      * Moves the currently selected Piece from the Hand to the specified row and column on the Board.
      * If the Drop (drop) is valid as determined by Referee::selectPieceInHand(), this method
- will generate and return a DropEvent to be handled by the calling object.
+     * will generate and return a DropEvent to be handled by the calling object.
  
- ///////////////////////////////////////////////////////////////////////
- Important: Returns null if the selection is invalid. The calling object
- should be able to handle this case.
+        ///////////////////////////////////////////////////////////////////////
+        Important: Returns null if the selection is invalid. The calling object
+        should be able to handle this case.
      * @param r
      * @param c
      * @return 
@@ -176,9 +176,9 @@ public class Referee
     {
         DropEvent e = null;
         
-        if (_selectedPiece != null && _shouldReplace)
+        if (_selectedPiece != null)
         {
-            if (_validDrops[r][c])
+            if (_selectedPiece.isCaptured() && _validDrops[r][c])
             {
                 e = new DropEvent(_selectedPiece, r, c);
             }
@@ -208,19 +208,23 @@ public class Referee
     }
     
     
+    /**
+     * Promote the piece that was just moved if legal. r and c represent the row and
+     * column that the piece moved to and returns the piece the promoted piece or null
+     * if unpromoted.
+     * @param r
+     * @param c
+     * @return Piece
+     */
     public Piece promotePieceAt(int r, int c)
-    {
-        if (_currentTeam == Team.RED && r < PROMO_COL_RED)
-        {
-            return null;
-        }
-        else if (_currentTeam == Team.BLUE && r > PROMO_COL_BLUE)
-        {
-            return null;
-        }
+    {        
+        Piece p = _selectedPiece; //_board.getPieceAt(r, c);
         
-        Piece p = _board.getPieceAt(r, c);
-        
+        // Ignore empty cells
+        if (p == null)
+        {
+            return p;
+        }
         
         // Jade and Gold Generals can't be promoted, so ignore them.
         if (p.getType() == Piece.Type.JADE || p.getType() == Piece.Type.GOLD)
@@ -228,12 +232,30 @@ public class Referee
             return null;
         }
         
-        if (p == null) return p;
+        // Don't promote captured pieces
+        if (p.isCaptured()) return null;
         
-        if (!p.isPromoted())
+        // If piece started in promotion zone and moves, promote.
+        if ((_currentTeam == Team.RED && _selectedRow >= PROMO_COLUMN_RED) ||
+            (_currentTeam == Team.BLUE && _selectedRow <= PROMO_COLUMN_BLUE))
         {
-            return p;
+            if (!p.isPromoted())
+            {
+                return p;
+            }
         }
+        
+        
+        // If moved to promotion zone, promote.
+        if ((_currentTeam == Team.RED && r >= PROMO_COLUMN_RED) ||
+            (_currentTeam == Team.BLUE && r <= PROMO_COLUMN_BLUE))
+        {
+            if (!p.isPromoted())
+            {
+                return p;
+            }
+        }
+        
         
         return null;
     }
@@ -278,7 +300,6 @@ public class Referee
         _selectedCol = -1;
         _validMoves = null;
         _validDrops = null;
-        _shouldReplace = false;
 
 
         // Switch to other player
@@ -287,7 +308,7 @@ public class Referee
             _currentTeam = Team.BLUE;
             _currentHand = _blueHand;
         }
-        else
+        else if (_currentTeam == Team.BLUE)
         {
             _currentTeam = Team.RED;
             _currentHand = _redHand;

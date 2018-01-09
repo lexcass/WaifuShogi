@@ -6,6 +6,7 @@
 package com.insanelyinsane.waifushogi.containers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.DropEvent;
 import com.insanelyinsane.waifushogi.listeners.MoveListener;
@@ -20,8 +21,8 @@ public class Board implements MoveListener, DropListener
 {
     public static final int ROWS = 9;
     public static final int COLS = 9;
-    public static final int CELL_WIDTH = 53;
-    public static final int CELL_HEIGHT = 71;
+    public static final int CELL_WIDTH = 42;
+    public static final int CELL_HEIGHT = 42;
     
     private final Piece[][] _pieces;
     
@@ -37,15 +38,18 @@ public class Board implements MoveListener, DropListener
      * @param r
      * @param c 
      */
-    public void addPiece(Piece p, int r, int c)
+    public boolean addPiece(Piece p, int r, int c)
     {
         if (_pieces[r][c] == null)
         {
             _pieces[r][c] = p;
+            Gdx.app.debug("Debug", p.getType().toString() + " added at (" + r + ", " + c + ").");
+            return true;
         }
         else
         {
             Gdx.app.debug("Warning", "Piece wasn't added. Cell not empty.");
+            return false;
         }
     }
     
@@ -64,26 +68,62 @@ public class Board implements MoveListener, DropListener
     
     
     /**
-     * Clears the board of all of its pieces
+     * Returns a 2D array that represents all of the pieces on the Board.
+     * @return Piece[][]
      */
-    public void clear()
-    {
-        for (Piece[] arr : _pieces)
-        {
-            for (Piece p : arr)
-            {
-                p = null;
-            }
-        }
-    }
-    
     public Piece[][] getPieces() { return _pieces; }
     
+    
+    /**
+     * Get a Piece at (r, c) assuming r and c are in bounds.
+     * @param r
+     * @param c
+     * @return 
+     */
     public Piece getPieceAt(int r, int c)
     {
         if (!inBounds(r, c)) Gdx.app.debug("Error", "No cell at (" + r + ", " + c + "), out of bounds.");
         
         return _pieces[r][c];
+    }
+    
+    
+    /**
+     * Make a copy of this board that can be used for AI evaluation.
+     * @return 
+     */
+    public Board makeCopy()
+    {
+        Board newBoard = new Board();
+        
+        for (int r = 0; r < ROWS; r++)
+        {
+            for (int c = 0; c < COLS; c++)
+            {
+                newBoard.addPiece(_pieces[r][c], r, c);
+            }
+        }
+        
+        return newBoard;
+    }
+    
+    
+    /**
+     * Replace this board with another board. All pieces are removed and this
+     * board becomes a duplicate of the other board. Intended for AI use.
+     * @param other 
+     */
+    public void setBoard(Board other)
+    {
+        Piece[][] otherPieces = other.getPieces();
+        
+        for (int r = 0; r < ROWS; r++)
+        {
+            for (int c = 0; c < COLS; c++)
+            {
+                _pieces[r][c] = otherPieces[r][c];
+            }
+        }
     }
     
     
@@ -123,14 +163,47 @@ public class Board implements MoveListener, DropListener
     @Override
     public void onWaifuMoved(MoveEvent e)
     {   
+        if (_pieces[e.fromRow()][e.fromCol()] != e.getPiece())
+        {
+            throw new GdxRuntimeException("Fatal error! Piece on board doesn't match piece being moved. Desynchronization error!");
+        }
+        
         _pieces[e.fromRow()][e.fromCol()] = null;
         _pieces[e.toRow()][e.toCol()] = e.getPiece();
+        
+        //print();
     }
     
     
+    /**
+     * Drop a piece onto the Board using a generated DropEvent.
+     * @param e 
+     */
     @Override
     public void onWaifuDropped(DropEvent e)
     {
         _pieces[e.toRow()][e.toCol()] = e.getPiece();
+    }
+    
+    
+    // FOR DEBUGGING
+    private void print()
+    {
+        for (int r = 8; r >= 0; r--) 
+        {
+            for (int c = 0; c < _pieces[r].length; c++)
+            {
+                if (_pieces[r][c] == null)
+                {
+                    System.out.print(" X ");
+                }
+                else
+                {
+                    System.out.print(" O ");
+                }
+            }
+            
+            System.out.println("");
+        }
     }
 }

@@ -35,6 +35,8 @@ public abstract class MovePattern
      * @param valid
      * @param r
      * @param c
+     * 
+     * @return boolean
      */
     public final boolean addIfValidMove(final Piece[][] board, boolean[][] valid, int r, int c)
     {

@@ -22,6 +22,13 @@ public class DragonKnightPattern extends MovePattern
         _rook = new RookPattern(team);
     }
     
+    @Override
+    public void setTeam(Team newTeam)
+    {
+        super.setTeam(newTeam);
+        _rook.setTeam(newTeam);
+    }
+    
     
     @Override
     public boolean[][] getValidMoves(final Piece[][] cells, int row, int col)

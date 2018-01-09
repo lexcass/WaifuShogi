@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.interfaces;
-
-import com.insanelyinsane.waifushogi.pieces.Piece;
+package com.insanelyinsane.waifushogi.gamecomponents;
 
 /**
  *
- * @author Alex Cassady
+ * @author A Wild Popo Appeared
  */
-public interface PromotionHandler 
+public enum GameComponentType 
 {
-    public void handlePromotion(Piece p);
+    HIGHLIGHTER, TEST, SINGLE_USE
 }

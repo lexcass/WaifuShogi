@@ -3,16 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.interfaces;
+package com.insanelyinsane.waifushogi.requesthandlers;
 
-import com.insanelyinsane.waifushogi.requesthandlers.PromotionHandler;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 
 /**
  *
  * @author Alex Cassady
  */
-public interface PromotionConfirmation 
+public interface PromotionHandler 
 {
-    void confirmPromotion(PromotionHandler h, Piece p);
+    public void handlePromotion(Piece p);
 }

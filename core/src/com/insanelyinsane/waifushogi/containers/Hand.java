@@ -91,7 +91,6 @@ public class Hand implements CaptureListener, DropListener
         
         if (piece.getTeam() != _team)
         {
-            System.out.println("Piece captured");
             _pieceMap.get(piece.getType()).push(piece);
         }
     }

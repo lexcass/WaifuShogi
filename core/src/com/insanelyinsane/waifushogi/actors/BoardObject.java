@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.ui.actors;
+package com.insanelyinsane.waifushogi.actors;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.insanelyinsane.waifushogi.RequestHandler;
+import com.insanelyinsane.waifushogi.requesthandlers.RequestHandler;
+import com.insanelyinsane.waifushogi.Sender;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 
@@ -30,7 +32,7 @@ public final class BoardObject extends Actor
     
     /**
      * Sets the bounds of the object for touch input, initializes its sprite, and adds an InputListener
-     * that communicates with other components via the RequestHandler.
+ that communicates with other components via the RequestHandler.
      * @param tex
      * @param x
      * @param y
@@ -59,16 +61,16 @@ public final class BoardObject extends Actor
                 int r = (int)(screenY / Board.CELL_HEIGHT);
                 int c = (int)(screenX / Board.CELL_WIDTH);
                 
-                System.out.println(r + " " + c);
-                Piece target = getBoard().getPieceAt(r, c);
-                
-                _handler.requestMove(r, c);
-                _handler.requestDrop(r, c);
+                Gdx.app.debug("Board touched", r + " " + c);
+                Piece target = _board.getPieceAt(r, c);
                 
                 if (target != null)
                 {
-                    _handler.requestSelection(RequestHandler.Sender.BOARD, target, r, c);
+                    _handler.requestSelection(Sender.BOARD, target, r, c);
                 }
+                
+                _handler.requestMove(r, c);
+                _handler.requestDrop(r, c);
                 
                 return true;
             }

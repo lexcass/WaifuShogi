@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.systems;
+package com.insanelyinsane.waifushogi.actors.animation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -35,6 +35,13 @@ public class Animator
     private static final String ERROR_PREFIX = "Error from Animator.loadFromFile: ";
     
     
+    /**
+     * Create a new Animator object and split the texture into frames based on
+     * frameWidth and frameHeight arguments.
+     * @param tex
+     * @param frameWidth
+     * @param frameHeight 
+     */
     public Animator(Texture tex, int frameWidth, int frameHeight)
     {
         _animations = new HashMap<>();
@@ -42,6 +49,8 @@ public class Animator
         
         // Split texture into texture regions
         TextureRegion[][] regions = TextureRegion.split(tex, frameWidth, frameHeight);
+        
+        // Initialize frames array
         _numRows = regions.length;
         _numCols = regions[0].length;
         MAX_FRAMES = (_numRows * _numCols) - 1;
@@ -58,7 +67,11 @@ public class Animator
         }
     }
     
-    public void loadFromFile(String fileName)
+    /**
+     * Load a ".anim" file, deserialize the animation data, and add each animation to this animator.
+     * @param fileName 
+     */
+    public void loadAnimationsFromFile(String fileName)
     {
         // Read content of .anim file
         FileHandle file = Gdx.files.internal("animations/" + fileName + ".anim");
@@ -146,6 +159,10 @@ public class Animator
     }
     
     
+    /**
+     * Set the current animation if the specified animation exists.
+     * @param anim 
+     */
     public void setAnimation(String anim)
     {
         if (_animations.containsKey(anim))

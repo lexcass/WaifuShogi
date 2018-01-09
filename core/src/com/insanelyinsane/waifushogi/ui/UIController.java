@@ -35,11 +35,11 @@ public class UIController
     }
     
     
-    public void showUI(boolean s)
-    {
-        _uiShowing = s;
-        _ui.show(s);
-    }
+//    public void showUI(boolean s)
+//    {
+//        _uiShowing = s;
+//        _ui.display(s);
+//    }
     
     
     public void dispose()

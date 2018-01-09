@@ -5,14 +5,14 @@
  */
 package com.insanelyinsane.waifushogi.interfaces;
 
-import com.insanelyinsane.waifushogi.requesthandlers.PromotionHandler;
-import com.insanelyinsane.waifushogi.pieces.Piece;
+import com.insanelyinsane.waifushogi.pieces.Team;
+import com.insanelyinsane.waifushogi.requesthandlers.WinGameHandler;
 
 /**
  *
  * @author Alex Cassady
  */
-public interface PromotionConfirmation 
+public interface WinConfirmation 
 {
-    void confirmPromotion(PromotionHandler h, Piece p);
+    public void confirmWin(WinGameHandler handler, Team team);
 }
