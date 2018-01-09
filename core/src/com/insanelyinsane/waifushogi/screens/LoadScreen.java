@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.insanelyinsane.waifushogi.WaifuShogi;
+import com.insanelyinsane.waifushogi.gamecomponents.GameComponent;
+import com.insanelyinsane.waifushogi.gamecomponents.GameComponentType;
 import com.insanelyinsane.waifushogi.ui.UIController;
 
 /**
@@ -36,6 +38,26 @@ public class LoadScreen extends Screen
         
         _assetsToLoad = assets;
         _loadingDone = false;
+        
+        addComponent(new GameComponent(GameComponentType.SINGLE_USE)
+        {
+            @Override
+            public void update(float deltaTime)
+            {
+                // Update assets until finished
+                if (_assetsToLoad.update())
+                {
+                    _loadingDone = true;
+
+                    Gdx.app.debug("Game message", "screen loaded in " + T);
+                }
+
+                T += deltaTime;
+            }
+            
+            @Override
+            public void draw(Batch batch) {}
+        });
     }
     
     @Override
@@ -57,26 +79,8 @@ public class LoadScreen extends Screen
     
     
     @Override
-    public void update(float delta) 
-    {
-        // Update assets until finished
-        if (_assetsToLoad.update())
-        {
-            _loadingDone = true;
-            
-            Gdx.app.debug("Game message", "screen loaded in " + T);
-        }
-        
-        T += delta;
-    }
-    
-    
-    @Override
-    public void draw(Batch batch) {}
-    
-    @Override
     public void handleGameQuit()
     {
-        
+        _assetsToLoad.dispose();
     }
 }
