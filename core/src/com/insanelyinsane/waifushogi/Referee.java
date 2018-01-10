@@ -5,7 +5,6 @@
  */
 package com.insanelyinsane.waifushogi;
 
-import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.insanelyinsane.waifushogi.events.MoveEvent;
 import com.insanelyinsane.waifushogi.events.DropEvent;
 import com.insanelyinsane.waifushogi.events.SelectionEvent;
@@ -43,13 +42,11 @@ public class Referee
     
     // Selection
     private Team _currentTeam;
-    private Hand _currentHand;
     private Piece _selectedPiece;
     private int _selectedRow;
     private int _selectedCol;
     private boolean[][] _validMoves;
     private boolean[][] _validDrops;
-    //private boolean _shouldDrop;
     
     
     /**
@@ -67,7 +64,6 @@ public class Referee
         
         // Red goes first
         _currentTeam = Team.RED;
-        _currentHand = _redHand;
     }
     
     
@@ -93,7 +89,6 @@ public class Referee
             _selectedRow = r;
             _selectedCol = c;
             _validMoves = _selectedPiece.getValidMoves(_board.getPieces(), r, c);
-            //_shouldDrop = false;
 
             return new SelectionEvent(_validMoves, _selectedPiece, true);
         }
@@ -120,7 +115,6 @@ public class Referee
         {
             _selectedPiece = target;
             _validDrops = target.getValidDrops(_board.getPieces());
-            //_shouldDrop = true;
             
             return new SelectionEvent(_validDrops, _selectedPiece, true);
         }
@@ -306,12 +300,10 @@ public class Referee
         if (_currentTeam == Team.RED)
         {
             _currentTeam = Team.BLUE;
-            _currentHand = _blueHand;
         }
         else if (_currentTeam == Team.BLUE)
         {
             _currentTeam = Team.RED;
-            _currentHand = _redHand;
         }
     }
 }

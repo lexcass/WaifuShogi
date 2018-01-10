@@ -9,7 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.insanelyinsane.waifushogi.requesthandlers.RequestHandler;
+import com.insanelyinsane.waifushogi.handlers.RequestHandler;
 import java.util.LinkedList;
 import java.util.List;
 

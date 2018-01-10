@@ -13,13 +13,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.insanelyinsane.waifushogi.requesthandlers.PromotionHandler;
+import com.insanelyinsane.waifushogi.handlers.PromotionHandler;
 import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
 import com.insanelyinsane.waifushogi.interfaces.WinConfirmation;
 import com.insanelyinsane.waifushogi.pieces.Team;
-import com.insanelyinsane.waifushogi.requesthandlers.WinGameHandler;
+import com.insanelyinsane.waifushogi.handlers.WinGameHandler;
 
 /**
  *

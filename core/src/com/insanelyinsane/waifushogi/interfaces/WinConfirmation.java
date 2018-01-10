@@ -6,7 +6,7 @@
 package com.insanelyinsane.waifushogi.interfaces;
 
 import com.insanelyinsane.waifushogi.pieces.Team;
-import com.insanelyinsane.waifushogi.requesthandlers.WinGameHandler;
+import com.insanelyinsane.waifushogi.handlers.WinGameHandler;
 
 /**
  *

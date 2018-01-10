@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.requesthandlers;
+package com.insanelyinsane.waifushogi.handlers;
 
 import com.insanelyinsane.waifushogi.Referee;
 import com.insanelyinsane.waifushogi.Sender;
