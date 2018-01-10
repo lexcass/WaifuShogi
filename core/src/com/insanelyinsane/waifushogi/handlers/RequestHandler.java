@@ -5,6 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.handlers;
 
+import com.insanelyinsane.waifushogi.Player;
 import com.insanelyinsane.waifushogi.Referee;
 import com.insanelyinsane.waifushogi.Sender;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
@@ -102,6 +103,16 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
      */
     public void requestSelection(Sender from, Piece target, int r, int c)
     {
+        // If the request is from the local player (touching the Board or Hand) and the 
+        // opponent is an AI, ignore the request if it's not the local player's turn.
+        if (from == Sender.LOCAL && _referee.getBluePlayer().getType() == Player.Type.AI)
+        {
+            if (_referee.whoseTurn() == _referee.getBluePlayer())
+            {
+                return;
+            }
+        }
+        
         SelectionEvent e;
         
         // Try to select on Board first

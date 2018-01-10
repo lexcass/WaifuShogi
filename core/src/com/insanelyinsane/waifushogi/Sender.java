@@ -9,4 +9,4 @@ package com.insanelyinsane.waifushogi;
 * Represents the type of sender. This is so the RequestHandler can differentiate between
 * a Board and a Hand object.
 */
-public enum Sender { BOARD, HAND };
+public enum Sender { LOCAL, AI };

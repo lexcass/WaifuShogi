@@ -48,6 +48,11 @@ public class Referee
     private boolean[][] _validMoves;
     private boolean[][] _validDrops;
     
+    // Players
+    private Player _redPlayer;
+    private Player _bluePlayer;
+    private Player _currentPlayer;
+    
     
     /**
      * Store a reference to the Board and Hands (Red and Blue). Initialize
@@ -56,14 +61,18 @@ public class Referee
      * @param redHand
      * @param blueHand 
      */
-    public Referee(Board board, Hand redHand, Hand blueHand)
+    public Referee(Player red, Player blue, Board board, Hand redHand, Hand blueHand)
     {
         _board = board;
         _redHand = redHand;
         _blueHand = blueHand;
         
+        _redPlayer = red;
+        _bluePlayer = blue;
+        
         // Red goes first
-        _currentTeam = Team.RED;
+        _currentPlayer = red;
+        _currentTeam = red.getTeam();
     }
     
     
@@ -297,13 +306,24 @@ public class Referee
 
 
         // Switch to other player
-        if (_currentTeam == Team.RED)
+        if (_currentPlayer == _redPlayer)
         {
-            _currentTeam = Team.BLUE;
+            _currentPlayer = _bluePlayer;
+            _currentTeam = _bluePlayer.getTeam();
         }
-        else if (_currentTeam == Team.BLUE)
+        else if (_currentPlayer == _bluePlayer)
         {
-            _currentTeam = Team.RED;
+            _currentPlayer = _redPlayer;
+            _currentTeam = _redPlayer.getTeam();
         }
+    }
+    
+    
+    public Player whoseTurn() { return _currentPlayer; }
+    
+    
+    public Player getBluePlayer()
+    {
+        return _bluePlayer;
     }
 }

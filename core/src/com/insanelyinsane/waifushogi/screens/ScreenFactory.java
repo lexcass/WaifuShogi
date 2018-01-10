@@ -23,8 +23,8 @@ public class ScreenFactory
                 return new MainMenuScreen(l, batch, ui);
             case LOCAL_MULTIPLAYER:
                 return new LocalMultiplayerScreen(l, batch, ui);
-//            case VERSUS_AI:
-//                return new VersusAIScreen(l, batch, ui);
+            case VERSUS_AI:
+                return new VersusAIScreen(l, batch, ui);
         }
         
         return null;

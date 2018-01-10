@@ -119,7 +119,7 @@ public abstract class MatchScreen extends Screen
          // Wire the RequestHandler to this MatchScreen
          _redPlayer = new Player(Player.Type.LOCAL_ONE);
          _bluePlayer = getBluePlayer();
-        _requestHandler = new RequestHandler(this, new Referee(board, red, blue), getComponent(GameComponentType.HIGHLIGHTER), ui, ui);
+        _requestHandler = new RequestHandler(this, new Referee(_redPlayer, _bluePlayer, board, red, blue), getComponent(GameComponentType.HIGHLIGHTER), ui, ui);
         
         
         // Initialize HandObjects and BoardObject (visual components)

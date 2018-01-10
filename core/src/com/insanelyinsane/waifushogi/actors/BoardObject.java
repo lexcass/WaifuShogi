@@ -66,7 +66,7 @@ public final class BoardObject extends Actor
                 
                 if (target != null)
                 {
-                    _handler.requestSelection(Sender.BOARD, target, r, c);
+                    _handler.requestSelection(Sender.LOCAL, target, r, c);
                 }
                 
                 _handler.requestMove(r, c);

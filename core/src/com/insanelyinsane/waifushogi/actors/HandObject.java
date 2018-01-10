@@ -55,7 +55,7 @@ public final class HandObject extends Actor
                 if (st.empty()) { return false; }
                 
                 Piece target = st.peek();
-                _handler.requestSelection(Sender.HAND, target, -1, -1);
+                _handler.requestSelection(Sender.LOCAL, target, -1, -1);
                 
                 return true;
             }
