@@ -23,7 +23,7 @@ import java.util.List;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
 import com.insanelyinsane.waifushogi.interfaces.WinConfirmation;
 import com.insanelyinsane.waifushogi.listeners.DropListener;
-import com.insanelyinsane.waifushogi.pieces.Team;
+import com.insanelyinsane.waifushogi.screens.MatchScreen;
 import com.insanelyinsane.waifushogi.screens.Screen;
 import com.insanelyinsane.waifushogi.screens.ScreenType;
 
@@ -59,7 +59,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
      * @param highlighter
      * @param c         The object that handles confirmation of promotion from the player (UI).
      */
-    public RequestHandler(Screen screen, Referee ref, SelectionListener highlighter, PromotionConfirmation c, WinConfirmation w)
+    public RequestHandler(MatchScreen screen, Referee ref, SelectionListener highlighter, PromotionConfirmation c, WinConfirmation w)
     {
         _waifus = new LinkedList<>();
         _selectionListeners = new LinkedList<>();

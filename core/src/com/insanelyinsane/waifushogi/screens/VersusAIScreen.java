@@ -6,6 +6,7 @@
 package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.Player;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.ui.UIController;
 
@@ -24,5 +25,12 @@ public class VersusAIScreen extends MatchScreen
     protected void setupMatch()
     {
         
+    }
+    
+    
+    @Override
+    protected Player getBluePlayer()
+    {
+        return new Player(Player.Type.AI);
     }
 }

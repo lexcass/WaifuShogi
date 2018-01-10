@@ -8,8 +8,8 @@ package com.insanelyinsane.waifushogi.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.Player;
 import com.insanelyinsane.waifushogi.handlers.RequestHandler;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.containers.Board;
@@ -17,7 +17,6 @@ import com.insanelyinsane.waifushogi.containers.Hand;
 import com.insanelyinsane.waifushogi.pieces.Pawn;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.pieces.Team;
-import com.insanelyinsane.waifushogi.gamecomponents.HighlighterComponent;
 import com.insanelyinsane.waifushogi.Referee;
 import com.insanelyinsane.waifushogi.actors.BoardObject;
 import com.insanelyinsane.waifushogi.actors.HandObject;
@@ -43,9 +42,6 @@ public abstract class MatchScreen extends Screen
 {
     // Assets to load
     Texture _woodTex;
-    BitmapFont _font = new BitmapFont();
-    
-    // Textures
     Texture _boardTex;
     Texture _pawnTex;
     Texture _rookTex;
@@ -61,6 +57,8 @@ public abstract class MatchScreen extends Screen
     HandObject _redHand;
     HandObject _blueHand;
     
+    Player _redPlayer;
+    Player _bluePlayer;
     
     RequestHandler _requestHandler;
     
@@ -119,6 +117,8 @@ public abstract class MatchScreen extends Screen
         addComponent(new HighlighterComponent(boardX, boardY));
         
          // Wire the RequestHandler to this MatchScreen
+         _redPlayer = new Player(Player.Type.LOCAL_ONE);
+         _bluePlayer = getBluePlayer();
         _requestHandler = new RequestHandler(this, new Referee(board, red, blue), getComponent(GameComponentType.HIGHLIGHTER), ui, ui);
         
         
@@ -128,10 +128,10 @@ public abstract class MatchScreen extends Screen
         
         int offsetFromBoard = Board.CELL_HEIGHT * 2;
         
-        _blueHand = new HandObject(boardX, boardY + _boardTex.getHeight() + offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, blue, _font, _requestHandler);
+        _blueHand = new HandObject(boardX, boardY + _boardTex.getHeight() + offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, blue, getFont(), _requestHandler);
         addActor(_blueHand);
         
-        _redHand = new HandObject(boardX, boardY - offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, red, _font, _requestHandler);
+        _redHand = new HandObject(boardX, boardY - offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, red, getFont(), _requestHandler);
         addActor(_redHand);
         
         // Add Pieces to the board
@@ -146,6 +146,9 @@ public abstract class MatchScreen extends Screen
     
     
     protected abstract void setupMatch();
+    
+    
+    protected abstract Player getBluePlayer();
     
     
     /**
@@ -216,24 +219,6 @@ public abstract class MatchScreen extends Screen
             Gdx.app.debug("Warning", piece.getType().toString() + " was not added at (" + row + ", " + col + ").");
         }
     }
-    
-    
-//    @Override
-//    public void update(float delta)
-//    {
-//        //////////////////////////////////////
-//        // Update objects here
-//    }
-//    
-//    
-//    @Override
-//    public void draw(Batch batch)
-//    {
-//        //////////////////////////////////////////
-//        // Draw highlighted cells to the screen
-//        _highlighter.draw(batch);
-//        
-//    }
     
     
     @Override
