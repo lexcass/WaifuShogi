@@ -103,16 +103,21 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
     public void requestSelection(Sender from, Piece target, int r, int c)
     {
         SelectionEvent e;
-        if (from == Sender.BOARD)
-        {
-            e = _referee.selectPieceOnBoard(target, r, c);
-        }
-        else
-        {
-            e = _referee.selectPieceInHand(target);
-        }
         
-        if (e != null) _selectionListeners.forEach(l -> l.onWaifuSelected(e));
+        // Try to select on Board first
+        e = _referee.selectPieceOnBoard(target, r, c);
+        
+        // If the piece is not on the Board, try the Hand
+        if (e == null) e = _referee.selectPieceInHand(target);
+        
+        // Inform Selection listeners of the new selection
+        if (e != null) 
+        {
+            for (SelectionListener l : _selectionListeners)
+            {
+                l.onWaifuSelected(e);
+            }
+        }
     }
     
     
