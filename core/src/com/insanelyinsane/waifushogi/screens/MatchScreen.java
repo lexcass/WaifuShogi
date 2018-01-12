@@ -120,10 +120,10 @@ public abstract class MatchScreen extends Screen
         addComponent(new HighlighterComponent(boardX, boardY));
         
          // Wire the RequestHandler to this MatchScreen
-         _referee = new Referee(_redPlayer, _bluePlayer, board, red, blue);
-         
          _redPlayer = new Player(Player.Type.LOCAL_ONE, true);
          _bluePlayer = getBluePlayer();
+         _referee = new Referee(_redPlayer, _bluePlayer, board, red, blue);
+         
         _requestHandler = new RequestHandler(this, _referee, getComponent(GameComponentType.HIGHLIGHTER), ui, ui);
         
         
@@ -239,4 +239,5 @@ public abstract class MatchScreen extends Screen
     public GameState getGameState() { return _gameState; }
     public Referee getReferee() { return _referee; }
     protected RequestHandler getRequestHandler() { return _requestHandler; }
+    protected Player getRedPlayer() { return _redPlayer; }
 }

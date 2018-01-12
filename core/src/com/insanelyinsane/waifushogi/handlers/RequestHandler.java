@@ -19,12 +19,14 @@ import com.insanelyinsane.waifushogi.listeners.PromotionListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.actors.Waifu;
+import com.insanelyinsane.waifushogi.events.TurnEndEvent;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import java.util.LinkedList;
 import java.util.List;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
 import com.insanelyinsane.waifushogi.interfaces.WinConfirmation;
 import com.insanelyinsane.waifushogi.listeners.DropListener;
+import com.insanelyinsane.waifushogi.listeners.TurnEndListener;
 import com.insanelyinsane.waifushogi.screens.MatchScreen;
 import com.insanelyinsane.waifushogi.screens.Screen;
 import com.insanelyinsane.waifushogi.screens.ScreenType;
@@ -46,6 +48,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
     private final List<DropListener> _dropListeners;
     private final List<CaptureListener> _captureListeners;
     private final List<PromotionListener> _promotionListeners;
+    private final List<TurnEndListener> _turnEndListeners;
     private final PromotionConfirmation _promoConfirmer;
     private final WinConfirmation  _winConfirmer;
     
@@ -69,6 +72,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         _dropListeners = new LinkedList<>();
         _captureListeners = new LinkedList<>();
         _promotionListeners = new LinkedList<>();
+        _turnEndListeners = new LinkedList<>();
         
         _promoConfirmer = c;
         _winConfirmer = w;
@@ -186,7 +190,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _waifus.get(0).getPiece(), false)));
         
         // Finish turn
-        _referee.finishTurn();
+        _turnEndListeners.forEach(l -> l.onTurnEnd(new TurnEndEvent(_referee.finishTurn())));
     }
     
     
@@ -317,6 +321,19 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         else
         {
             Gdx.app.debug("PromotionListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
+    
+    public void registerTurnEndListener(TurnEndListener l)
+    {
+        if (l != null)
+        {
+            _turnEndListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("TurnEndListener error", "Listener was not registered to the RequestHandler.");
         }
     }
     

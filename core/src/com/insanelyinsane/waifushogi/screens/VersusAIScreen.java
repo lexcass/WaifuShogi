@@ -38,15 +38,11 @@ public class VersusAIScreen extends MatchScreen
         Referee referee = getReferee();
         GameState state = getGameState();
         
-        _ai = new AIOpponent(handler, referee, state);
+        _ai = new AIOpponent(handler, state);
         AIControllerComponent aiComponent = new AIControllerComponent(_ai);
         
-        handler.registerMoveListener(aiComponent);
-                
+        handler.registerTurnEndListener(aiComponent);
         addComponent(aiComponent);
-        
-        // register _ai as MoveListener so when player move is over, _ai stops thinking
-        // and executes its move
     }
     
     

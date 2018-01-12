@@ -120,8 +120,8 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         
         _animator.update(delta);
         
-        _sprite.setX(getX());
-        _sprite.setY(getY());
+//        _sprite.setX(getX());
+//        _sprite.setY(getY());
     }
     
     
@@ -155,6 +155,9 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         {
             setX((BOARD_X + e.toCol() * Board.CELL_WIDTH) + (Board.CELL_WIDTH / 2) - (WIDTH / 2));
             setY((BOARD_Y + e.toRow() * Board.CELL_HEIGHT) + (Board.CELL_HEIGHT / 2) - (HEIGHT / 2));
+            
+            _sprite.setX(getX());
+            _sprite.setY(getY());
         }
     }
     
@@ -172,6 +175,8 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
             
             setX(x);
             setY(y);
+            _sprite.setX(getX());
+            _sprite.setY(getY());
             p.setCaptured(true);
             p.setTeam(p.getTeam() == Team.RED ? Team.BLUE : Team.RED);
             _animPrefix = (p.getTeam() == Team.RED ? "up" : "down");
@@ -191,6 +196,9 @@ public class Waifu extends Actor implements MoveListener, CaptureListener, Selec
         {
             setX((BOARD_X + e.toCol() * Board.CELL_WIDTH) + (Board.CELL_WIDTH / 2) - (WIDTH / 2));
             setY((BOARD_Y + e.toRow() * Board.CELL_HEIGHT) + (Board.CELL_HEIGHT / 2) - (HEIGHT / 2));
+            
+            _sprite.setX(getX());
+            _sprite.setY(getY());
             
             setAnimation("Idle");
             p.setCaptured(false);

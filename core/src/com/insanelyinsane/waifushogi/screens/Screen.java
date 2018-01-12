@@ -155,12 +155,12 @@ public abstract class Screen implements QuitListener
      */
     public final void render(float delta)
     {
-        // Update Stage and GameComponents
+        // Update and Draw Stage
         _stage.act(delta);
-        _components.forEach(comp -> comp.update(delta));
-        
-        // Draw Stage and GameComponents
         _stage.draw();
+        
+        // Update and Draw GameComponents
+        _components.forEach(comp -> comp.update(delta));
         _components.forEach(comp -> comp.draw(_spriteBatch));
     }
     

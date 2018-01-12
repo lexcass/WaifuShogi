@@ -28,6 +28,9 @@ public class Referee
     private final int PROMO_COLUMN_BLUE = 2;
     
     
+    RuleBook _ruleBook;
+    
+    
     // Board and Hands
     private final Board _board;
     private final Hand _redHand;
@@ -42,9 +45,7 @@ public class Referee
     
     // Selection
     private Team _currentTeam;
-    private Piece _selectedPiece;
-    private int _selectedRow;
-    private int _selectedCol;
+    private Selection _selection;
     private boolean[][] _validMoves;
     private boolean[][] _validDrops;
     
@@ -73,6 +74,9 @@ public class Referee
         // Red goes first
         _currentPlayer = red;
         _currentTeam = red.getTeam();
+        
+        _selection = new Selection(null, -1, -1);
+        _ruleBook = new RuleBook();
     }
     
     
@@ -92,14 +96,13 @@ public class Referee
      */
     public SelectionEvent selectPieceOnBoard(Piece target, int r, int c)
     {
-        if (target.getTeam() == _currentTeam && !target.isCaptured())
+        if (_ruleBook.canSelectPieceOnBoard(target, r, c, _currentTeam)) //(target.getTeam() == _currentTeam && !target.isCaptured())
         {
-            _selectedPiece = target;
-            _selectedRow = r;
-            _selectedCol = c;
-            _validMoves = _selectedPiece.getValidMoves(_board.getPieces(), r, c);
+            _selection.setPiece(target);
+            _selection.setCell(r, c);
+            _validMoves = target.getValidMoves(_board.getPieces(), r, c);
 
-            return new SelectionEvent(_validMoves, _selectedPiece, true);
+            return new SelectionEvent(_validMoves, target, true);
         }
         
         return null;
@@ -120,12 +123,12 @@ public class Referee
      */
     public SelectionEvent selectPieceInHand(Piece target)
     {
-        if (target.getTeam() == _currentTeam && target.isCaptured())
+        if (_ruleBook.canSelectPieceInHand(target, _currentTeam)) //(target.getTeam() == _currentTeam && target.isCaptured())
         {
-            _selectedPiece = target;
+            _selection.setPiece(target);
             _validDrops = target.getValidDrops(_board.getPieces());
             
-            return new SelectionEvent(_validDrops, _selectedPiece, true);
+            return new SelectionEvent(_validDrops, target, true);
         }
         
         return null;
@@ -148,15 +151,14 @@ public class Referee
     public MoveEvent movePieceTo(int r, int c)
     {
         boolean promo = false;
-        
+        Piece selectedPiece = _selection.getPiece();
+        int selectedRow = _selection.getRow();
+        int selectedCol = _selection.getCol();
         MoveEvent e = null;
         
-        if (_selectedPiece != null)
+        if (_ruleBook.canMovePieceTo(_selection, _validMoves, r, c))
         {
-            if (!_selectedPiece.isCaptured() && _validMoves[r][c])
-            {
-                e = new MoveEvent(_selectedPiece, _selectedRow, _selectedCol, r, c, promo);
-            }
+            e = new MoveEvent(selectedPiece, selectedRow, selectedCol, r, c, promo);
         }
         
         return e;
@@ -179,12 +181,11 @@ public class Referee
     {
         DropEvent e = null;
         
-        if (_selectedPiece != null)
+        Piece selectedPiece = _selection.getPiece();
+        
+        if (_ruleBook.canDropPieceAt(_selection, _validDrops, r, c))
         {
-            if (_selectedPiece.isCaptured() && _validDrops[r][c])
-            {
-                e = new DropEvent(_selectedPiece, r, c);
-            }
+            e = new DropEvent(selectedPiece, r, c);
         }
         
         return e;
@@ -202,107 +203,50 @@ public class Referee
     public Piece capturePieceAt(int r, int c)
     {
         Piece target = _board.getPieceAt(r, c);
-        if (target != null)
-        {
-            if (target.getTeam() != _currentTeam) return target;
-        }
         
+        if (_ruleBook.canCapturePiece(target, _currentTeam))
+        {
+            return target;
+        }
+            
         return null;
     }
     
     
     /**
-     * Promote the piece that was just moved if legal. r and c represent the row and
-     * column that the piece moved to and returns the piece the promoted piece or null
+     * Promote the piece that was just moved if legal. Returns the promoted piece or null
      * if unpromoted.
      * @param r
      * @param c
-     * @return Piece
+     * @return Piece or null if unpromoted.
      */
     public Piece promotePieceAt(int r, int c)
     {        
-        Piece p = _selectedPiece; //_board.getPieceAt(r, c);
-        
-        // Ignore empty cells
-        if (p == null)
-        {
-            return p;
-        }
-        
-        // Jade and Gold Generals can't be promoted, so ignore them.
-        if (p.getType() == Piece.Type.JADE || p.getType() == Piece.Type.GOLD)
-        {
-            return null;
-        }
-        
-        // Don't promote captured pieces
-        if (p.isCaptured()) return null;
-        
-        // If piece started in promotion zone and moves, promote.
-        if ((_currentTeam == Team.RED && _selectedRow >= PROMO_COLUMN_RED) ||
-            (_currentTeam == Team.BLUE && _selectedRow <= PROMO_COLUMN_BLUE))
-        {
-            if (!p.isPromoted())
-            {
-                return p;
-            }
-        }
-        
-        
-        // If moved to promotion zone, promote.
-        if ((_currentTeam == Team.RED && r >= PROMO_COLUMN_RED) ||
-            (_currentTeam == Team.BLUE && r <= PROMO_COLUMN_BLUE))
-        {
-            if (!p.isPromoted())
-            {
-                return p;
-            }
-        }
-        
-        
-        return null;
+        return _ruleBook.canPromotePieceAt(_selection, r, _currentTeam);
     }
     
     
     
     public boolean isPieceStuck(Piece p, int r, int c)
     {
-        // Pawn, Lance, and Knight are special cases.
-        // If they are in the last row (or second to last row for Knight),
-        // they have no future moves and must promoted.
-        if (p.getType() == Piece.Type.PAWN || p.getType() == Piece.Type.LANCE)
-        {
-            int lastRow = p.getTeam() == Team.RED ? Board.COLS - 1 : 0;
-            return (r == lastRow);
-        }
-        else if (p.getType() == Piece.Type.KNIGHT)
-        {
-            if (p.getTeam() == Team.RED)
-            {
-                return r >= Board.COLS - 2;
-            }
-            else
-            {
-                return r <= 1;
-            }
-        }
-        
-        return false;
+        return _ruleBook.isPieceStuck(p, r, c);
     }
     
     
     /**
      * End the current player's turn by resetting the game state's selection
      * and validity flags. Change the current team to the next team (RED or BLUE).
+     * 
+     * @return Team who just finished their turn.
      */
-    public void finishTurn()
+    public Team finishTurn()
     {
         // Reset the selection
-        _selectedPiece = null;
-        _selectedRow = -1;
-        _selectedCol = -1;
+        _selection.reset();
         _validMoves = null;
         _validDrops = null;
+        
+        Team whoFinished = _currentTeam;
 
 
         // Switch to other player
@@ -321,6 +265,8 @@ public class Referee
         }
         
         _currentPlayer.setActing(true);
+        
+        return whoFinished;
     }
     
     

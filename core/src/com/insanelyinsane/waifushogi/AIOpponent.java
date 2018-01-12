@@ -6,6 +6,8 @@
 package com.insanelyinsane.waifushogi;
 
 import com.badlogic.gdx.Gdx;
+import com.insanelyinsane.waifushogi.containers.Board;
+import com.insanelyinsane.waifushogi.containers.Hand;
 import com.insanelyinsane.waifushogi.handlers.RequestHandler;
 
 /**
@@ -15,18 +17,25 @@ import com.insanelyinsane.waifushogi.handlers.RequestHandler;
 public class AIOpponent 
 {
     private RequestHandler _requestHandler;
-    private Referee _referee;
-    private GameState _gameState;
+    private GameState _currentGameState;
+    private RuleBook _ruleBook;
     
     private boolean _thinking;
     public boolean isThinking() { return _thinking; }
     
     
-    public AIOpponent(RequestHandler handler, Referee ref, GameState state)
+    /**
+     * 
+     * @param handler The RequestHandler to relay the AI's final move to the game's other systems (Board, Hand, etc.)
+     * @param state The current state of the game including the Board and Hands.
+     */
+    public AIOpponent(RequestHandler handler, GameState state)
     {
         _requestHandler = handler;
-        _referee = ref;
-        _gameState = state;
+        
+        // Keep a reference to the current state (position) of the game Board.
+        _currentGameState = state;
+        _ruleBook = new RuleBook();
         
         _thinking = false;
     }
@@ -39,6 +48,12 @@ public class AIOpponent
         {
             _thinking = false;
         }
+    }
+    
+    
+    private GameState createMockGameState(GameState gs)
+    {
+        return new GameState(gs.getBoard(), gs.getRedHand(), gs.getBlueHand());
     }
     
     

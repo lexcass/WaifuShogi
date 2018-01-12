@@ -7,15 +7,15 @@ package com.insanelyinsane.waifushogi.gamecomponents;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.insanelyinsane.waifushogi.AIOpponent;
-import com.insanelyinsane.waifushogi.events.MoveEvent;
-import com.insanelyinsane.waifushogi.listeners.MoveListener;
+import com.insanelyinsane.waifushogi.events.TurnEndEvent;
+import com.insanelyinsane.waifushogi.listeners.TurnEndListener;
 import com.insanelyinsane.waifushogi.pieces.Team;
 
 /**
  *
  * @author Alex Cassady
  */
-public class AIControllerComponent extends GameComponent implements MoveListener
+public class AIControllerComponent extends GameComponent implements TurnEndListener
 {
     private final Team PLAYER_TEAM = Team.RED;
     
@@ -53,10 +53,10 @@ public class AIControllerComponent extends GameComponent implements MoveListener
     
     
     @Override
-    public void onWaifuMoved(MoveEvent e)
+    public void onTurnEnd(TurnEndEvent e)
     {
         // Start thinking of move to execute after the player moves
-        if (e.getPiece().getTeam() == PLAYER_TEAM)
+        if (e.getTeam() == PLAYER_TEAM)
         {
             _active = true;
         }
