@@ -6,22 +6,26 @@
 package com.insanelyinsane.waifushogi;
 
 import com.badlogic.gdx.Gdx;
-import com.insanelyinsane.waifushogi.containers.Board;
-import com.insanelyinsane.waifushogi.containers.Hand;
+import com.insanelyinsane.waifushogi.events.TurnEndEvent;
 import com.insanelyinsane.waifushogi.handlers.RequestHandler;
+import com.insanelyinsane.waifushogi.listeners.QuitListener;
+import com.insanelyinsane.waifushogi.listeners.TurnEndListener;
+import com.insanelyinsane.waifushogi.pieces.Team;
 
 /**
  *
  * @author Alex Cassady
  */
-public class AIOpponent 
+public class AIOpponent implements TurnEndListener, QuitListener
 {
+    private final Team PLAYER_TEAM = Team.RED;
+    
     private RequestHandler _requestHandler;
     private GameState _currentGameState;
     private RuleBook _ruleBook;
     
-    private boolean _thinking;
-    public boolean isThinking() { return _thinking; }
+    private boolean _active;
+    public boolean isActive() { return _active; }
     
     
     /**
@@ -37,17 +41,39 @@ public class AIOpponent
         _currentGameState = state;
         _ruleBook = new RuleBook();
         
-        _thinking = false;
+        _active = false;
     }
+    
+    
+    @Override
+    public void onTurnEnd(TurnEndEvent e)
+    {
+        // Execute move only after the player moves
+        if (e.getTeam() == PLAYER_TEAM)
+        {
+            think();
+            execute();
+        }
+    }
+    
+    
+    @Override
+    public void handleGameQuit()
+    {
+        
+    }
+    
     
     public void think()
     {
-        _thinking = true;
+        _active = true;
         
-        while (_thinking)
+        try
         {
-            _thinking = false;
+            Thread.sleep(2000);
+            Gdx.app.debug("AI", "finished thinking.");
         }
+        catch(InterruptedException e){}
     }
     
     
@@ -92,18 +118,7 @@ public class AIOpponent
      */
     public void execute()
     {
-        if (_thinking)
-        {
-            _thinking = false;
-        }
-        
-        // 2 second delay to test
-        try
-        {
-            Thread.sleep(2000);
-            Gdx.app.debug("AI", "Finished!");
-            _thinking = false;
-        }
-        catch (InterruptedException e) {}
+        // End AI turn
+        _active = false;
     }
 }

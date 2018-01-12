@@ -39,10 +39,12 @@ public class VersusAIScreen extends MatchScreen
         GameState state = getGameState();
         
         _ai = new AIOpponent(handler, state);
-        AIControllerComponent aiComponent = new AIControllerComponent(_ai);
+        handler.registerTurnEndListener(_ai);
         
-        handler.registerTurnEndListener(aiComponent);
-        addComponent(aiComponent);
+        //AIControllerComponent aiComponent = new AIControllerComponent(_ai);
+        
+        //handler.registerTurnEndListener(aiComponent);
+        //addComponent(aiComponent);
     }
     
     
