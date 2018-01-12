@@ -26,7 +26,9 @@ import java.util.List;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
 import com.insanelyinsane.waifushogi.interfaces.WinConfirmation;
 import com.insanelyinsane.waifushogi.listeners.DropListener;
+import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.listeners.TurnEndListener;
+import com.insanelyinsane.waifushogi.pieces.Team;
 import com.insanelyinsane.waifushogi.screens.MatchScreen;
 import com.insanelyinsane.waifushogi.screens.Screen;
 import com.insanelyinsane.waifushogi.screens.ScreenType;
@@ -160,6 +162,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         
         // Capture the piece in the cell (if there is one)
         Piece captured = _referee.capturePieceAt(r, c);
+        boolean gameOver = false;
         if (captured != null)
         {
             _captureListeners.forEach(l -> l.onWaifuCaptured(new CaptureEvent(captured)));
@@ -168,6 +171,8 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
             {
                 // Player wins
                 System.out.println("---------------------------------------------------------------\n" + captured.getTeam().toString() + " is the winner!\n---------------------------------------------------------------");
+                
+                gameOver = true;
                 
                 // Use same team since team changes upon capture; Jade is now on winner's team.
                 _winConfirmer.confirmWin(this, captured.getTeam());
@@ -180,7 +185,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         
         // Handle promotion
         Piece toPromote = _referee.promotePieceAt(r, c);
-        if (toPromote != null)
+        if (toPromote != null && !gameOver)
         {
             requestPromotion(toPromote, _referee.isPieceStuck(toPromote, r, c));
         }
@@ -190,7 +195,8 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _waifus.get(0).getPiece(), false)));
         
         // Finish turn
-        _turnEndListeners.forEach(l -> l.onTurnEnd(new TurnEndEvent(_referee.finishTurn())));
+        Team ended = _referee.finishTurn();
+        _turnEndListeners.forEach(l -> l.onTurnEnd(new TurnEndEvent(ended)));
     }
     
     
@@ -219,7 +225,8 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _waifus.get(0).getPiece(), false)));
         
         // Finish turn
-        _referee.finishTurn();
+        Team ended = _referee.finishTurn();
+        _turnEndListeners.forEach(l -> l.onTurnEnd(new TurnEndEvent(ended)));
     }
     
     

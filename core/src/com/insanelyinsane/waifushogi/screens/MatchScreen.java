@@ -64,11 +64,12 @@ public abstract class MatchScreen extends Screen
     RequestHandler _requestHandler;
     Referee _referee;
     GameState _gameState;
+    MatchUI _ui;
     
     
-    public MatchScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
+    public MatchScreen(WaifuShogi game, SpriteBatch batch, UIController _ui)
     {
-        super(game, batch, ui);
+        super(game, batch, _ui);
         
         // Load assets
         loadAsset(Textures.WOOD_BACKGROUND, Texture.class);
@@ -106,7 +107,7 @@ public abstract class MatchScreen extends Screen
         setBackground(_woodTex);
         
         // Load the MatchUI
-        MatchUI ui = new MatchUI(getStage(), this);
+        _ui = new MatchUI(getStage(), this);
         
         // Initialize Hands and Board (logic components)
         Hand blue = new Hand(Team.BLUE);
@@ -124,7 +125,7 @@ public abstract class MatchScreen extends Screen
          _bluePlayer = getBluePlayer();
          _referee = new Referee(_redPlayer, _bluePlayer, board, red, blue);
          
-        _requestHandler = new RequestHandler(this, _referee, getComponent(GameComponentType.HIGHLIGHTER), ui, ui);
+        _requestHandler = new RequestHandler(this, _referee, getComponent(GameComponentType.HIGHLIGHTER), _ui, _ui);
         
         
         // Initialize HandObjects and BoardObject (visual components)
@@ -149,7 +150,7 @@ public abstract class MatchScreen extends Screen
         setupMatch();
         
         // Load the UI
-        getUIController().loadUI(ui);
+        getUIController().loadUI(_ui);
     }
     
     
@@ -236,6 +237,7 @@ public abstract class MatchScreen extends Screen
     
     
     
+    public MatchUI getUI() { return _ui; }
     public GameState getGameState() { return _gameState; }
     public Referee getReferee() { return _referee; }
     protected RequestHandler getRequestHandler() { return _requestHandler; }

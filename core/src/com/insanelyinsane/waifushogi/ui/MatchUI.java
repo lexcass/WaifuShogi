@@ -20,6 +20,8 @@ import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
 import com.insanelyinsane.waifushogi.interfaces.WinConfirmation;
 import com.insanelyinsane.waifushogi.pieces.Team;
 import com.insanelyinsane.waifushogi.handlers.WinGameHandler;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -27,7 +29,7 @@ import com.insanelyinsane.waifushogi.handlers.WinGameHandler;
  */
 public class MatchUI extends UI implements PromotionConfirmation, WinConfirmation
 {
-    private final QuitListener _quitListener;
+    private final List<QuitListener> _quitListeners;
     
     private Button _quitButton;
     private Button _menuButton;
@@ -36,7 +38,9 @@ public class MatchUI extends UI implements PromotionConfirmation, WinConfirmatio
     public MatchUI(Stage stage, QuitListener q)
     {
         super(stage);
-        _quitListener = q;
+        _quitListeners = new LinkedList<>();
+        
+        _quitListeners.add(q);
     }
     
     @Override
@@ -66,7 +70,7 @@ public class MatchUI extends UI implements PromotionConfirmation, WinConfirmatio
             @Override
             public void touchUp(InputEvent e, float screenX, float screenY, int pointer, int button)
             {
-                _quitListener.handleGameQuit();
+                _quitListeners.forEach(l -> l.handleGameQuit());
             }
         });
         _quitButton.setVisible(false);
@@ -115,5 +119,15 @@ public class MatchUI extends UI implements PromotionConfirmation, WinConfirmatio
                 }
             }
         }.button("Play Again", true).button("Quit", false).show(getStage());
+    }
+    
+    
+    
+    public void registerQuitListener(QuitListener l)
+    {
+        if (l != null)
+        {
+            _quitListeners.add(l);
+        }
     }
 }

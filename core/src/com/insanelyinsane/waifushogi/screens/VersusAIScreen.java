@@ -11,9 +11,11 @@ import com.insanelyinsane.waifushogi.GameState;
 import com.insanelyinsane.waifushogi.Player;
 import com.insanelyinsane.waifushogi.Referee;
 import com.insanelyinsane.waifushogi.WaifuShogi;
-import com.insanelyinsane.waifushogi.gamecomponents.AIControllerComponent;
 import com.insanelyinsane.waifushogi.handlers.RequestHandler;
+import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.ui.UIController;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -40,11 +42,8 @@ public class VersusAIScreen extends MatchScreen
         
         _ai = new AIOpponent(handler, state);
         handler.registerTurnEndListener(_ai);
-        
-        //AIControllerComponent aiComponent = new AIControllerComponent(_ai);
-        
-        //handler.registerTurnEndListener(aiComponent);
-        //addComponent(aiComponent);
+        getUI().registerQuitListener(_ai);
+        _ai.start();
     }
     
     

@@ -16,7 +16,7 @@ import com.insanelyinsane.waifushogi.pieces.Team;
  *
  * @author Alex Cassady
  */
-public class AIOpponent implements TurnEndListener, QuitListener
+public class AIOpponent extends Thread implements TurnEndListener, QuitListener
 {
     private final Team PLAYER_TEAM = Team.RED;
     
@@ -24,8 +24,10 @@ public class AIOpponent implements TurnEndListener, QuitListener
     private GameState _currentGameState;
     private RuleBook _ruleBook;
     
+    private boolean _running;
     private boolean _active;
-    public boolean isActive() { return _active; }
+    public synchronized boolean isActive() { return _active; }
+    public synchronized void setActive(boolean a) { _active = a; }
     
     
     /**
@@ -41,7 +43,27 @@ public class AIOpponent implements TurnEndListener, QuitListener
         _currentGameState = state;
         _ruleBook = new RuleBook();
         
+        _running = true;
         _active = false;
+    }
+    
+    @Override
+    public void run()
+    {
+        while (_running)
+        {
+            if (isActive())
+            {
+                think();
+                
+                if (isActive())
+                {
+                    execute();
+                }
+            }
+        }
+        
+        System.out.println("Not running");
     }
     
     
@@ -51,8 +73,7 @@ public class AIOpponent implements TurnEndListener, QuitListener
         // Execute move only after the player moves
         if (e.getTeam() == PLAYER_TEAM)
         {
-            think();
-            execute();
+            setActive(true);
         }
     }
     
@@ -60,20 +81,20 @@ public class AIOpponent implements TurnEndListener, QuitListener
     @Override
     public void handleGameQuit()
     {
-        
+        System.out.println("Game quit!");
+        terminate();
     }
     
     
+    // Maybe have evaluations or other steps throw InterruptedExceptions if interrupted.
     public void think()
     {
-        _active = true;
-        
         try
         {
-            Thread.sleep(2000);
-            Gdx.app.debug("AI", "finished thinking.");
+            
+            Thread.sleep(6000);
         }
-        catch(InterruptedException e){}
+        catch(InterruptedException e){ System.out.println("AI was interrupted!"); }
     }
     
     
@@ -118,7 +139,17 @@ public class AIOpponent implements TurnEndListener, QuitListener
      */
     public void execute()
     {
+        
+        
         // End AI turn
-        _active = false;
+        setActive(false);
+        System.out.println("Move executed!");
+    }
+    
+    
+    public void terminate()
+    {
+        _running = false;
+        setActive(false);
     }
 }
