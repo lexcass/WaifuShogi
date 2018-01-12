@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.GameState;
 import com.insanelyinsane.waifushogi.Player;
 import com.insanelyinsane.waifushogi.handlers.RequestHandler;
 import com.insanelyinsane.waifushogi.WaifuShogi;
@@ -61,6 +62,8 @@ public abstract class MatchScreen extends Screen
     Player _bluePlayer;
     
     RequestHandler _requestHandler;
+    Referee _referee;
+    GameState _gameState;
     
     
     public MatchScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
@@ -117,9 +120,11 @@ public abstract class MatchScreen extends Screen
         addComponent(new HighlighterComponent(boardX, boardY));
         
          // Wire the RequestHandler to this MatchScreen
-         _redPlayer = new Player(Player.Type.LOCAL_ONE);
+         _referee = new Referee(_redPlayer, _bluePlayer, board, red, blue);
+         
+         _redPlayer = new Player(Player.Type.LOCAL_ONE, true);
          _bluePlayer = getBluePlayer();
-        _requestHandler = new RequestHandler(this, new Referee(_redPlayer, _bluePlayer, board, red, blue), getComponent(GameComponentType.HIGHLIGHTER), ui, ui);
+        _requestHandler = new RequestHandler(this, _referee, getComponent(GameComponentType.HIGHLIGHTER), ui, ui);
         
         
         // Initialize HandObjects and BoardObject (visual components)
@@ -137,6 +142,9 @@ public abstract class MatchScreen extends Screen
         // Add Pieces to the board
         setupGameBoard();
         
+        // Store GameState
+        _gameState = new GameState(board, red, blue);
+        
         // Call abstract method that will extend creation logic for MatchScreens
         setupMatch();
         
@@ -145,9 +153,8 @@ public abstract class MatchScreen extends Screen
     }
     
     
+    // Override in child
     protected abstract void setupMatch();
-    
-    
     protected abstract Player getBluePlayer();
     
     
@@ -226,4 +233,10 @@ public abstract class MatchScreen extends Screen
     {
         changeScreen(ScreenType.MAIN_MENU);
     }
+    
+    
+    
+    public GameState getGameState() { return _gameState; }
+    public Referee getReferee() { return _referee; }
+    protected RequestHandler getRequestHandler() { return _requestHandler; }
 }

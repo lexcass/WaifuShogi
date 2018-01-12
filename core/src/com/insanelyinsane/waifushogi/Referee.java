@@ -306,6 +306,9 @@ public class Referee
 
 
         // Switch to other player
+        
+        _currentPlayer.setActing(false);
+        
         if (_currentPlayer == _redPlayer)
         {
             _currentPlayer = _bluePlayer;
@@ -316,6 +319,8 @@ public class Referee
             _currentPlayer = _redPlayer;
             _currentTeam = _redPlayer.getTeam();
         }
+        
+        _currentPlayer.setActing(true);
     }
     
     

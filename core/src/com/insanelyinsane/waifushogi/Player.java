@@ -17,24 +17,56 @@ public class Player
 {
     public enum Type { LOCAL_ONE, LOCAL_TWO, AI, NETWORK_TWO }
     
-    Type _type;
+    private Type _type;
+    
+    /**
+     * 
+     * @return The type of the Player (specified by the Player.Type enum).
+     */
     public Type getType() { return _type; }
     
-    Team _team;
+    private Team _team;
+    
+    /**
+     * 
+     * @return Team the Player is on.
+     */
     public Team getTeam() { return _team; }
     
+    private boolean _acting;
     
-    public Player(Type type)
+    /**
+     * 
+     * @return Whether the player is currently doing their turn (true) or not (false).
+     */
+    public boolean isActing() { return _acting; }
+    
+    /**
+     * Set the Player to acting (true) or not acting (false). This is synonymous to it being this
+     * Player's turn.
+     * @param b 
+     */
+    public void setActing(boolean b) { _acting = b; }
+    
+    
+    public Player(Type type, boolean acting)
     {
         _type = type;
+        _acting = acting;
         
+        // RED player is always the local player
         if (_type == Type.LOCAL_ONE)
         {
             _team = Team.RED;
         }
+        
+        // Other player is BLUE
         else
         {
             _team = Team.BLUE;
         }
     }
 }
+
+
+

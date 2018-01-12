@@ -6,8 +6,13 @@
 package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.AIOpponent;
+import com.insanelyinsane.waifushogi.GameState;
 import com.insanelyinsane.waifushogi.Player;
+import com.insanelyinsane.waifushogi.Referee;
 import com.insanelyinsane.waifushogi.WaifuShogi;
+import com.insanelyinsane.waifushogi.gamecomponents.AIControllerComponent;
+import com.insanelyinsane.waifushogi.handlers.RequestHandler;
 import com.insanelyinsane.waifushogi.ui.UIController;
 
 /**
@@ -16,21 +21,38 @@ import com.insanelyinsane.waifushogi.ui.UIController;
  */
 public class VersusAIScreen extends MatchScreen
 {
+    private AIOpponent _ai;
+    private Player _bluePlayer;
+    
+    
     public VersusAIScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
     {
         super(game, batch, ui);
+        _bluePlayer = new Player(Player.Type.AI, false);
     }
     
     @Override
     protected void setupMatch()
     {
+        RequestHandler handler = getRequestHandler();
+        Referee referee = getReferee();
+        GameState state = getGameState();
         
+        _ai = new AIOpponent(handler, referee, state);
+        AIControllerComponent aiComponent = new AIControllerComponent(_ai);
+        
+        handler.registerMoveListener(aiComponent);
+                
+        addComponent(aiComponent);
+        
+        // register _ai as MoveListener so when player move is over, _ai stops thinking
+        // and executes its move
     }
     
     
     @Override
     protected Player getBluePlayer()
     {
-        return new Player(Player.Type.AI);
+        return _bluePlayer;
     }
 }

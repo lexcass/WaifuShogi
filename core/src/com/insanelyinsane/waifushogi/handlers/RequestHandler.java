@@ -5,6 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.handlers;
 
+import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.Player;
 import com.insanelyinsane.waifushogi.Referee;
 import com.insanelyinsane.waifushogi.Sender;
@@ -252,6 +253,73 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
             _screen.changeScreen(ScreenType.MAIN_MENU);
         }
     }
+    
+    
+    
+    public void registerSelectionListener(SelectionListener l)
+    {
+        if (l != null)
+        {
+            _selectionListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("SelectionListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
+    
+    public void registerMoveListener(MoveListener l)
+    {
+        if (l != null)
+        {
+            _moveListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("MoveListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
+    
+    public void registerDropListener(DropListener l)
+    {
+        if (l != null)
+        {
+            _dropListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("DropListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
+    
+    public void registerCaptureListener(CaptureListener l)
+    {
+        if (l != null)
+        {
+            _captureListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("CaptureListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
+    
+    public void registerPromotionListener(PromotionListener l)
+    {
+        if (l != null)
+        {
+            _promotionListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("PromotionListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
     
     
     /**
