@@ -24,4 +24,14 @@ public class GoldGeneral extends Piece
     {
         return checkAllForDrop(cells);
     }
+    
+    
+    @Override
+    public Piece copy()
+    {
+        GoldGeneral copy = new GoldGeneral(this.getTeam());
+        this.cloneStateInto(copy);
+        
+        return copy;
+    }
 }

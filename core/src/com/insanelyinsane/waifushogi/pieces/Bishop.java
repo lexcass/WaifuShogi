@@ -25,4 +25,14 @@ public class Bishop extends Piece
     {
         return checkAllForDrop(cells);
     }
+    
+    
+    @Override
+    public Piece copy()
+    {
+        Bishop copy = new Bishop(this.getTeam());
+        this.cloneStateInto(copy);
+        
+        return copy;
+    }
 }

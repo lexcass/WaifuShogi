@@ -34,6 +34,8 @@ import com.insanelyinsane.waifushogi.pieces.Rook;
 import com.insanelyinsane.waifushogi.pieces.SilverGeneral;
 import com.insanelyinsane.waifushogi.ui.MatchUI;
 import com.insanelyinsane.waifushogi.ui.UIController;
+import java.util.Map.Entry;
+import java.util.Stack;
 
 /**
  *

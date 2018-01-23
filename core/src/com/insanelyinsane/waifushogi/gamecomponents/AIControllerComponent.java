@@ -6,7 +6,7 @@
 package com.insanelyinsane.waifushogi.gamecomponents;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.insanelyinsane.waifushogi.AIOpponent;
+import com.insanelyinsane.waifushogi.ai.AIOpponent;
 import com.insanelyinsane.waifushogi.events.TurnEndEvent;
 import com.insanelyinsane.waifushogi.listeners.TurnEndListener;
 import com.insanelyinsane.waifushogi.pieces.Team;

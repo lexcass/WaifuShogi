@@ -13,9 +13,9 @@ import com.insanelyinsane.waifushogi.ui.UIController;
  *
  * @author alex
  */
-public class ScreenFactory 
+public class ScreenProducer 
 {
-    public static Screen createScreen(ScreenType type, WaifuShogi l, SpriteBatch batch, UIController ui)
+    public static Screen produceScreen(ScreenType type, WaifuShogi l, SpriteBatch batch, UIController ui)
     {
         switch (type)
         {

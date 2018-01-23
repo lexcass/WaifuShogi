@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 import com.insanelyinsane.waifushogi.listeners.DropListener;
+import java.util.Map.Entry;
 
 /**
  *
@@ -21,8 +22,8 @@ import com.insanelyinsane.waifushogi.listeners.DropListener;
  */
 public class Hand implements CaptureListener, DropListener
 {
-    public HashMap<Piece.Type, Stack<Piece>> _pieceMap;
-    public Team _team;
+    private HashMap<Piece.Type, Stack<Piece>> _pieceMap;
+    private Team _team;
     
     
     /**
@@ -43,6 +44,33 @@ public class Hand implements CaptureListener, DropListener
         _pieceMap.put(Piece.Type.SILVER, new Stack<>());
         _pieceMap.put(Piece.Type.GOLD, new Stack<>());
         _pieceMap.put(Piece.Type.JADE, new Stack<>());
+    }
+    
+    
+    public Hand(Hand other)
+    {
+        this._team = other._team;
+        
+        this._pieceMap = new HashMap<>();
+        
+        _pieceMap.put(Piece.Type.PAWN, new Stack<>());
+        _pieceMap.put(Piece.Type.ROOK, new Stack<>());
+        _pieceMap.put(Piece.Type.BISHOP, new Stack<>());
+        _pieceMap.put(Piece.Type.KNIGHT, new Stack<>());
+        _pieceMap.put(Piece.Type.LANCE, new Stack<>());
+        _pieceMap.put(Piece.Type.SILVER, new Stack<>());
+        _pieceMap.put(Piece.Type.GOLD, new Stack<>());
+        _pieceMap.put(Piece.Type.JADE, new Stack<>());
+        
+        for (Entry<Piece.Type, Stack<Piece>> entry : other._pieceMap.entrySet())
+        {
+            Stack<Piece> clone = (Stack<Piece>)entry.getValue().clone();
+            
+            while (!clone.isEmpty())
+            {
+                this._pieceMap.get(entry.getKey()).add(clone.pop().copy());
+            }
+        }
     }
     
     

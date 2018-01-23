@@ -68,6 +68,41 @@ public abstract class Piece
     }
     
     
+    /**
+     * Make a copy of the given Piece.
+     * @param other 
+     */
+    public Piece(Piece other)
+    {
+        this._type = other._type;
+        this._team = other._team;
+        this._promoted = other._promoted;
+        this._captured = other._captured;
+        this._standardPattern = other._standardPattern;
+        this._promotedPattern = other._promotedPattern;
+    }
+    
+    
+    /**
+     * This method is used in conjuction with the copy method to
+     * copy data into a child Piece when needed.
+     * @param other 
+     */
+    protected void cloneStateInto(Piece other)
+    {
+        other.setCaptured(this.isCaptured());
+        
+        if (this.isPromoted())
+        {
+            other.promote();
+        }
+        else
+        {
+            other.demote();
+        }
+    }
+    
+    
     /////////////////////////////////////
     // Getters and setters
     public Type getType() { return _type; }
@@ -91,6 +126,12 @@ public abstract class Piece
     // Overrideable methods
 //    protected abstract boolean[][] findValidMoves(final Piece[][] cells, int row, int col);
     protected abstract boolean[][] findValidDrops(final Piece[][] cells);
+    
+    /**
+     * Make and return a copy of this Piece including child's move patterns and type.
+     * @return 
+     */
+    public abstract Piece copy();
     
     
     /**

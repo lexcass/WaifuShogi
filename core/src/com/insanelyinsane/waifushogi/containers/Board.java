@@ -33,6 +33,26 @@ public class Board implements MoveListener, DropListener
     }
     
     /**
+     * Make a copy of the given Board.
+     * @param other Board to copy
+     */
+    public Board(Board other)
+    {
+        _pieces = new Piece[ROWS][COLS];
+        
+        for (int r = 0; r < ROWS; r++)
+        {
+            for (int c = 0; c < COLS; c++)
+            {
+                if (other.getPieceAt(r,c) != null)
+                {
+                    this.addPiece(other.getPieceAt(r, c).copy(), r, c);
+                }
+            }
+        }
+    }
+    
+    /**
      * Add a piece at this cell on the board if it's unoccupied.
      * @param p
      * @param r
@@ -87,25 +107,6 @@ public class Board implements MoveListener, DropListener
         return _pieces[r][c];
     }
     
-    
-    /**
-     * Make a copy of this board that can be used for AI evaluation.
-     * @return 
-     */
-    public Board makeCopy()
-    {
-        Board newBoard = new Board();
-        
-        for (int r = 0; r < ROWS; r++)
-        {
-            for (int c = 0; c < COLS; c++)
-            {
-                newBoard.addPiece(_pieces[r][c], r, c);
-            }
-        }
-        
-        return newBoard;
-    }
     
     
     /**

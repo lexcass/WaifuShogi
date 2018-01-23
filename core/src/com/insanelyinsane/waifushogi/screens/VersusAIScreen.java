@@ -6,7 +6,7 @@
 package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.insanelyinsane.waifushogi.AIOpponent;
+import com.insanelyinsane.waifushogi.ai.AIOpponent;
 import com.insanelyinsane.waifushogi.GameState;
 import com.insanelyinsane.waifushogi.Player;
 import com.insanelyinsane.waifushogi.Referee;
@@ -40,6 +40,7 @@ public class VersusAIScreen extends MatchScreen
         Referee referee = getReferee();
         GameState state = getGameState();
         
+        // Create AIOpponent and start AI Thread
         _ai = new AIOpponent(handler, state);
         handler.registerTurnEndListener(_ai);
         getUI().registerQuitListener(_ai);

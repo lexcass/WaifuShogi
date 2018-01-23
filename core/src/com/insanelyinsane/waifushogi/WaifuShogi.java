@@ -11,7 +11,7 @@ import com.insanelyinsane.waifushogi.events.ScreenChangeEvent;
 import com.insanelyinsane.waifushogi.listeners.ScreenChangeListener;
 import com.insanelyinsane.waifushogi.screens.LoadScreen;
 import com.insanelyinsane.waifushogi.screens.Screen;
-import com.insanelyinsane.waifushogi.screens.ScreenFactory;
+import com.insanelyinsane.waifushogi.screens.ScreenProducer;
 import com.insanelyinsane.waifushogi.screens.ScreenType;
 import com.insanelyinsane.waifushogi.ui.UIController;
 
@@ -75,7 +75,7 @@ public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListen
         public void onScreenChanged(ScreenChangeEvent e)
         {
             // Load next screen's assets asynchronously and show loading screen in the process
-            _nextScreen = ScreenFactory.createScreen(e.getType(), this, _batch, _uiController);
+            _nextScreen = ScreenProducer.produceScreen(e.getType(), this, _batch, _uiController);
             
             // Report non-existing screen to debug log
             if (_nextScreen == null) Gdx.app.debug("Error", "WaifuShogi::_nextScreen was null in method onScreenChanged.");
