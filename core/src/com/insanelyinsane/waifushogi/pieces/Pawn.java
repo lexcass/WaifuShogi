@@ -61,4 +61,14 @@ public class Pawn extends Piece
         
         return valid;
     }
+    
+    
+    @Override
+    public Piece copy()
+    {
+        Pawn copy = new Pawn(this.getTeam());
+        this.cloneStateInto(copy);
+        
+        return copy;
+    }
 }

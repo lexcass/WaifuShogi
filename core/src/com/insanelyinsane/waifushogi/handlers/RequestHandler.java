@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.requesthandlers;
+package com.insanelyinsane.waifushogi.handlers;
 
+import com.badlogic.gdx.Gdx;
+import com.insanelyinsane.waifushogi.Player;
 import com.insanelyinsane.waifushogi.Referee;
 import com.insanelyinsane.waifushogi.Sender;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
@@ -17,13 +19,17 @@ import com.insanelyinsane.waifushogi.listeners.PromotionListener;
 import com.insanelyinsane.waifushogi.listeners.SelectionListener;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.actors.Waifu;
+import com.insanelyinsane.waifushogi.events.TurnEndEvent;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import java.util.LinkedList;
 import java.util.List;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
 import com.insanelyinsane.waifushogi.interfaces.WinConfirmation;
 import com.insanelyinsane.waifushogi.listeners.DropListener;
+import com.insanelyinsane.waifushogi.listeners.QuitListener;
+import com.insanelyinsane.waifushogi.listeners.TurnEndListener;
 import com.insanelyinsane.waifushogi.pieces.Team;
+import com.insanelyinsane.waifushogi.screens.MatchScreen;
 import com.insanelyinsane.waifushogi.screens.Screen;
 import com.insanelyinsane.waifushogi.screens.ScreenType;
 
@@ -44,6 +50,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
     private final List<DropListener> _dropListeners;
     private final List<CaptureListener> _captureListeners;
     private final List<PromotionListener> _promotionListeners;
+    private final List<TurnEndListener> _turnEndListeners;
     private final PromotionConfirmation _promoConfirmer;
     private final WinConfirmation  _winConfirmer;
     
@@ -59,7 +66,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
      * @param highlighter
      * @param c         The object that handles confirmation of promotion from the player (UI).
      */
-    public RequestHandler(Screen screen, Referee ref, SelectionListener highlighter, PromotionConfirmation c, WinConfirmation w)
+    public RequestHandler(MatchScreen screen, Referee ref, SelectionListener highlighter, PromotionConfirmation c, WinConfirmation w)
     {
         _waifus = new LinkedList<>();
         _selectionListeners = new LinkedList<>();
@@ -67,6 +74,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         _dropListeners = new LinkedList<>();
         _captureListeners = new LinkedList<>();
         _promotionListeners = new LinkedList<>();
+        _turnEndListeners = new LinkedList<>();
         
         _promoConfirmer = c;
         _winConfirmer = w;
@@ -102,17 +110,32 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
      */
     public void requestSelection(Sender from, Piece target, int r, int c)
     {
-        SelectionEvent e;
-        if (from == Sender.BOARD)
+        // If the request is from the local player (touching the Board or Hand) and the 
+        // opponent is an AI, ignore the request if it's not the local player's turn.
+        if (from == Sender.LOCAL && _referee.getBluePlayer().getType() == Player.Type.AI)
         {
-            e = _referee.selectPieceOnBoard(target, r, c);
-        }
-        else
-        {
-            e = _referee.selectPieceInHand(target);
+            if (_referee.whoseTurn() == _referee.getBluePlayer())
+            {
+                return;
+            }
         }
         
-        if (e != null) _selectionListeners.forEach(l -> l.onWaifuSelected(e));
+        SelectionEvent e;
+        
+        // Try to select on Board first
+        e = _referee.selectPieceOnBoard(target, r, c);
+        
+        // If the piece is not on the Board, try the Hand
+        if (e == null) e = _referee.selectPieceInHand(target);
+        
+        // Inform Selection listeners of the new selection
+        if (e != null) 
+        {
+            for (SelectionListener l : _selectionListeners)
+            {
+                l.onWaifuSelected(e);
+            }
+        }
     }
     
     
@@ -139,6 +162,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         
         // Capture the piece in the cell (if there is one)
         Piece captured = _referee.capturePieceAt(r, c);
+        boolean gameOver = false;
         if (captured != null)
         {
             _captureListeners.forEach(l -> l.onWaifuCaptured(new CaptureEvent(captured)));
@@ -147,6 +171,8 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
             {
                 // Player wins
                 System.out.println("---------------------------------------------------------------\n" + captured.getTeam().toString() + " is the winner!\n---------------------------------------------------------------");
+                
+                gameOver = true;
                 
                 // Use same team since team changes upon capture; Jade is now on winner's team.
                 _winConfirmer.confirmWin(this, captured.getTeam());
@@ -159,7 +185,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         
         // Handle promotion
         Piece toPromote = _referee.promotePieceAt(r, c);
-        if (toPromote != null)
+        if (toPromote != null && !gameOver)
         {
             requestPromotion(toPromote, _referee.isPieceStuck(toPromote, r, c));
         }
@@ -169,7 +195,8 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _waifus.get(0).getPiece(), false)));
         
         // Finish turn
-        _referee.finishTurn();
+        Team ended = _referee.finishTurn();
+        _turnEndListeners.forEach(l -> l.onTurnEnd(new TurnEndEvent(ended)));
     }
     
     
@@ -198,7 +225,8 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         _selectionListeners.forEach(l -> l.onWaifuSelected(new SelectionEvent(null, _waifus.get(0).getPiece(), false)));
         
         // Finish turn
-        _referee.finishTurn();
+        Team ended = _referee.finishTurn();
+        _turnEndListeners.forEach(l -> l.onTurnEnd(new TurnEndEvent(ended)));
     }
     
     
@@ -236,6 +264,86 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
             _screen.changeScreen(ScreenType.MAIN_MENU);
         }
     }
+    
+    
+    
+    public void registerSelectionListener(SelectionListener l)
+    {
+        if (l != null)
+        {
+            _selectionListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("SelectionListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
+    
+    public void registerMoveListener(MoveListener l)
+    {
+        if (l != null)
+        {
+            _moveListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("MoveListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
+    
+    public void registerDropListener(DropListener l)
+    {
+        if (l != null)
+        {
+            _dropListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("DropListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
+    
+    public void registerCaptureListener(CaptureListener l)
+    {
+        if (l != null)
+        {
+            _captureListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("CaptureListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
+    
+    public void registerPromotionListener(PromotionListener l)
+    {
+        if (l != null)
+        {
+            _promotionListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("PromotionListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
+    
+    public void registerTurnEndListener(TurnEndListener l)
+    {
+        if (l != null)
+        {
+            _turnEndListeners.add(l);
+        }
+        else
+        {
+            Gdx.app.debug("TurnEndListener error", "Listener was not registered to the RequestHandler.");
+        }
+    }
+    
     
     
     /**

@@ -3,16 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.interfaces;
+package com.insanelyinsane.waifushogi.events;
 
 import com.insanelyinsane.waifushogi.pieces.Team;
-import com.insanelyinsane.waifushogi.handlers.WinGameHandler;
 
 /**
  *
  * @author Alex Cassady
  */
-public interface WinConfirmation 
+public class TurnEndEvent 
 {
-    public void confirmWin(WinGameHandler handler, Team team);
+    Team _team;
+    public Team getTeam() { return _team; }
+    
+    public TurnEndEvent(Team t)
+    {
+        _team = t;
+    }
 }

@@ -7,6 +7,7 @@ package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -36,6 +37,7 @@ public abstract class Screen implements QuitListener
     private final List<GameComponent> _components;
     
     private Actor _background;
+    private BitmapFont _font;
     
     
     /**
@@ -55,6 +57,8 @@ public abstract class Screen implements QuitListener
         _uiController = ui;
         
         _components = new LinkedList<>();
+        
+        _font = new BitmapFont();
     }
     
     /**
@@ -151,12 +155,12 @@ public abstract class Screen implements QuitListener
      */
     public final void render(float delta)
     {
-        // Update Stage and GameComponents
+        // Update and Draw Stage
         _stage.act(delta);
-        _components.forEach(comp -> comp.update(delta));
-        
-        // Draw Stage and GameComponents
         _stage.draw();
+        
+        // Update and Draw GameComponents
+        _components.forEach(comp -> comp.update(delta));
         _components.forEach(comp -> comp.draw(_spriteBatch));
     }
     
@@ -172,6 +176,20 @@ public abstract class Screen implements QuitListener
      * @return SpriteBatch
      */
     public SpriteBatch getSpriteBatch() { return _spriteBatch; }
+    
+    
+    /**
+     * Returns the BitmapFont for this Screen used for drawing text.
+     * @return 
+     */
+    public BitmapFont getFont() { return _font; }
+    
+    
+    /**
+     * Set the BitmapFont for this Screen.
+     * @param font 
+     */
+    public void setFont(BitmapFont font) { _font = font; }
     
     /**
      * Get the AssetManager that will contain the Textures (or other assets)

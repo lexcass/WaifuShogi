@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.insanelyinsane.waifushogi.requesthandlers.RequestHandler;
+import com.insanelyinsane.waifushogi.handlers.RequestHandler;
 import com.insanelyinsane.waifushogi.Sender;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.containers.Hand;
@@ -55,7 +55,7 @@ public final class HandObject extends Actor
                 if (st.empty()) { return false; }
                 
                 Piece target = st.peek();
-                _handler.requestSelection(Sender.HAND, target, -1, -1);
+                _handler.requestSelection(Sender.LOCAL, target, -1, -1);
                 
                 return true;
             }
@@ -80,16 +80,6 @@ public final class HandObject extends Actor
             {
                 Piece p = s.peek();
                 _font.draw(batch, s.size() + "", getX() + (p.getType().getIndex()) * Board.CELL_WIDTH, getY());
-                
-                // OLD
-//                if (team == Team.RED)
-//                {
-//                    _font.draw(batch, s.size() + "", getX() + (p.getType().getIndex() + 1) * Board.CELL_WIDTH + xOffset, getY());
-//                }
-//                else
-//                {
-//                    _font.draw(batch, s.size() + "", getX() + xOffset, Gdx.graphics.getHeight() - getY() - p.getType().getIndex() * Board.CELL_HEIGHT);
-//                }
             }
         }
     }

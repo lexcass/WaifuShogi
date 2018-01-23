@@ -25,4 +25,14 @@ public class JadeGeneral extends Piece
     {
         return new boolean[Board.ROWS][Board.COLS];
     }
+    
+    
+    @Override
+    public Piece copy()
+    {
+        JadeGeneral copy = new JadeGeneral(this.getTeam());
+        this.cloneStateInto(copy);
+        
+        return copy;
+    }
 }

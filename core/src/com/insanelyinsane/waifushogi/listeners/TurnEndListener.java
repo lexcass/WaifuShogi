@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.requesthandlers;
+package com.insanelyinsane.waifushogi.listeners;
+
+import com.insanelyinsane.waifushogi.events.TurnEndEvent;
 
 /**
  *
  * @author Alex Cassady
  */
-public interface WinGameHandler 
+public interface TurnEndListener
 {
-    public void handleGameWon(Boolean playAgain);
+    public void onTurnEnd(TurnEndEvent e);
 }

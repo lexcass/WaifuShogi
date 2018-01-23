@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.insanelyinsane.waifushogi.requesthandlers.RequestHandler;
+import com.insanelyinsane.waifushogi.handlers.RequestHandler;
 import com.insanelyinsane.waifushogi.Sender;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.pieces.Piece;
@@ -66,7 +66,7 @@ public final class BoardObject extends Actor
                 
                 if (target != null)
                 {
-                    _handler.requestSelection(Sender.BOARD, target, r, c);
+                    _handler.requestSelection(Sender.LOCAL, target, r, c);
                 }
                 
                 _handler.requestMove(r, c);

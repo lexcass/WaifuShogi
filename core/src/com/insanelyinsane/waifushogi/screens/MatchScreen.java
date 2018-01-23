@@ -8,16 +8,16 @@ package com.insanelyinsane.waifushogi.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.insanelyinsane.waifushogi.requesthandlers.RequestHandler;
+import com.insanelyinsane.waifushogi.GameState;
+import com.insanelyinsane.waifushogi.Player;
+import com.insanelyinsane.waifushogi.handlers.RequestHandler;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.containers.Board;
 import com.insanelyinsane.waifushogi.containers.Hand;
 import com.insanelyinsane.waifushogi.pieces.Pawn;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.pieces.Team;
-import com.insanelyinsane.waifushogi.gamecomponents.HighlighterComponent;
 import com.insanelyinsane.waifushogi.Referee;
 import com.insanelyinsane.waifushogi.actors.BoardObject;
 import com.insanelyinsane.waifushogi.actors.HandObject;
@@ -34,6 +34,8 @@ import com.insanelyinsane.waifushogi.pieces.Rook;
 import com.insanelyinsane.waifushogi.pieces.SilverGeneral;
 import com.insanelyinsane.waifushogi.ui.MatchUI;
 import com.insanelyinsane.waifushogi.ui.UIController;
+import java.util.Map.Entry;
+import java.util.Stack;
 
 /**
  *
@@ -43,9 +45,6 @@ public abstract class MatchScreen extends Screen
 {
     // Assets to load
     Texture _woodTex;
-    BitmapFont _font = new BitmapFont();
-    
-    // Textures
     Texture _boardTex;
     Texture _pawnTex;
     Texture _rookTex;
@@ -61,13 +60,18 @@ public abstract class MatchScreen extends Screen
     HandObject _redHand;
     HandObject _blueHand;
     
+    Player _redPlayer;
+    Player _bluePlayer;
     
     RequestHandler _requestHandler;
+    Referee _referee;
+    GameState _gameState;
+    MatchUI _ui;
     
     
-    public MatchScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
+    public MatchScreen(WaifuShogi game, SpriteBatch batch, UIController _ui)
     {
-        super(game, batch, ui);
+        super(game, batch, _ui);
         
         // Load assets
         loadAsset(Textures.WOOD_BACKGROUND, Texture.class);
@@ -105,7 +109,7 @@ public abstract class MatchScreen extends Screen
         setBackground(_woodTex);
         
         // Load the MatchUI
-        MatchUI ui = new MatchUI(getStage(), this);
+        _ui = new MatchUI(getStage(), this);
         
         // Initialize Hands and Board (logic components)
         Hand blue = new Hand(Team.BLUE);
@@ -119,7 +123,11 @@ public abstract class MatchScreen extends Screen
         addComponent(new HighlighterComponent(boardX, boardY));
         
          // Wire the RequestHandler to this MatchScreen
-        _requestHandler = new RequestHandler(this, new Referee(board, red, blue), getComponent(GameComponentType.HIGHLIGHTER), ui, ui);
+         _redPlayer = new Player(Player.Type.LOCAL_ONE, true);
+         _bluePlayer = getBluePlayer();
+         _referee = new Referee(_redPlayer, _bluePlayer, board, red, blue);
+         
+        _requestHandler = new RequestHandler(this, _referee, getComponent(GameComponentType.HIGHLIGHTER), _ui, _ui);
         
         
         // Initialize HandObjects and BoardObject (visual components)
@@ -128,24 +136,29 @@ public abstract class MatchScreen extends Screen
         
         int offsetFromBoard = Board.CELL_HEIGHT * 2;
         
-        _blueHand = new HandObject(boardX, boardY + _boardTex.getHeight() + offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, blue, _font, _requestHandler);
+        _blueHand = new HandObject(boardX, boardY + _boardTex.getHeight() + offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, blue, getFont(), _requestHandler);
         addActor(_blueHand);
         
-        _redHand = new HandObject(boardX, boardY - offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, red, _font, _requestHandler);
+        _redHand = new HandObject(boardX, boardY - offsetFromBoard, Board.CELL_WIDTH * Board.COLS, Board.CELL_HEIGHT, red, getFont(), _requestHandler);
         addActor(_redHand);
         
         // Add Pieces to the board
         setupGameBoard();
         
+        // Store GameState
+        _gameState = new GameState(board, red, blue);
+        
         // Call abstract method that will extend creation logic for MatchScreens
         setupMatch();
         
         // Load the UI
-        getUIController().loadUI(ui);
+        getUIController().loadUI(_ui);
     }
     
     
+    // Override in child
     protected abstract void setupMatch();
+    protected abstract Player getBluePlayer();
     
     
     /**
@@ -218,27 +231,17 @@ public abstract class MatchScreen extends Screen
     }
     
     
-//    @Override
-//    public void update(float delta)
-//    {
-//        //////////////////////////////////////
-//        // Update objects here
-//    }
-//    
-//    
-//    @Override
-//    public void draw(Batch batch)
-//    {
-//        //////////////////////////////////////////
-//        // Draw highlighted cells to the screen
-//        _highlighter.draw(batch);
-//        
-//    }
-    
-    
     @Override
     public void handleGameQuit()
     {
         changeScreen(ScreenType.MAIN_MENU);
     }
+    
+    
+    
+    public MatchUI getUI() { return _ui; }
+    public GameState getGameState() { return _gameState; }
+    public Referee getReferee() { return _referee; }
+    protected RequestHandler getRequestHandler() { return _requestHandler; }
+    protected Player getRedPlayer() { return _redPlayer; }
 }

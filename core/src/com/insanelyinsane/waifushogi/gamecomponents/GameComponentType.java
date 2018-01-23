@@ -11,5 +11,5 @@ package com.insanelyinsane.waifushogi.gamecomponents;
  */
 public enum GameComponentType 
 {
-    HIGHLIGHTER, TEST, SINGLE_USE
+    HIGHLIGHTER, TEST, AI_CONTROLLER, SINGLE_USE
 }

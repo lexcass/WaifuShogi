@@ -41,4 +41,14 @@ public class Lance extends Piece
         
         return valid;
     }
+    
+    
+    @Override
+    public Piece copy()
+    {
+        Lance copy = new Lance(this.getTeam());
+        this.cloneStateInto(copy);
+        
+        return copy;
+    }
 }

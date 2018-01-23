@@ -41,4 +41,14 @@ public class Knight extends Piece
         
         return valid;
     }
+    
+    
+    @Override
+    public Piece copy()
+    {
+        Knight copy = new Knight(this.getTeam());
+        this.cloneStateInto(copy);
+        
+        return copy;
+    }
 }

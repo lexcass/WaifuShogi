@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.insanelyinsane.waifushogi.requesthandlers;
-
-import com.insanelyinsane.waifushogi.pieces.Piece;
+package com.insanelyinsane.waifushogi.handlers;
 
 /**
  *
  * @author Alex Cassady
  */
-public interface PromotionHandler 
+public interface WinGameHandler 
 {
-    public void handlePromotion(Piece p);
+    public void handleGameWon(Boolean playAgain);
 }

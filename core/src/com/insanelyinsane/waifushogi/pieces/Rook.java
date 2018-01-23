@@ -24,4 +24,14 @@ public class Rook extends Piece
     {
         return checkAllForDrop(cells);
     }
+    
+    
+    @Override
+    public Piece copy()
+    {
+        Rook copy = new Rook(this.getTeam());
+        this.cloneStateInto(copy);
+        
+        return copy;
+    }
 }

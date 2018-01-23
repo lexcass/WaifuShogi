@@ -6,6 +6,7 @@
 package com.insanelyinsane.waifushogi.screens;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.insanelyinsane.waifushogi.Player;
 import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.ui.UIController;
 
@@ -15,9 +16,12 @@ import com.insanelyinsane.waifushogi.ui.UIController;
  */
 public class LocalMultiplayerScreen extends MatchScreen
 {
+    private Player _bluePlayer;
+    
     public LocalMultiplayerScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
     {
         super(game, batch, ui);
+        _bluePlayer = new Player(Player.Type.LOCAL_TWO, false);
     }
     
     
@@ -25,5 +29,12 @@ public class LocalMultiplayerScreen extends MatchScreen
     protected void setupMatch()
     {
         
+    }
+    
+    
+    @Override
+    protected Player getBluePlayer()
+    {
+        return _bluePlayer;
     }
 }

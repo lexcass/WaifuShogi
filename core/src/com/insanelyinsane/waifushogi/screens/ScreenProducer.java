@@ -13,9 +13,9 @@ import com.insanelyinsane.waifushogi.ui.UIController;
  *
  * @author alex
  */
-public class ScreenFactory 
+public class ScreenProducer 
 {
-    public static Screen createScreen(ScreenType type, WaifuShogi l, SpriteBatch batch, UIController ui)
+    public static Screen produceScreen(ScreenType type, WaifuShogi l, SpriteBatch batch, UIController ui)
     {
         switch (type)
         {
@@ -23,8 +23,8 @@ public class ScreenFactory
                 return new MainMenuScreen(l, batch, ui);
             case LOCAL_MULTIPLAYER:
                 return new LocalMultiplayerScreen(l, batch, ui);
-//            case VERSUS_AI:
-//                return new VersusAIScreen(l, batch, ui);
+            case VERSUS_AI:
+                return new VersusAIScreen(l, batch, ui);
         }
         
         return null;

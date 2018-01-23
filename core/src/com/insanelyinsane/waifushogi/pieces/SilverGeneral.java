@@ -25,4 +25,14 @@ public class SilverGeneral extends Piece
     {
         return checkAllForDrop(cells);
     }
+    
+    
+    @Override
+    public Piece copy()
+    {
+        SilverGeneral copy = new SilverGeneral(this.getTeam());
+        this.cloneStateInto(copy);
+        
+        return copy;
+    }
 }
