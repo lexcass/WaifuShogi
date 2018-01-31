@@ -31,8 +31,9 @@ public class AIOpponent extends Thread implements TurnEndListener, QuitListener
     private RequestHandler _requestHandler;
     private GameState _currentGameState;
     private RuleBook _ruleBook;
+    private Selection _selection;
     
-    private DecisionNode _finalMove;
+    private GameState _finalMove;
     
     private boolean _running;
     private boolean _active;
@@ -53,6 +54,7 @@ public class AIOpponent extends Thread implements TurnEndListener, QuitListener
         // Keep a reference to the current state (position) of the game Board.
         _currentGameState = state;
         _ruleBook = new RuleBook();
+        _selection = new Selection(null, -1, -1);
         
         _running = true;
         _active = false;
@@ -99,7 +101,7 @@ public class AIOpponent extends Thread implements TurnEndListener, QuitListener
     public void think()
     {
         GameState mockGameState = createMockGameState(_currentGameState);
-        DecisionNode startNode = new DecisionNode(mockGameState, null);
+        Turn startNode = new Turn(mockGameState, null);
         
         // final move will be decided here
         int score = miniMax(startNode, INIT_SEARCH_DEPTH);
@@ -122,26 +124,27 @@ public class AIOpponent extends Thread implements TurnEndListener, QuitListener
      * @param depth to start at
      * @return int score of AI's best move
      */
-    private int miniMax(DecisionNode startNode, int depth)
+    private int miniMax(GameState mockState, int depth)
     {
         // Stop processing if game is interrupted (forfeit, etc.)
         //if (!isActive()) return 0;
         
-        // 
+        // Score and team
         int score, topScore;
         Team team = (depth % 2 == 0) ? Team.RED : Team.BLUE; // even depth = RED, odd depth = BLUE
         
-        Board parentBoard = startNode.getGameState().getBoard();
+        // Board and Hands
+        Board parentBoard = mockState.getBoard();
         Hand parentHand;
         
         if (team == Team.BLUE) // BLUE is AI
         {
-            parentHand = startNode.getGameState().getBlueHand();
+            parentHand = mockState.getBlueHand();
             topScore = Integer.MAX_VALUE;
         }
         else                   // RED is Human Player
         {
-            parentHand = startNode.getGameState().getRedHand();
+            parentHand = mockState.getRedHand();
             topScore = Integer.MIN_VALUE;
         }
         
@@ -149,7 +152,7 @@ public class AIOpponent extends Thread implements TurnEndListener, QuitListener
         // and return the final DecisionNode to send to a RequestHandler.
         if (depth > MAX_SEARCH_DEPTH)
         {
-            return evaluate(startNode.getGameState());
+            return evaluate(mockState);
         }
         
         
@@ -159,8 +162,10 @@ public class AIOpponent extends Thread implements TurnEndListener, QuitListener
         {
             for (int c = 0; c < Board.COLS; c++)
             {
-                
+                // Select the piece
                 Piece piece = parentBoard.getPieceAt(r, c);
+                _selection.setPiece(piece);
+                _selection.setCell(r, c);
                 
                 if (piece != null)
                 {
@@ -171,49 +176,40 @@ public class AIOpponent extends Thread implements TurnEndListener, QuitListener
                         {
                             if (validMoves[toRow][toCol])
                             {
-                                GameState startState = startNode.getGameState();
                                 int scoreWithPromo;
-                                DecisionNode finalMove;
                                 
-                                DecisionNode move = doMove(startState, r, c, toRow, toCol);
-                                DecisionNode promotion = doPromote(move.getGameState(), toRow, toCol);
-                                score = miniMax(move, depth + 1);
-                                scoreWithPromo = miniMax(promotion, depth + 1);
+                                doMove(mockState, r, c, toRow, toCol);
+                                score = miniMax(mockState, depth + 1);
+                                doPromote(mockState, toRow, toCol);
+                                scoreWithPromo = miniMax(mockState, depth + 1);
                                 
-                                finalMove = move;
-                                
-                                if (team == Team.BLUE)
+                                // If the score with a promotion is better, use it.
+                                // Otherwise, undo the promotion for the final move.
+                                if ((scoreWithPromo < score && team == Team.BLUE) ||
+                                   (scoreWithPromo > score && team == Team.RED))
                                 {
-                                    if (scoreWithPromo < score)
-                                    {
-                                        score = scoreWithPromo;
-                                        finalMove = promotion;
-                                    }
+                                    score = scoreWithPromo;
                                 }
                                 else
                                 {
-                                    if (scoreWithPromo > score)
-                                    {
-                                        score = scoreWithPromo;
-                                        finalMove = promotion;
-                                    }
+                                    undoPromote(mockState, toRow, toCol);
                                 }
-                                
-                                undoPromote(move.getGameState(), toRow, toCol);
-                                undoMove(startNode.getGameState(), r, c, toRow, toCol);
                                 
                                 if (team == Team.BLUE)  // BLUE (AI) is minimizer
                                 {
                                     if (score < topScore)
                                     {
                                         topScore = score;
-                                        if (depth == INIT_SEARCH_DEPTH) _finalMove = finalMove;
+                                        if (depth == INIT_SEARCH_DEPTH) _finalMove = createMockGameState(mockState);
                                     }
                                 }
                                 else                    // RED (Human Player) is maximizer
                                 {
                                     topScore = Integer.max(topScore, score);
                                 }
+                                
+                                undoPromote(mockState, toRow, toCol);
+                                undoMove(mockState, r, c, toRow, toCol);
                             }
                         }
                     }
@@ -227,6 +223,8 @@ public class AIOpponent extends Thread implements TurnEndListener, QuitListener
         for (Entry<Piece.Type, Stack<Piece>> pieces : parentHand.getPieces().entrySet())
         {
             Piece piece = pieces.getValue().peek();
+            _selection.setPiece(piece);
+            _selection.setCell(-1, -1);
             
             boolean[][] validDrops = piece.getValidDrops(parentBoard.getPieces());
             for (int toRow = 0; toRow < Board.ROWS; toRow++)
@@ -235,18 +233,16 @@ public class AIOpponent extends Thread implements TurnEndListener, QuitListener
                 {
                     if (validDrops[toRow][toCol])
                     {
-                        GameState startState = startNode.getGameState();
-
-                        DecisionNode drop = doDrop(startState, toRow, toCol);
-                        score = miniMax(drop, depth + 1);
-                        undoDrop(startNode.getGameState(), toRow, toCol);
+                        Turn drop = doDrop(mockState, toRow, toCol);
+                        score = miniMax(mockState, depth + 1);
+                        undoDrop(mockState, toRow, toCol);
 
                         if (team == Team.BLUE)  // BLUE (AI) is minimizer
                         {
                             if (score < topScore)
                             {
                                 topScore = score;
-                                if (depth == INIT_SEARCH_DEPTH) _finalMove = drop;
+                                if (depth == INIT_SEARCH_DEPTH) _finalMove = createMockGameState(mockState);
                             }
                         }
                         else                    // RED (Human Player) is maximizer
@@ -264,32 +260,35 @@ public class AIOpponent extends Thread implements TurnEndListener, QuitListener
     
     
     // Move Methods
-    private DecisionNode doMove(GameState mockState, int fromR, int fromC, int toR, int toC)
+    private Turn doMove(GameState mockState, int fromR, int fromC, int toR, int toC)
+    {
+         if (_ruleBook.canMovePieceTo(_selection, mockState.getBoard().getPieces(), toR, toC))
+         {
+             return new Turn(fromR, fromC, toR, toC, mockState.getBoard().getPieceAt(toR, toC), false);
+         }
+    }
+    
+    private Turn undoMove(GameState mockState, int fromR, int fromC, int toR, int toC)
     {
         
     }
     
-    private DecisionNode undoMove(GameState mockState, int fromR, int fromC, int toR, int toC)
+    private Turn doPromote(GameState mockState, int fromR, int fromC)
     {
         
     }
     
-    private DecisionNode doPromote(GameState mockState, int fromR, int fromC)
+    private Turn undoPromote(GameState mockState, int fromR, int fromC)
     {
         
     }
     
-    private DecisionNode undoPromote(GameState mockState, int fromR, int fromC)
+    private Turn doDrop(GameState mockState, int toRow, int toCol)
     {
         
     }
     
-    private DecisionNode doDrop(GameState mockState, int toRow, int toCol)
-    {
-        
-    }
-    
-    private DecisionNode undoDrop(GameState mockState, int toRow, int toCol)
+    private Turn undoDrop(GameState mockState, int toRow, int toCol)
     {
         
     }
