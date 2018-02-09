@@ -7,9 +7,9 @@ Shogi is a Japanese variation of Chess with its own twist on the original formul
 
 
 ### Is it finished?
-Waifu Shogi is mostly playable but only has local multiplayer for desktop at this point in time. There may also be bugs concerning the movement of promoted pieces (especially the Rook and Bishop).
+_Note: This repository for Waifu Shogi is currently not being updated due to my decision to release the game commercially once it's finished._
 
-_Note: Currently Waifu Shogi has borrowed sprites from Final Fantasy IV and these sprites are not mine. Any art assets present in this version are placeholders and most are protected by copyright._
+Waifu Shogi is mostly playable but only has local multiplayer for desktop at this point in time. There may also be bugs concerning the movement of promoted pieces (especially the Rook and Bishop).
 
 
 ### What features can be expected in the final product?
