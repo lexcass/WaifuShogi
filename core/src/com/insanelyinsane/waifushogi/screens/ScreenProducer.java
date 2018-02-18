@@ -25,6 +25,8 @@ public class ScreenProducer
                 return new LocalMultiplayerScreen(l, batch, ui);
             case VERSUS_AI:
                 return new VersusAIScreen(l, batch, ui);
+            case NETWORK_MULTIPLAYER:
+                return new NetworkMultiplayerScreen(l, batch, ui);
         }
         
         return null;

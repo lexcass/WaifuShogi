@@ -53,7 +53,7 @@ public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListen
             }
             else
             {*/ // LOCAL_MULTIPLAYER, VERSUS_AI
-                onScreenChanged(new ScreenChangeEvent(ScreenType.VERSUS_AI));
+                onScreenChanged(new ScreenChangeEvent(ScreenType.LOCAL_MULTIPLAYER));
             //}
 	}
         

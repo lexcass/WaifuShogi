@@ -21,6 +21,26 @@ import com.insanelyinsane.waifushogi.pieces.Team;
  * what is valid and what is not.
  * @author alex
  */
+
+
+
+
+
+
+
+/*
+
+Note: Potential CONFLICT! _currentPlayer/team may allow Player to select pieces from network opponent's hand.
+*/
+
+
+
+
+
+
+
+
+
 public class Referee
 {
     // Column that starts promotion zone for each team

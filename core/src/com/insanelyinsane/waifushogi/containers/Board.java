@@ -175,7 +175,7 @@ public class Board implements MoveListener, DropListener
      * @param c
      * @return 
      */
-    public boolean inBounds(int r, int c)
+    public static boolean inBounds(int r, int c)
     {
         return r >= 0 && c >= 0 && r < Board.ROWS && c < Board.COLS;
     }

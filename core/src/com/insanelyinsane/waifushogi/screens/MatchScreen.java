@@ -127,7 +127,7 @@ public abstract class MatchScreen extends Screen
          _bluePlayer = getBluePlayer();
          _referee = new Referee(_redPlayer, _bluePlayer, board, red, blue);
          
-        _requestHandler = new RequestHandler(this, _referee, getComponent(GameComponentType.HIGHLIGHTER), _ui, _ui);
+        _requestHandler = initRequestHandler();//new RequestHandler(this, _referee, getComponent(GameComponentType.HIGHLIGHTER), _ui, _ui);
         
         
         // Initialize HandObjects and BoardObject (visual components)
@@ -159,6 +159,7 @@ public abstract class MatchScreen extends Screen
     // Override in child
     protected abstract void setupMatch();
     protected abstract Player getBluePlayer();
+    protected abstract RequestHandler initRequestHandler();
     
     
     /**
