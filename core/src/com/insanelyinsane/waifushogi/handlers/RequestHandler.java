@@ -26,7 +26,6 @@ import java.util.List;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
 import com.insanelyinsane.waifushogi.interfaces.WinConfirmation;
 import com.insanelyinsane.waifushogi.listeners.DropListener;
-import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.listeners.TurnEndListener;
 import com.insanelyinsane.waifushogi.pieces.Team;
 import com.insanelyinsane.waifushogi.screens.MatchScreen;
@@ -152,7 +151,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
      * @param r
      * @param c 
      */
-    public void requestMove(int r, int c)
+    public void requestMove(Sender sender, int r, int c)
     {
         if (!inBounds(r, c)) return;
         
@@ -187,7 +186,7 @@ public class RequestHandler implements PromotionHandler, WinGameHandler
         Piece toPromote = _referee.promotePieceAt(r, c);
         if (toPromote != null && !gameOver)
         {
-            requestPromotion(toPromote, _referee.isPieceStuck(toPromote, r, c));
+            requestPromotion(toPromote, _referee.isPieceStuck(toPromote, r, c) || sender == Sender.AI);
         }
         
         

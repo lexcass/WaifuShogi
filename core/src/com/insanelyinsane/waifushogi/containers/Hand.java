@@ -5,6 +5,7 @@
  */
 package com.insanelyinsane.waifushogi.containers;
 
+import com.badlogic.gdx.Gdx;
 import com.insanelyinsane.waifushogi.events.CaptureEvent;
 import com.insanelyinsane.waifushogi.events.DropEvent;
 import com.insanelyinsane.waifushogi.listeners.CaptureListener;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Stack;
 import com.insanelyinsane.waifushogi.listeners.DropListener;
 import java.util.Map.Entry;
+
 
 /**
  *
@@ -91,7 +93,15 @@ public class Hand implements CaptureListener, DropListener
      */
     public Piece removePiece(Piece.Type type)
     {
-        return _pieceMap.get(type).pop();
+        if (_pieceMap.get(type).isEmpty())
+        {
+            Gdx.app.debug(_team + " Hand", type + " stack was empty.");
+            return null;
+        }
+        else
+        {
+            return _pieceMap.get(type).pop();
+        }
     }
     
     

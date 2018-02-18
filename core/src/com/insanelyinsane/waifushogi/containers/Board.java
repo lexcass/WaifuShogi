@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.insanelyinsane.waifushogi.containers;
 
 import com.badlogic.gdx.Gdx;
@@ -63,14 +58,28 @@ public class Board implements MoveListener, DropListener
         if (_pieces[r][c] == null)
         {
             _pieces[r][c] = p;
-            Gdx.app.debug("Debug", p.getType().toString() + " added at (" + r + ", " + c + ").");
+            //Gdx.app.debug("Debug", p.getType().toString() + " added at (" + r + ", " + c + ").");
             return true;
         }
         else
         {
-            Gdx.app.debug("Warning", "Piece wasn't added. Cell not empty.");
+            //Gdx.app.debug("Warning", "Piece wasn't added. Cell not empty.");
             return false;
         }
+    }
+    
+    
+    /**
+     * Put the given Piece in the given row and column replacing any piece that is currently
+     * there.
+     * @param p
+     * @param r
+     * @param c 
+     */
+    public void putPiece(Piece p, int r, int c)
+    {
+        _pieces[r][c] = p;
+        System.out.println("Put: " + p.getType() + "(" + r + ", " + c + ")");
     }
     
     
@@ -80,10 +89,16 @@ public class Board implements MoveListener, DropListener
      * WARNING: This is unsynchronized with the GUI and may cause issues if used improperly.
      * @param r
      * @param c 
+     * @return Piece that was removed
      */
-    public void removePieceAt(int r, int c)
+    public Piece removePieceAt(int r, int c)
     {
+        Piece p = _pieces[r][c];
         _pieces[r][c] = null;
+        
+        System.out.println("Remove: " + p.getType() + "(" + r + ", " + c + ")");
+        
+        return p;
     }
     
     
@@ -132,18 +147,26 @@ public class Board implements MoveListener, DropListener
      * Move a piece from one cell to another.
      * 
      * WARNING: This will overwrite any piece that is currently in this cell!
-     * @param from
-     * @param to 
+     * @param fromR
+     * @param fromC
+     * @param toR
+     * @param toC
+     * @return Piece that was captured or null if none were captured.
      */
-//    public void movePiece(int fromR, int fromC, int toR, int toC)
-//    {
-//        if (inBounds(fromR, fromC) && inBounds(toR, toC))
-//        {
-//            Piece p = _pieces[fromR][fromC];
-//            _pieces[fromR][fromC] = null;
-//            _pieces[toR][toC] = p;
-//        }
-//    }
+    public Piece movePiece(int fromR, int fromC, int toR, int toC)
+    {
+        if (inBounds(fromR, fromC) && inBounds(toR, toC))
+        {
+            Piece p = _pieces[fromR][fromC];
+            _pieces[fromR][fromC] = null;
+            Piece captured = _pieces[toR][toC];
+            _pieces[toR][toC] = p;
+            
+            return captured;
+        }
+        
+        return null;
+    }
     
     
     /**

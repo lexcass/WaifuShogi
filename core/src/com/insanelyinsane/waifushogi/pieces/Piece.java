@@ -113,6 +113,10 @@ public abstract class Piece
         _standardPattern.setTeam(_team);
         _promotedPattern.setTeam(_team);
     }
+    public void toggleTeam()
+    {
+        _team = (_team == Team.RED) ? Team.BLUE : Team.RED;
+    }
     
     public void setCaptured(boolean c) { _captured = c; }
     public boolean isCaptured() { return _captured; }
