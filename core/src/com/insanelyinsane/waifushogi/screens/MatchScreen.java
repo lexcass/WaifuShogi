@@ -158,6 +158,7 @@ public abstract class MatchScreen extends Screen
     
     // Override in child
     protected abstract void setupMatch();
+    //protected abstract Player getRedPlayer();
     protected abstract Player getBluePlayer();
     protected abstract RequestHandler initRequestHandler();
     

@@ -6,10 +6,12 @@
 package com.insanelyinsane.waifushogi.ui;
 
 import com.badlogic.gdx.Gdx;
+import static com.badlogic.gdx.graphics.profiling.GLProfiler.listener;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.insanelyinsane.waifushogi.handlers.RequestHandler;
+import com.insanelyinsane.waifushogi.listeners.QuitListener;
+import com.insanelyinsane.waifushogi.screens.Screen;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,6 +24,8 @@ public abstract class UI
     private List<Actor> _elements;
     private Skin _skin;
     private Stage _stage;
+    private Screen _screen;
+    private List<QuitListener> _quitListeners;
     
     
     /**
@@ -29,11 +33,14 @@ public abstract class UI
      * method overridden by child classes.
      * @param stage 
      */
-    public UI(Stage stage)
+    public UI(Stage stage, Screen parent)
     {
         _stage = stage;
         _elements = new LinkedList<>();
         _skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
+        _quitListeners = new LinkedList<>();
+        _quitListeners.add(parent);
+        _screen = parent;
         
         createElements();
     }
@@ -90,4 +97,22 @@ public abstract class UI
      * @return 
      */
     public Skin getSkin() { return _skin; } 
+    
+    
+    public Screen getScreen() { return _screen; }
+    
+    
+    public void quitGame()
+    {
+        _quitListeners.forEach(l -> l.handleGameQuit());
+    }
+    
+    
+    public void registerQuitListener(QuitListener l)
+    {
+        if (l != null)
+        {
+            _quitListeners.add(l);
+        }
+    }
 }

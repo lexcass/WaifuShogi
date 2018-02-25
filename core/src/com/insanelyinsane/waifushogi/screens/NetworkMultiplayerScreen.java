@@ -11,7 +11,14 @@ import com.insanelyinsane.waifushogi.WaifuShogi;
 import com.insanelyinsane.waifushogi.gamecomponents.GameComponentType;
 import com.insanelyinsane.waifushogi.handlers.NetworkRequestHandler;
 import com.insanelyinsane.waifushogi.handlers.RequestHandler;
+import com.insanelyinsane.waifushogi.networking.MultiplayerServer;
+import com.insanelyinsane.waifushogi.networking.NetworkParams;
+import com.insanelyinsane.waifushogi.networking.ServerThread;
+import com.insanelyinsane.waifushogi.pieces.Team;
 import com.insanelyinsane.waifushogi.ui.UIController;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  *
@@ -19,18 +26,57 @@ import com.insanelyinsane.waifushogi.ui.UIController;
  */
 public class NetworkMultiplayerScreen extends MatchScreen
 {
-    private Player _bluePlayer;
+    private Team _myTeam;
+    private boolean _isHost;
+    private String _ip;
+    private ServerThread _serverThread;
+    private NetworkParams _netParams;
+    
     
     public NetworkMultiplayerScreen(WaifuShogi game, SpriteBatch batch, UIController ui)
     {
         super(game, batch, ui);
-        _bluePlayer = null;
+//        _ip = ip;
+//        _isHost = isHost;
+//        
+//        if (_isHost)
+//        {
+//            try
+//            {
+//                new MultiplayerServer().acceptConnections();
+//            }
+//            catch (IOException e)
+//            {
+//                System.err.println("Could not initialize the game server. Please restart the game and try again.");
+//            }
+//        }
+//        
+//        try
+//        {
+//            Socket socket = new Socket(_ip, MultiplayerServer.PORT_NUMBER);
+//            _serverThread = new ServerThread(socket);
+//            new Thread(_serverThread).start();
+//        }
+//        catch (UnknownHostException e)
+//        {
+//            System.err.println("Unknown host.");
+//        }
+//        catch (IOException e)
+//        {
+//            System.err.println("Failed to connect to host.");
+//        }
+//        
+//        _netParams = new NetworkParams();
     }
     
     
     @Override
     protected void setupMatch()
     {
+        // assign a team to this player by requesting assignment from server
+        
+        
+        
         
     }
     
@@ -45,6 +91,6 @@ public class NetworkMultiplayerScreen extends MatchScreen
     @Override
     protected Player getBluePlayer()
     {
-        return _bluePlayer;
+        return null;
     }
 }

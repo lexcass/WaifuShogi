@@ -8,7 +8,7 @@ package com.insanelyinsane.waifushogi.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.insanelyinsane.waifushogi.WaifuShogi;
-import com.insanelyinsane.waifushogi.gamecomponents.TestComponent;
+import com.insanelyinsane.waifushogi.ui.MainMenuUI;
 import com.insanelyinsane.waifushogi.ui.UIController;
 
 /**
@@ -26,12 +26,13 @@ public class MainMenuScreen extends Screen
     @Override
     public void create()
     {
-        addComponent(new TestComponent());
+        getUIController().loadUI(new MainMenuUI(getStage(), this));
     }
     
     public boolean touchDown(int screenX, int screenY, int pointer, int button)
     {
-        Gdx.app.debug("Touch?", "Yes, please!");
+        
+        
         return true;
     }
     
@@ -39,6 +40,6 @@ public class MainMenuScreen extends Screen
     @Override
     public void handleGameQuit()
     {
-        
+        Gdx.app.exit();
     }
 }

@@ -14,14 +14,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.insanelyinsane.waifushogi.handlers.PromotionHandler;
-import com.insanelyinsane.waifushogi.listeners.QuitListener;
 import com.insanelyinsane.waifushogi.pieces.Piece;
 import com.insanelyinsane.waifushogi.interfaces.PromotionConfirmation;
 import com.insanelyinsane.waifushogi.interfaces.WinConfirmation;
 import com.insanelyinsane.waifushogi.pieces.Team;
 import com.insanelyinsane.waifushogi.handlers.WinGameHandler;
-import java.util.LinkedList;
-import java.util.List;
+import com.insanelyinsane.waifushogi.screens.Screen;
 
 /**
  *
@@ -29,18 +27,13 @@ import java.util.List;
  */
 public class MatchUI extends UI implements PromotionConfirmation, WinConfirmation
 {
-    private final List<QuitListener> _quitListeners;
-    
     private Button _quitButton;
     private Button _menuButton;
     
     
-    public MatchUI(Stage stage, QuitListener q)
+    public MatchUI(Stage stage, Screen q)
     {
-        super(stage);
-        _quitListeners = new LinkedList<>();
-        
-        _quitListeners.add(q);
+        super(stage, q);
     }
     
     @Override
@@ -70,7 +63,7 @@ public class MatchUI extends UI implements PromotionConfirmation, WinConfirmatio
             @Override
             public void touchUp(InputEvent e, float screenX, float screenY, int pointer, int button)
             {
-                _quitListeners.forEach(l -> l.handleGameQuit());
+                quitGame();
             }
         });
         _quitButton.setVisible(false);
@@ -119,15 +112,5 @@ public class MatchUI extends UI implements PromotionConfirmation, WinConfirmatio
                 }
             }
         }.button("Play Again", true).button("Quit", false).show(getStage());
-    }
-    
-    
-    
-    public void registerQuitListener(QuitListener l)
-    {
-        if (l != null)
-        {
-            _quitListeners.add(l);
-        }
     }
 }
