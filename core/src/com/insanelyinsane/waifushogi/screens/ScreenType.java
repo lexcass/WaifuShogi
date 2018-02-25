@@ -13,6 +13,7 @@ public enum ScreenType
 {
     MAIN_MENU,
     LOCAL_MULTIPLAYER,
+    NETWORK_CONNECTION,
     NETWORK_MULTIPLAYER,
     VERSUS_AI
 }

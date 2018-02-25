@@ -5,31 +5,34 @@
  */
 package com.insanelyinsane.waifushogi.ui;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.insanelyinsane.waifushogi.interfaces.ConnectionHandler;
+import com.insanelyinsane.waifushogi.interfaces.ConnectionSetter;
+import com.insanelyinsane.waifushogi.interfaces.HostHandler;
+import com.insanelyinsane.waifushogi.interfaces.HostSetter;
 import com.insanelyinsane.waifushogi.screens.Screen;
-import com.insanelyinsane.waifushogi.screens.ScreenType;
 
 /**
  *
  * @author Alex Cassady
  */
-public class MainMenuUI extends UI 
+public class NetworkConnectionUI extends UI implements ConnectionSetter, HostSetter
 {
-    private TextButton _playButton;
-    private TextButton _networkButton;
-    private TextButton _quitButton;
-    private TextButton _aiButton;
+    private ConnectionHandler _connectionHandler;
+    private HostHandler _hostHandler;
     
-    private String _ipText;
+    private TextField _ipTextField;
+    private TextButton _hostButton;
+    private TextButton _joinButton;
+    private TextButton _cancelButton;
     
-    
-    public MainMenuUI(Stage stage, Screen q)
+
+    public NetworkConnectionUI(Stage stage, Screen q)
     {
         super(stage, q);
     }
@@ -39,8 +42,10 @@ public class MainMenuUI extends UI
     {
         Table table = new Table();
         
-        _playButton = new TextButton("Local Multiplayer", getSkin());
-        _playButton.addListener(new InputListener()
+        _ipTextField = new TextField("IP Adress", getSkin());
+        
+        _joinButton = new TextButton("Join", getSkin());
+        _joinButton.addListener(new InputListener()
         {
             @Override
             public boolean touchDown(InputEvent e, float screenX, float screenY, int pointer, int button) { return true; }
@@ -48,13 +53,13 @@ public class MainMenuUI extends UI
             @Override
             public void touchUp(InputEvent e, float screenX, float screenY, int pointer, int button)
             {
-                getScreen().changeScreen(ScreenType.LOCAL_MULTIPLAYER);
+                _connectionHandler.connect(_ipTextField.getText());
             }
         });
         
         
-        _networkButton = new TextButton("Network Multiplayer", getSkin());
-        _networkButton.addListener(new InputListener()
+        _hostButton = new TextButton("Host", getSkin());
+        _hostButton.addListener(new InputListener()
         {
             @Override
             public boolean touchDown(InputEvent e, float screenX, float screenY, int pointer, int button) { return true; }
@@ -62,27 +67,13 @@ public class MainMenuUI extends UI
             @Override
             public void touchUp(InputEvent e, float screenX, float screenY, int pointer, int button)
             {
-                getScreen().changeScreen(ScreenType.NETWORK_CONNECTION);
+                _hostHandler.host(_ipTextField.getText());
             }
         });
         
         
-        _aiButton = new TextButton("Practice Vs. AI", getSkin());
-        _aiButton.addListener(new InputListener()
-        {
-            @Override
-            public boolean touchDown(InputEvent e, float screenX, float screenY, int pointer, int button) { return true; }
-            
-            @Override
-            public void touchUp(InputEvent e, float screenX, float screenY, int pointer, int button)
-            {
-                getScreen().changeScreen(ScreenType.VERSUS_AI);
-            }
-        });
-        
-        
-        _quitButton = new TextButton("Quit Game", getSkin());
-        _quitButton.addListener(new InputListener()
+        _cancelButton = new TextButton("Cancel", getSkin());
+        _cancelButton.addListener(new InputListener()
         {
             @Override
             public boolean touchDown(InputEvent e, float screenX, float screenY, int pointer, int button) { return true; }
@@ -94,16 +85,31 @@ public class MainMenuUI extends UI
             }
         });
         
+        
         table.setFillParent(true);
-        table.add(_playButton);
+        table.add(_ipTextField);
         table.row();
-        table.add(_networkButton);
+        table.add(_hostButton);
         table.row();
-        table.add(_aiButton);
+        table.add(_joinButton);
         table.row();
-        table.add(_quitButton);
+        table.add(_cancelButton);
         table.row();
         
         addElement(table);
+    }
+    
+    
+    @Override
+    public void setConnectionHandler(ConnectionHandler h)
+    {
+        _connectionHandler = h;
+    }
+    
+    
+    @Override
+    public void setHostHandler(HostHandler h)
+    {
+        _hostHandler = h;
     }
 }
