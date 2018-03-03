@@ -8,6 +8,7 @@ package com.insanelyinsane.waifushogi.ui;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -42,7 +43,7 @@ public class NetworkConnectionUI extends UI implements ConnectionSetter, HostSet
     {
         Table table = new Table();
         
-        _ipTextField = new TextField("IP Adress", getSkin());
+        _ipTextField = new TextField("localhost", getSkin());
         
         _joinButton = new TextButton("Join", getSkin());
         _joinButton.addListener(new InputListener()
@@ -53,7 +54,7 @@ public class NetworkConnectionUI extends UI implements ConnectionSetter, HostSet
             @Override
             public void touchUp(InputEvent e, float screenX, float screenY, int pointer, int button)
             {
-                _connectionHandler.connect(_ipTextField.getText());
+                _connectionHandler.connect(_ipTextField.getText(), false);
             }
         });
         
@@ -104,6 +105,19 @@ public class NetworkConnectionUI extends UI implements ConnectionSetter, HostSet
     public void setConnectionHandler(ConnectionHandler h)
     {
         _connectionHandler = h;
+    }
+    
+    
+    @Override
+    public void onConnectionError(String errorMessage)
+    {
+        new Dialog("Connection Error", getSkin())
+        {
+            @Override
+            public void result(Object o)
+            {
+            }
+        }.text(errorMessage).button("Ok", true).show(getStage());
     }
     
     

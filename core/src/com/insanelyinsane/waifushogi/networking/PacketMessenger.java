@@ -9,7 +9,11 @@ package com.insanelyinsane.waifushogi.networking;
  *
  * @author Alex Cassady
  */
-public enum NetworkRequestType 
+public interface PacketMessenger 
 {
-    READY, TEAM_ASSIGNMENT, MAKE_MOVE, FORFEIT, UNKNOWN
+    public void send(NetworkRequestType requestType, String data);
+    public Packet receive();
+    
+    public void queueOutgoing(Packet packet);
+    public void queueIncoming(Packet packet);
 }

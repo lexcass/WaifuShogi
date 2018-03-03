@@ -75,13 +75,13 @@ public class WaifuShogi extends ApplicationAdapter implements ScreenChangeListen
         public void onScreenChanged(ScreenChangeEvent e)
         {
             // Load next screen's assets asynchronously and show loading screen in the process
-            _nextScreen = ScreenProducer.produceScreen(e.getType(), this, _batch, _uiController);
+            _nextScreen = ScreenProducer.produceScreen(e.getType(), this, _batch, _uiController, e.getArg1(), e.getArg2());
             
-            // Report non-existing screen to debug log
-            if (_nextScreen == null) Gdx.app.debug("Error", "WaifuShogi::_nextScreen was null in method onScreenChanged.");
+            // Report non-existing screen to error log
+            if (_nextScreen == null) Gdx.app.error("Error", "WaifuShogi::_nextScreen was null in method onScreenChanged.");
             
             
-            // Clean up previou active screen
+            // Clean up previous active screen
             _stage.clear();
             if (_activeScreen != null) _activeScreen.getAssets().dispose();
             

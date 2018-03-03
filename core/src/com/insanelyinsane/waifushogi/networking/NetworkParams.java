@@ -14,16 +14,22 @@ import com.insanelyinsane.waifushogi.pieces.Team;
  */
 public class NetworkParams 
 {
+    private String _hostIP;
+    private boolean _isHost;
     private Team _team;
-    private Turn _lastTurn;
+    //private Turn _lastTurn;
     
+    public String getHostIP() { return _hostIP; }
+    public boolean isHost() { return _isHost; }
     public Team getTeam() { return _team; }
-    public Turn getLastTurn() { return _lastTurn; }
+    
+    public void setTeam(Team t) { _team = t; }
     
     
-    public NetworkParams setTeam(Team team)
+    public NetworkParams(String hostIP, boolean isHost, Team team)
     {
+        _hostIP = hostIP;
+        _isHost = isHost;
         _team = team;
-        return this;
     }
 }

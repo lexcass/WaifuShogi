@@ -5,6 +5,8 @@
  */
 package com.insanelyinsane.waifushogi.networking;
 
+import com.badlogic.gdx.Gdx;
+import com.insanelyinsane.waifushogi.handlers.NetworkRequestHandler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,11 +19,12 @@ import java.util.Queue;
  *
  * @author Alex Cassady
  */
-public class ServerThread implements Runnable
+public class ServerThread implements Runnable, PacketMessenger
 {
     private Socket _socket;
-    private Packet _data;
-    private Queue<Packet> _messageQueue;
+    private Queue<Packet> _outgoingQueue;
+    private Queue<Packet> _incomingQueue;
+    private NetworkRequestHandler _netHandler;
     
     @Override
     public void run()
@@ -37,14 +40,31 @@ public class ServerThread implements Runnable
                 if (in.ready())
                 {
                     // get input from server here
-                    queuePacket(Packet.fromString(in.readLine()));
+                    String s = in.readLine();
+                    System.out.println("Server: " + s);
+                    queueIncoming(Packet.fromString(s));
                 }
                 
                 // give output to server here
-                if (_data != null)
+                if (!_outgoingQueue.isEmpty())
                 {
-                    out.write(_data.toString());
-                    _data = null;
+                    out.write(_outgoingQueue.remove().toString());
+                    
+                    if (out.checkError()) { System.out.println("Error encountered while sending message to server."); }
+                }
+                
+                // handle input from server
+                if (!_incomingQueue.isEmpty())
+                {
+                    while (_netHandler == null);
+                    
+                    Packet packet = receive();
+                    System.out.println("Packet received.");
+                    
+                    if (packet.getNetworkRequestType() == NetworkRequestType.TEAM_ASSIGNMENT)
+                    {
+                        _netHandler.setTeam(packet);
+                    }
                 }
             }
             
@@ -56,9 +76,18 @@ public class ServerThread implements Runnable
     }
     
     
-    private void queuePacket(Packet data)
+    @Override
+    public void queueIncoming(Packet data)
     {
-        _messageQueue.add(data);
+        if (data == null)  { return; }
+        _incomingQueue.add(data);
+    }
+    
+    @Override
+    public void queueOutgoing(Packet data)
+    {
+        if (data == null) return;
+        _outgoingQueue.add(data);
     }
     
     /**
@@ -66,9 +95,11 @@ public class ServerThread implements Runnable
      * @param requestType
      * @param data 
      */
+    @Override
     public void send(NetworkRequestType requestType, String data)
     {
-        _data = new Packet(requestType, data);
+        //_data = new Packet(requestType, data);
+        queueOutgoing(new Packet(requestType, data));
     }
     
     
@@ -76,17 +107,26 @@ public class ServerThread implements Runnable
      * Receive data from the server if data is available.
      * @return Packet containing received data.
      */
+    @Override
     public Packet receive()
     {
-        if (_messageQueue.isEmpty()) return null;
-            
-        return _messageQueue.remove();
+        if (_incomingQueue.isEmpty()) return null;
+        return _incomingQueue.remove();
+    }
+    
+    
+    public void setNetworkRequestHandler(NetworkRequestHandler handler)
+    {
+        _netHandler = handler;
     }
     
     
     public ServerThread(Socket socket)
     {
         _socket = socket;
-        _messageQueue = new LinkedList<>();
+        _outgoingQueue = new LinkedList<>();
+        _incomingQueue = new LinkedList<>();
+        
+        Gdx.app.debug("Warning", "Make sure you set the NetworkRequestHandler for this ServerThread.");
     }
 }

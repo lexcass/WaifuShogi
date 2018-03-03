@@ -15,7 +15,7 @@ import com.insanelyinsane.waifushogi.ui.UIController;
  */
 public class ScreenProducer 
 {
-    public static Screen produceScreen(ScreenType type, WaifuShogi l, SpriteBatch batch, UIController ui)
+    public static Screen produceScreen(ScreenType type, WaifuShogi l, SpriteBatch batch, UIController ui, Object arg1, Object arg2)
     {
         switch (type)
         {
@@ -28,7 +28,7 @@ public class ScreenProducer
             case NETWORK_CONNECTION:
                 return new NetworkConnectionScreen(l, batch, ui);
             case NETWORK_MULTIPLAYER:
-                return new NetworkMultiplayerScreen(l, batch, ui);
+                return new NetworkMultiplayerScreen(l, batch, ui, arg1, arg2);
         }
         
         return null;

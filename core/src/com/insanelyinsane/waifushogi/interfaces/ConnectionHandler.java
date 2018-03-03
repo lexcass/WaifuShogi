@@ -11,5 +11,5 @@ package com.insanelyinsane.waifushogi.interfaces;
  */
 public interface ConnectionHandler 
 {
-    public void connect(String ip);
+    public void connect(String ip, boolean isHost);
 }

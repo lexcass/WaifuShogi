@@ -32,7 +32,14 @@ public class Packet
             type = NetworkRequestType.UNKNOWN;
         }
         
-        packetData = parts[1];
+        if (parts.length < 2)
+        {
+            packetData = null;
+        }
+        else
+        {
+            packetData = parts[1];
+        }
         
         return new Packet(type, packetData);
     }
@@ -40,7 +47,7 @@ public class Packet
     @Override
     public String toString()
     {
-        return _type.toString() + "," + _data;
+        return _type.toString() + "," + _data + "\n";
     }
     
     public Packet(NetworkRequestType type, String data)

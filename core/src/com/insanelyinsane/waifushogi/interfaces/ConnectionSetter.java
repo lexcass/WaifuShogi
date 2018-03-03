@@ -12,4 +12,5 @@ package com.insanelyinsane.waifushogi.interfaces;
 public interface ConnectionSetter 
 {
     public void setConnectionHandler(ConnectionHandler h);
+    public void onConnectionError(String errorMessage);
 }

@@ -67,8 +67,27 @@ public abstract class Screen implements QuitListener
      */
     public final void changeScreen(ScreenType type)
     {
-        _screenChangeListener.onScreenChanged(new ScreenChangeEvent(type));
+        _screenChangeListener.onScreenChanged(new ScreenChangeEvent(type, null, null));
     }
+    
+    /**
+     * Change to a different screen of the specified type, and inform listeners.
+     * @param type 
+     */
+    public final void changeScreen(ScreenType type, Object arg1)
+    {
+        _screenChangeListener.onScreenChanged(new ScreenChangeEvent(type, arg1, null));
+    }
+    
+    /**
+     * Change to a different screen of the specified type, and inform listeners.
+     * @param type 
+     */
+    public final void changeScreen(ScreenType type, Object arg1, Object arg2)
+    {
+        _screenChangeListener.onScreenChanged(new ScreenChangeEvent(type, arg1, arg2));
+    }
+    
     
     /**
      * Load an asset using this Screen's AssetManager.

@@ -6,6 +6,7 @@
 package com.insanelyinsane.waifushogi.listeners;
 
 import com.insanelyinsane.waifushogi.events.ScreenChangeEvent;
+import com.insanelyinsane.waifushogi.screens.Screen;
 
 /**
  *

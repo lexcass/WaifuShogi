@@ -68,30 +68,26 @@ public class NetworkRequestHandler extends RequestHandler
     }
     
     
-//    private void parseTeamData(Packet data)
-//    {
-//        _netParams.setTeam(Team.valueOf(data.toString().split(",")[1]));
-//    }
+    public void setTeam(Packet data)
+    {
+        _netParams.setTeam(Team.valueOf(data.getData()));
+        System.out.println("You are on team " + _netParams.getTeam().toString());
+    }
+    
+    
+    public NetworkParams getNetworkParams() { return _netParams; }
+    
+    
+    public void startGame(ServerThread thread, NetworkParams netParams)
+    {
+        _serverThread = thread;
+        _netParams = netParams;
+    }
     
     
     public NetworkRequestHandler(MatchScreen screen, Referee ref, SelectionListener highlighter, PromotionConfirmation c, WinConfirmation w)
     {
         super(screen, ref, highlighter, c, w);
-//        _serverThread = thread;
-//        _netParams = params;
 //        
-//        _serverThread.send(NetworkRequestType.TEAM_ASSIGNMENT, "");
-//        
-//        boolean received = false;
-//        while (!received)
-//        {
-//            Packet teamData = _serverThread.receive();
-//            
-//            if (teamData != null)
-//            {
-//                parseTeamData(teamData);
-//                received = true;
-//            }
-//        }
     }
 }
