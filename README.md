@@ -7,16 +7,13 @@ Shogi is a Japanese variation of Chess with its own twist on the original formul
 
 
 ### Is it finished?
-_Note: This repository for Waifu Shogi is currently not being updated due to my decision to release the game commercially once it's finished._
-
-Waifu Shogi is mostly playable but only has local multiplayer for desktop at this point in time. There may also be bugs concerning the movement of promoted pieces (especially the Rook and Bishop).
+Waifu Shogi is mostly playable but only has local multiplayer for desktop at this point in time.
 
 
 ### What features can be expected in the final product?
 These are the currently planned features:
 
 - Desktop support including Windows, Mac and Linux (functioning)
-- Local multiplayer (mostly finished)
-- A.I. opponent with different levels of difficulty (coming next)
-- Android support
-- Network multiplayer including cross-platform play between desktop and Android
+- Local multiplayer (finished)
+- A.I. opponent
+- Network multiplayer (in the works)
